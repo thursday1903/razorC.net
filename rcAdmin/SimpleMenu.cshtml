@@ -1,0 +1,130 @@
+﻿@{
+    Page.Title = "Simple Menu";
+    var db = Database.Open("razorC");
+
+    var errMsg = "";
+    var smName = Request["smName"];
+    var smURL = Request["smURL"];
+    var smOrderId = Request["smOrderId"];
+    var smTarget = Request["smTarget"];
+    
+    //delete record 
+    var deleteID = Request["id"];
+    if (!deleteID.IsEmpty())
+    {
+        var sqlDelete = "delete from rc_SimpleMenu where Id=@0";
+        db.Execute(sqlDelete, deleteID);
+        Response.Redirect("SimpleMenu");
+    }
+    
+
+    Validation.RequireField("smName","Please enter name");
+    Validation.RequireField("smOrderId","Please enter order");
+    Validation.Add("smOrderId",Validator.Integer("Order must be an integer") );
+
+    if (IsPost && Validation.IsValid()){
+      //no errors = insert record
+
+            if (smURL.IsEmpty()){
+            smURL="~/" + Request["smPage"];
+            if (smURL.ToLower() == "~/default") { smURL = "~/"; }
+            }
+            
+            
+        var sqlInsert = "Insert into rc_SimpleMenu "
+            +"(smName, smURL, smOrderId, smTarget) values "
+            +"(@0, @1, @2, @3)";
+        try
+        {
+            db.Execute(sqlInsert, smName, smURL, smOrderId, smTarget);
+            Response.Redirect("SimpleMenu");
+        }
+        catch (Exception ex)
+        {
+            
+            errMsg = ex.Message.ToString();
+        }
+  
+        
+    }
+
+
+    var sqlSelect = "Select * from rc_SimpleMenu order by smOrderId DESC";
+    var data = db.Query(sqlSelect);
+    var grid = new WebGrid(data);
+    
+    //select pages 
+    var sqlPages = "Select pName from rc_Pages where rcPage=1 order by pName";
+    var pages = db.Query(sqlPages);
+    
+}
+
+@section head {
+    
+}
+@section menu{
+@RenderPage("_Menu.cshtml")
+}
+
+ <fieldset>
+   <legend>Insert</legend>
+   @if (!errMsg.IsEmpty())
+    {
+    <div> 
+        @Html.Raw(errMsg)
+    </div>
+    }
+
+     <form action="" method="post">
+       <ol>
+            <li >
+                <label for="smName">Name:</label>
+                <input type="text" name="smName" @Validation.For("smName") id="smName" value="@smName" maxlength="50" /> <img src="images/help.gif" alt="help" title="Name that will be visible in menu" /> @Html.ValidationMessage("smName")
+             </li>
+             <li >
+                <label for="smPage">Select Page:</label>
+                 <select id="smPage" name="smPage">
+                 @foreach (var row in pages)
+                 {
+                      <option value="@row.pName" @if(Request["smPage"]==row.pName){<text>selected="selected"</text>}>@row.pName</option>
+                 }
+                    
+                 </select> <img src="images/help.gif" alt="help" title="Select page you want to link to" />
+             </li>
+             <li >
+                <label for="smURL">or enter URL:</label>
+                <input type="text" name="smURL" id="smURL" value="@smURL" maxlength="250" /> <img src="images/help.gif" alt="help" title="Use this if you want to link to pages that are outside of your website ex.: http://www.razorc.net" />
+             </li>
+               <li >
+                <label for="smOrderId">Order:</label>
+                <input type="text" name="smOrderId" @Validation.For("smOrderId") id="smOrderId" value="@smOrderId" /> <img src="images/help.gif" alt="help" title="Higher the number, higher the position of item in menu" /> @Html.ValidationMessage("smOrderId")
+             </li>
+              <li >
+                <label for="smTarget">Target:</label>
+                  <select id="smTarget" name="smTarget">
+                      <option value="_self"  @if(smTarget=="_self"){<text>selected="selected"</text>}>Same window</option>
+                      <option value="_blank" @if(smTarget=="_blank"){<text>selected="selected"</text>}>New window</option>
+                  </select> <img src="images/help.gif" alt="help" title="Should the page open in new window/tab or in the same window" />
+             </li>
+              
+    </ol> <input type="submit" value="Insert" title="Insert" />
+</form> 
+    </fieldset>
+     <fieldset>
+   <legend>Available</legend>
+    @grid.GetHtml(tableStyle: "rcGrid",
+                headerStyle: "head",
+                alternatingRowStyle: "alt", 
+                columns:grid.Columns(
+                    grid.Column("smName", "Name", style: "rcGB"), 
+                    grid.Column("URL", format:@<i>@item.smURL</i>),
+                    grid.Column("Order",format:@<span class="rcGB"><a href="ChangeOrderId.cshtml?tn=rc_simplemenu&cv=1&id=@item.Id"><img
+                        src="images/up.gif" alt="up" class="rcGC"/></a>
+                    <a href="ChangeOrderId.cshtml?tn=rc_simplemenu&cv=-1&id=@item.Id"><img src="images/down.gif" alt="down" class="rcGC" style="margin-right:10px" /></a>@item.smOrderId</span>),
+                    grid.Column("smTarget", "Target"),
+                    grid.Column(format:@<a href="SimpleMenu.cshtml?id=@item.Id" onclick="return confirm('Are you sure you want to delete ?')" title="Delete"><img
+                        src="images/delete.gif" class="rcGC" alt="Delete" /></a>)
+                                    )
+                            )
+
+</fieldset> 

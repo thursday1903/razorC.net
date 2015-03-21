@@ -1,0 +1,146 @@
+﻿@{
+
+    Page.Title = "Create new page";
+    var pName = "";
+    var pTitle = "Page Title Here";
+    var pText = "Text of the page";
+    var mTitle = "Meta tag: Title";
+    var mDescription = "Meta tag: Description";
+    var mKeywords = "Meta tag: Keywords";
+    var pMasterPage = "";
+    var pEditDate = DateTime.Now;
+    var pBody = true;
+    var pBodyFile = "";
+
+    var errMSG = "";
+
+    var fromPage = Request["fromPage"];
+    
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));  
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+
+    // list all the body pages
+    List<string> pBodies = rcFunctions.pageBodies();
+    
+    Validation.RequireField("pName","Please Enter Page Name");
+    Validation.RequireField("pMasterPage","Please Select Layout For Your New Page");
+
+        pName = Request["pName"];
+        pMasterPage = Request["pMasterPage"];
+        pBodyFile = Request["pBodyFile"];
+
+    var db = Database.Open("razorC");
+    
+    if (IsPost && Validation.IsValid()){
+
+             //clean pName - it is not passed as parameter :(
+                var pNameSQL = pName.Replace(" ", "").Trim();
+                pNameSQL = pNameSQL.Replace("'", "").ToLower();
+
+            
+            if (!fromPage.IsEmpty()){
+                    
+            //copy existing page
+                var copyPage = "INSERT INTO rc_Pages " +
+                             "(pName, pTitle, pText, mTitle, mDescription, mKeywords, pMasterPage, pEditDate, pBody, rcPage, pBodyFile)" +
+                             " SELECT '" + pNameSQL + "' AS pName, pTitle, pText, mTitle, mDescription, mKeywords, pMasterPage, pEditDate, pBody, rcPage, pBodyFile " +
+                            "FROM  rc_Pages AS rc_Pages_1 WHERE (pName = @0)";
+               db.Execute(copyPage, fromPage);
+               var copyId = db.GetLastInsertId();
+                
+              //copy widget
+                var copyWidgets = "INSERT INTO rc_PageWidget " +
+                         "(sName, wOrderId, wId, pId) " +
+                         " Select sName,WOrderId, wId, " + copyId + " from rc_PageWidget pw inner join rc_Pages p on pw.pID=p.pId where p.pName=@0";
+                
+                
+                db.Execute(copyWidgets,fromPage);
+
+                Response.Redirect("Editpage.cshtml?id=" + copyId );
+                
+            }
+            else{
+             var sqlIN = "Insert into rc_Pages "
+            + "(pName, pTitle, pText, mTitle, mDescription, mKeywords, pMasterPage, pEditDate, pBody, rcPage, pBodyFile) values "
+            + "(@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10)";
+
+
+                 try
+                 {
+                     db.Execute(sqlIN, pNameSQL , pTitle, pText, mTitle, mDescription, mKeywords, pMasterPage, pEditDate, pBody, 1, pBodyFile);
+                     Response.Redirect("Editpage.cshtml?id=" + db.GetLastInsertId());
+                 }
+                 catch (Exception ex)
+                 {
+
+                     errMSG = ex.Message.ToString();
+                 }
+                
+            }
+   
+    }
+
+
+    //select pages 
+    var sqlPages = "Select pName from rc_Pages where rcPage=1 order by pName";
+    var pages = db.Query(sqlPages);
+    
+}
+
+@section head {
+
+}
+@section menu{
+@RenderPage("_Menu.cshtml")
+}
+
+@if (!errMSG.IsEmpty())
+{
+<div> 
+@Html.Raw(errMSG)
+</div>
+}
+<form method="post" action="">
+ <fieldset>
+        <legend>New Page | <a href="~/rcAdmin/AllPages">All Pages</a> </legend>
+        <ol>
+            <li >
+                <label for="pName">Name:</label>
+                <input type="text" name="pName" id="pName" value="@pName" maxlength="100" @Validation.For("pName") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("pName")  
+                </li>
+                <li>
+                <label for="pMasterPage">Select Layout:</label>
+                <select id="pMasterPage" name="pMasterPage" @Validation.For("pMasterPage")>
+               @foreach (var f in fileInfo )
+               {
+                <option value="@f.Name" @if(pMasterPage==f.Name){<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(f.Name)</option>
+                }
+                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
+            </li>
+             <li>
+                <label for="pBodyFile">Body template:</label>
+                <select id="pBodyFile" name="pBodyFile">
+               @foreach (var fName in pBodies)
+               {
+                <option value="@fName" @if (pBodyFile == fName)
+                                        {<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(fName)</option>
+               }
+                </select>  <img src="images/help.gif" alt="help" title="Template that will be used to render a body part of your page. All body templates are in rcTempaltes/Body folder - you can add/change/modify them to fit your needs" />
+            </li>
+            <li>
+            <label for="fromPage">or create based on existing page:</label>
+                <select id="fromPage" name="fromPage">
+                    <option value="">Select one</option>
+                    @foreach (var p in pages)
+                    {
+                        <option value="@p.pName" @if(fromPage==p.pName){<text>selected="selected"</text>}>@p.pName</option>
+                    }
+                </select>  <img src="images/help.gif" alt="help" title="You can create new page based on existing one. All content, meta tags, widgets will be copied to new page." />
+            </li>
+        </ol>
+          <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+</fieldset>
+</form>

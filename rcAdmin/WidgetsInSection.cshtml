@@ -1,0 +1,158 @@
+﻿@using System.Text.RegularExpressions;
+@{
+    var pageId = Request["pId"];
+    var pageName = Request["pName"];
+
+    Page.Title = Html.Raw("Widgets In Section (page:" + pageName + " <a href=\"EditPage.cshtml?id=" + pageId + "\" title=\"Edit Page\" >"
+        +"<img src=\"images/edit_page.gif\" alt=\"Edit\" class=\"rcGC\" /></a>)");
+            
+    var errMsg = "";
+    var disableButton = false;
+    var wId = Request["wId"];
+    var sName = Request["sName"];
+    var wOrderId = Request["wOrderId"];
+     
+    var db = Database.Open("razorC");
+
+    var sqlSelectWidgets = "Select Id, wName from rc_Widgets order by wName";
+    var Widgets = db.Query(sqlSelectWidgets);
+    
+    
+    //delete record 
+    var deleteID = Request["deleteId"];
+    if (!deleteID.IsEmpty())
+    {
+        var sqlDelete = "delete from rc_PageWidget where Id=@0";
+        db.Execute(sqlDelete, deleteID);
+        Response.Redirect("WidgetsInSection.cshtml?pId="+pageId+"&pName="+pageName );
+    }
+
+
+    // read layout page and find all available zones
+    var sqlMaster = "Select pMasterPage from rc_Pages where pId=@0";
+    var masterPage = db.QueryValue(sqlMaster, pageId);
+
+    //read master and find zones
+    StreamReader textFile = new StreamReader(Server.MapPath("~/rcLayouts/" + masterPage));
+
+    string fileContents = textFile.ReadToEnd();
+    textFile.Close();
+
+    System.Collections.ArrayList availZones = new System.Collections.ArrayList();
+    string pattern = "@RenderSection\\(\"rc[\\w]*";
+
+    foreach (Match m in Regex.Matches(fileContents, pattern))
+    {
+        availZones.Add(m.ToString().Replace("@RenderSection(\"", ""));
+    }
+    //should list only unique zones, ex.: if zones are inside IF will create duplicates, so :
+    object[] arr = availZones.ToArray();
+    var distZones = arr.Distinct();
+        
+    Validation.RequireField("wOrderId","Please enter order id");
+    Validation.Add("wOrderId",Validator.Integer("Order Id must be an integer"));
+
+    if (IsPost && Validation.IsValid())
+    {
+
+
+        if (pageId.IsEmpty())
+        {
+            errMsg += "Id of the page is missing !<br/>";
+        }
+        if (wId.IsEmpty())
+        {
+            errMsg += "<h2>Please, create some <a href=\"NewWidget\">widgets first</a></h2><br/>";
+            disableButton = true;
+        }
+
+        //no errors = insert record
+        if (errMsg.IsEmpty())
+        {
+            var sqlInsert = "Insert into rc_PageWidget "
+                + "(wId, sName, wOrderId, pId) values "
+                + "(@0, @1, @2, @3)";
+            try
+            {
+                db.Execute(sqlInsert, wId, sName, wOrderId, pageId);
+                Response.Redirect("WidgetsInSection.cshtml?pId="+pageId+"&pName="+pageName);
+            }
+            catch (Exception ex)
+            {
+
+                errMsg = ex.Message.ToString();
+            }
+
+        }
+    }
+
+
+    var sqlSelect = "Select rc_PageWidget.*, rc_Widgets.wName, rc_Widgets.wFile from rc_Pagewidget "
+                + "inner join rc_Widgets on rc_PageWidget.wId = rc_Widgets.ID "
+                + "where pId= @0 order by sName ASC, wOrderId DESC";
+
+    var data = db.Query(sqlSelect, pageId );
+    var grid = new WebGrid(data);
+}
+
+
+@section head {
+    
+}
+@section menu{
+@RenderPage("_Menu.cshtml")
+}
+ <fieldset>
+   <legend>Insert</legend>
+   @if (!errMsg.IsEmpty())
+    {
+    <div> 
+        @Html.Raw(errMsg)
+    </div>
+    }
+
+     <form action="" method="post">
+       <ol>
+            <li >
+                <label for="sName">Section name:</label>
+                <select id="sName" name="sName" >
+                @foreach (var zone in distZones)
+                {
+                    <option value="@zone" @if(sName==zone.ToString()){<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(@zone.ToString())</option>
+                }
+                  </select> <img src="images/help.gif" alt="help" title="Select section of the page where you want to insert the widget" />
+             </li>
+             <li >
+                <label for="wId">Widget:</label>
+                 <select id="wId" name="wId">
+                 @foreach (var row in Widgets)
+                 {
+                      <option value="@row.Id" @if (wId.AsInt() == row.Id){<text>selected="selected"</text>}>@row.wName</option>
+                 }
+                 </select> <img src="images/help.gif" alt="help" title="Select widget that will be inserted to selected section of the page" />
+             </li>
+             <li >
+                <label for="wOrderId">Order Id:</label>
+                <input type="text" name="wOrderId" @Validation.For("wOrderId") id="wOrderId" value="@wOrderId" /> <img src="images/help.gif" alt="help" title="Higher the number , higher the position of the widget on page" /> @Html.ValidationMessage("wOrderId")
+            </li>
+    </ol> 
+    <input type="submit" value="Insert" title="Insert" @if(disableButton==true){<text>disabled="disabled"</text>} />
+</form> 
+    </fieldset>
+
+     <fieldset>
+   <legend>Available</legend>
+    @grid.GetHtml(tableStyle: "rcGrid",
+                headerStyle: "head",
+                alternatingRowStyle: "alt",
+                columns: grid.Columns(
+                         grid.Column(format: @<text>@rcHelpers.EditWidgetImg(item.wId, item.wFile)</text>),
+                         grid.Column("wName", "Name", style: "rcGB"),
+                         grid.Column("Section", format: @<span>@item.sName.ToString().Replace("rc", "")</span>),
+                         grid.Column("Order Id", format: @<span class="rcGB"><a href="ChangeOrderId.cshtml?tn=rc_pagewidget&cv=1&id=@item.Id"><img
+                        src="images/up.gif" alt="up" class="rcGC"/></a><a href="ChangeOrderId.cshtml?tn=rc_pagewidget&cv=-1&id=@item.Id"><img src="images/down.gif" alt="down" class="rcGC" style="margin-right:10px" /></a>@item.wOrderId</span>),
+                         grid.Column(format: @<text>@rcHelpers.DeleteWidgetInPage(Convert.ToInt32(pageId), pageName, item.Id, item.wFile)</text>)
+                                    )
+                            )
+
+</fieldset> 

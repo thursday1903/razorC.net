@@ -1,0 +1,28 @@
+﻿@using System.Xml
+@using System.Data
+@{
+    Page.Title = "System configuration";
+
+    //display news from razorC.net - no ads just security and available site updates
+    XmlTextReader reader = new XmlTextReader("http://www.razorc.net/rss");
+    DataSet ds = new DataSet();
+    try
+    {
+        ds.ReadXml(reader) ;
+    }
+    catch (Exception)
+    {}
+    
+    var loginUr = User.Identity.Name.ToString();
+    }
+
+@section head {
+    
+}
+@section menu{
+@RenderPage("_Menu.cshtml")
+}
+ <fieldset>
+   <p>Hello: @loginUr</p>
+     <p>You can change your password here:</p>     
+</fieldset> 

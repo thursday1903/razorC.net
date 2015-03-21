@@ -1,0 +1,38 @@
+﻿@{
+    
+    var tableName = Request["tn"];
+    var changeValue = Request["cv"];
+    var id = Request["id"];
+       
+    
+    var db = Database.Open("razorC");
+    var sqlUpdate = "";
+    
+    //update menu order
+    if (tableName.ToString().ToLower() == "rc_simplemenu"){
+        sqlUpdate = "Update rc_simplemenu set smOrderId=smOrderId +@0 where Id=@1";
+        
+    }
+
+    //update order of widgets in page
+    if (tableName.ToString().ToLower() == "rc_pagewidget")
+    {
+        sqlUpdate = "Update rc_pagewidget set wOrderId=wOrderId +@0 where Id=@1";
+    }
+
+
+
+    try
+    {
+        db.Execute(sqlUpdate, changeValue, id);
+
+        Response.Redirect(Request.UrlReferrer.ToString());
+        
+        
+    }
+    catch (Exception)
+    {
+        
+        throw;
+    }
+}

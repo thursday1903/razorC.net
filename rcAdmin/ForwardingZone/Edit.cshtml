@@ -1,0 +1,230 @@
+﻿@{
+    //fileManager
+    Response.Cookies[Session.SessionID].Value = "True";
+    Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
+    var fbURL= System.Web.VirtualPathUtility.ToAbsolute("~/tinymce/plugins/FileManager/Default.aspx?sessionid=") + Session.SessionID.ToString();
+    
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly  );
+
+    // list all the body pages
+    List<string> pBodies = rcFunctions.pageBodies();
+
+    var pId = Request["id"];
+    var errMSG = "";
+    
+    var db = Database.Open("razorC");
+    var sqlSelect = " Select * from rc_Pages where pId=@0";
+    var data = db.QuerySingle(sqlSelect,pId);
+
+    var pName = data.pName;
+    var pTitle = data.pTitle;
+    var pText = data.pText;
+    var mTitle = data.mTitle;
+    var mDescription = data.mDescription;
+    var mKeywords = data.mKeywords;
+    var pMasterPage = data.pMasterPage;
+    var pEditDate = data.pEditDate;
+    var pBody = data.pBody;
+    var pBodyFile = data.pBodyFile;
+
+    Page.Title = Html.Raw("razorC.net" + " <a href=\"WidgetsInSection.cshtml?pid=" + pId + "&pName=" + pName + "\" title=\"Widgets\">"
+    + "<img src=\"images/widgets.gif\" alt=\"Widgets\" class=\"rcGC\" /></a>");
+    
+    if (IsPost){
+        
+        
+         if (!Request["btnUpdate"].IsEmpty()){
+
+             //create backup copy before update
+             var sqlBackup = "Insert INTO rc_Backups (pwId, pwName, pwTitle, pwText, mTitle, mDescription, mKeywords, pMasterPage,pwDate, pBody, BType, pwFile) "
+                + "values (@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10, @11)";
+             db.Execute(sqlBackup, pId, pName, pTitle, pText, mTitle, mDescription, mKeywords, pMasterPage, pEditDate, pBody, 'p', pBodyFile);
+             
+             //update record
+
+        pName = Request["pName"];
+        pTitle = Request["pTitle"];
+        pText = Request.Unvalidated("pText");
+        mTitle = Request["mTitle"];
+        mDescription = Request["mDescription"];
+        mKeywords = Request["mKeywords"];
+        pMasterPage = Request["pMasterPage"];
+        pEditDate = DateTime.Now;
+        pBody = false;
+        pBodyFile = Request["pBodyFile"];
+        if(Request["pBody"] == "on"){
+            pBody = true;
+        }
+
+        var sqlUpdate = "Update rc_Pages set "
+            + "pTitle=@0, pText=@1, mTitle=@2, mDescription=@3, mKeywords=@4, pMasterPage=@5, pEditdate=@6, pBody=@7, pBodyFile=@8 "
+            + "where pId=@9";
+
+        try
+        {
+            db.Execute(sqlUpdate, pTitle, pText, mTitle, mDescription, mKeywords, pMasterPage, pEditDate, pBody, pBodyFile, pId);
+            errMSG = "Data saved !";
+        }
+        catch (Exception ex)
+        {
+
+            errMSG = ex.Message.ToString();
+        }
+         }else         {
+             //from backup - load current version selected
+             if (Request["rcBackup"].AsInt() ==0){Response.Redirect("EditPage.cshtml?id=" + pId);}
+             //load from backup - post & btnUpdate is empty
+             var loadFromBackup = "Select * from rc_Backups where Id=@0";
+             var dataFromBackup = db.QuerySingle(loadFromBackup, Request["rcBackup"]);
+
+             pName = dataFromBackup.pwName;
+             pTitle = dataFromBackup.pwTitle;
+             pText = dataFromBackup.pwText;
+             mTitle = dataFromBackup.mTitle;
+             mDescription = dataFromBackup.mDescription;
+             mKeywords = dataFromBackup.mKeywords;
+             pMasterPage = dataFromBackup.pMasterPage;
+             pEditDate = dataFromBackup.pwDate;
+             pBody = dataFromBackup.pBody;
+             pBodyFile = dataFromBackup.pwFile;
+         }
+    }
+
+    int numberOfBackups = 0;
+    var selectBackups = "Select Id, pwDate from rc_Backups where bType='p' and pwID=@0 order by id Desc";
+    var dataBackups = db.Query(selectBackups, pId);
+    numberOfBackups = dataBackups.Count();
+    //delete old backups, we want keep only top 5 backups per page/widget
+    if (numberOfBackups > 5)
+    {
+        int TopRecords = numberOfBackups - 5;
+        var deleteBackups = "Delete from rc_Backups where Id in (Select TOP " + TopRecords + " Id from rc_Backups where bType='p' and pwID=@0 order by Id Asc)";
+        db.Execute(deleteBackups, pId);
+    }
+
+
+    }
+
+@section head {
+<!-- You can use any editor you want. We decided to use TinyMCE visit http://www.tinymce.com// for licence and help -->
+<!-- TinyMCE -->
+<script src="@Href("~/tinymce/tinymce.min.js")" type="text/javascript"></script>
+<script type="text/javascript">
+        var language = navigator.userLanguage;
+
+        tinymce.init({
+            relative_urls: false,
+            // General options
+            selector: "textarea",
+            theme: "modern",
+            height: "400",
+            plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor"],
+
+            file_browser_callback: function(field_name, url, type, win) { 
+            tinymce.activeEditor.windowManager.open({
+            title: "My file browser",
+            url: "@fbURL",
+            width: 950,
+            height: 650
+        }, {
+                window: win,
+                input: field_name,
+                sessionid: '@Session.SessionID.ToString()'
+                
+        });
+    }
+
+
+          });
+
+
+
+    </script>
+<!-- /TinyMCE -->
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#rcBackup").change(function () {
+            $("#editPage").submit();
+        });
+
+    });
+</script>
+}
+@section menu{
+@RenderPage("_Menu.cshtml")
+}
+<form action="" method="post" id="editPage">
+ <fieldset>
+        <legend>Edit Page | <a href="~/rcAdmin/AllPages">All Pages</a> | <a href="~/rcAdmin/NewPage">Create Page</a> </legend>
+        @errMSG
+        Edited: @pEditDate 
+        <ol>
+                <li>
+                <label for="pName">Name:</label>
+                <input type="text" name="pName" id="pName" value="@pName" readonly="readonly" maxlength="100" /> <img src="images/help.gif" alt="help" title="Name of the page. You CANNOT change this." />
+                </li>
+
+               <li>
+                <label for="pMasterPage">Layout:</label>
+                <select id="pMasterPage" name="pMasterPage">
+               @foreach (var f in fileInfo)
+               {
+                <option value="@f.Name" @if (pMasterPage == f.Name)
+                                        {<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(f.Name)</option>
+               }
+                </select>  <img src="images/help.gif" alt="help" title="Layout/theme that razorC will use to render the page. All layouts are in rcLayouts folder - you can change/modify them to fit your needs" />
+            </li>
+
+                <li>
+                <label for="pTitle">Title:</label>
+                <input type="text" name="pTitle" id="pTitle" value="@pTitle"  maxlength="250" /> <img src="images/help.gif" alt="help" title="Title of the page. Depending on template for body section (located in rcTemplates\Body\ folder) it will or will not be visible to end user" />
+                </li>
+                <li>
+                <label for="pBody">Body template:</label>
+                 <select id="pBodyFile" name="pBodyFile">
+               @foreach (var fName in pBodies)
+               {
+                <option value="@fName" @if (pBodyFile == fName)
+                                        {<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(fName)</option>
+               }
+                </select>  <img src="images/help.gif" alt="help" title="Template that will be used to render a body part of your page. All body templates are in rcTempaltes/Body folder - you can add/change/modify them to fit your needs" />
+                Render body:<input id="pBody" name="pBody" type="checkbox" @if (pBody)
+                                                                           {<text>checked="checked"</text>} /> <img src="images/help.gif" alt="help" title="Should be selected for most of the pages, unless you need page that ONLY renders widgets in sections..." />
+                </li>
+            </ol>
+            <textarea id="pText" name="pText" cols="80" rows="15">@pText</textarea>
+     <input type="submit" name="btnUpdate" value="Update" />
+      <select id="rcBackup" name="rcBackup">
+     <option value="-1">Load from backup</option>
+               @foreach (var f in dataBackups.Take(5) )
+               {
+                <option value="@f.Id">@f.pwDate</option>
+               }
+          <option value="0">Load current version</option>
+                </select> <img src="images/help.gif" alt="help" title="Load content from backup. Every time you update widget/page razorC will create backup of that widget/page. By default last 5 version of widget/page are stored in rc_Backups table." />
+       
+</fieldset> 
+
+
+<fieldset>
+        <legend>Edit Meta Tags</legend>
+        <ol>
+                <li>
+                <label for="mTitle">Title:</label>
+                <input type="text" name="mTitle" id="mTitle" value="@mTitle" maxlength="100" /> <img src="images/help.gif" alt="help" title="Meta tag: Title" />
+                </li>
+                <li>
+                <label for="mDescription">Description:</label>
+                <input type="text" name="mDescription" id="mDescription" value="@mDescription" maxlength="200" /> <img src="images/help.gif" alt="help" title="Meta tag: Description" />
+                </li>
+                <li>
+                <label for="mKeywords">Keywords:</label>
+                <input type="text" name="mKeywords" id="mKeywords" value="@mKeywords" maxlength="200" /> <img src="images/help.gif" alt="help" title="Meta tag: keywords" />
+                </li>
+                </ol>
+                </fieldset>
+</form>

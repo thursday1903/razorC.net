@@ -1,0 +1,70 @@
+﻿@{
+
+    Page.Title = "Create new forwarding service";
+    var forwardingSvName = "";
+    var pName = "";   
+    var pMasterPage = "";
+    var pEditDate = DateTime.Now;
+    var pBody = true;
+    var pBodyFile = "";
+
+    var errMSG = "";
+
+
+    
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));  
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+
+    // list all the body pages
+    List<string> pBodies = rcFunctions.pageBodies();
+
+    Validation.RequireField("forwardingSvName", "Please Enter Forwarding Service name");
+    
+
+    forwardingSvName = Request["forwardingSvName"];
+
+    var db = Database.Open("Checking_Master");
+    
+    if (IsPost && Validation.IsValid()){
+        String sqlvalid = "Select count(*) from Forwarding_Service where Forwarding_Service_Name = @0";
+        int validResult = db.QueryValue(sqlvalid, forwardingSvName);
+        if (validResult > 0)
+        {
+            errMSG = "Forwarding service name existed";         
+        }
+        else
+        {
+            String sql = "insert into dbo.Forwarding_Service (Forwarding_Service_Name,Created_Date) values (@0, getdate())";
+            db.Execute(sql, forwardingSvName);       
+        }                
+    }    
+}
+
+@section head {
+
+}
+@section menu{
+@RenderPage("../_Menu.cshtml")
+}
+
+@if (!errMSG.IsEmpty())
+{
+<div> 
+@Html.Raw(errMSG)
+</div>
+}
+<form method="post" action="">
+ <fieldset>
+        <legend>New Forwarding service | <a href="~/rcAdmin/ForwardingServices/IndexForwardingServices">All Forwarding service</a> </legend>
+        <ol>
+            <li >
+                <label for="pName">Forwarding Service Name:</label>
+                <input type="text" name="forwardingSvName" id="forwardingSvName" value="@pName" maxlength="100" @Validation.For("forwardingSvName") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("forwardingSvName")  
+                </li>                
+        </ol>
+          <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+</fieldset>
+</form>

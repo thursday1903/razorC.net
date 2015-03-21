@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>@Page.mTitle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="@Page.mKeywords" />
+    <meta name="description" content="@Page.mDescription" />
+    <!-- Bootstrap -->
+    <link href="~/rcLayouts/default/css/bootstrap.css" rel="stylesheet">
+    <link href="~/rcLayouts/default/css/carousel.css" rel="stylesheet">
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.10.2.js"></script>
+    <script src="/rcLayouts/default/js/bootstrap.min.js"></script>
+    <script src="/rcLayouts/default/js/holder.js"></script>
+    <!--Validation-->
+      <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+      <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/mvc/4.0/jquery.validate.unobtrusive.js"></script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+      @RenderSection("head")
+      @Html.Raw(App.siteAnalytics)
+  </head>
+   <body>
+    <div class="navbar-wrapper">
+      <div class="container">
+
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/">@Html.Raw(@App.siteName)</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                 @rcHelpers.SimpleMenu(className:"nav navbar-nav navbar-right",id:"rcSimpleMenu")
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    @RenderSection("rcTop",false)
+  
+
+   
+      <!-- Marketing messaging and featurettes
+    ================================================== -->
+    <!-- Wrap the rest of the page in another container to center all the content. -->
+
+    <div class="container marketing">
+
+@*This is just to demonstrate how you can have multiple layout options
+(1,2,3 columns) based on the defined sections for every page
+You can use IsSectionDefined to hide/show blocks of html
+The other option is to create multiple layout pages in rcLayouts folder
+*@
+
+
+        @if(IsSectionDefined("rcLeft") && IsSectionDefined("rcRight")){
+        <!-- START 3 columns layout-->
+      <div class="row">
+          <div class="col-md-3">
+           @RenderSection("rcLeft",false)
+        </div>
+        <div class="col-md-6">
+           @RenderSection("rcAboveBody",false)
+           @RenderBody()
+           @RenderSection("rcBelowBody",false)
+        </div>
+        <div class="col-md-3">
+          @RenderSection("rcRight",false)
+        </div>
+      </div>
+        <!-- END 3 columns layout-->
+        }
+
+        @if(IsSectionDefined("rcLeft") && !IsSectionDefined("rcRight")){
+        <!-- START 2 columns layout - left sidebar -->
+      <div class="row">
+          <div class="col-md-3">
+           @RenderSection("rcLeft",false)
+        </div>
+        <div class="col-md-9">
+           @RenderSection("rcAboveBody",false)
+           @RenderBody()
+           @RenderSection("rcBelowBody",false)
+        </div>
+      </div>
+        <!-- END 2 columns layout - left sidebar-->
+        }
+
+        @if(!IsSectionDefined("rcLeft") && IsSectionDefined("rcRight")){
+        <!-- START 2 columns layout - right sidebar-->
+      <div class="row">
+        <div class="col-md-9">
+           @RenderSection("rcAboveBody",false)
+           @RenderBody()
+           @RenderSection("rcBelowBody",false)
+        </div>
+        <div class="col-md-3">
+          @RenderSection("rcRight",false)
+        </div>
+      </div>
+        <!-- END 2 columns layout - right sidebar-->
+        }
+
+        @if(!IsSectionDefined("rcLeft") && !IsSectionDefined("rcRight")){
+        <!-- START body only layout-->
+      <div class="row">
+        <div class="col-md-12">
+           @RenderSection("rcAboveBody",false)
+           @RenderBody()
+           @RenderSection("rcBelowBody",false)
+        </div>
+      </div>
+        <!-- END body only layout-->
+        }
+
+        <hr class="featurette-divider">
+        @RenderSection("rcBottom",false)
+
+      <!-- FOOTER -->
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>&copy;  @DateTime.Now.Year @App.siteName &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+      </footer>
+
+    </div><!-- /.container -->
+     
+  </body>
+</html>

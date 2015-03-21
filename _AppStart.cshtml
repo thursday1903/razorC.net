@@ -1,0 +1,28 @@
+﻿@using System.Web.Routing
+@{
+    RouteTable.Routes.MapWebPageRoute("{rcPageName}/{rc0}/{rc1}", "~/Default.cshtml", new { rcPageName = "default", rc0 = -1, rc1 = -1 });
+
+
+    //WebSecurity.InitializeDatabaseConnection("StarterSite", "UserProfile", "UserId", "Email", true);
+
+    var db = Database.Open("razorC");
+    var sqlSelect = "SELECT TOP 1 * From rc_Settings";
+    var data = db.QuerySingle(sqlSelect);
+
+
+    //THE EMAIL SETTINGS CAN BE CHANGED IN THE ADMIN DASHBOARD UNDER, WEBSITE SETTINGS.
+
+    App.SmtpServer = data.smtpServer;
+    App.SmtpPort = data.smtpPort;
+    App.EnableSsl = data.smtpSSL;
+    App.UserName = data.smtpUser;
+    App.Password = data.smtpPwd;
+    App.From = data.smtpFrom;
+
+    // GLOBAL VARIABLE FOR YOUR WEBSITE NAME YOU CAN CHANGE THE NAME IN THE ADMIN DASHBOARD
+    App.siteName = data.siteName;
+    App.siteAnalytics = data.siteAnalytics;
+    App.smtpTo = data.smtpTo;
+
+
+}

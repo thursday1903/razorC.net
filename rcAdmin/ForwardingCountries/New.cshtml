@@ -1,0 +1,113 @@
+﻿@{
+
+    Page.Title = "Create new Forwarding Country";
+
+    var pComment = "";
+    var pMasterPage = "";
+    var pEditDate = DateTime.Now;
+    var fwService = "";
+    var country = "";
+    var fwZone = "";
+    var errMSG = "";
+
+
+
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+
+    // list all the body pages
+    List<string> pBodies = rcFunctions.pageBodies();
+
+
+    fwService = Request["fwService"];
+    country = Request["country"];
+    fwZone = Request["fwZone"];
+    pComment = Request["pComment"];
+    errMSG = fwService + country + fwZone + pComment;
+
+
+
+
+
+    var db = Database.Open("Checking_Master");
+
+    var sqlFwdSv = "SELECT [Id_Forwarding_Service] ,[Forwarding_Service_Name] FROM [dbo].[Forwarding_Service]";
+    var dataForwardingSv = db.Query(sqlFwdSv);
+
+    var sqlCountry = "SELECT [Id_Country],[Country_Name],[Comments] FROM [dbo].[Countries]";
+    var dataCountry = db.Query(sqlCountry);
+
+    var sqlFwZone = "SELECT [Id_Forwarding_Zone],[Id_Forwarding_Service],[Forwarding_Zone],[Comments]  FROM [dbo].[Forwarding_Zone]";
+    var dataZone = db.Query(sqlFwZone);
+
+    if (IsPost && Validation.IsValid())
+    {
+        String createFwCountrySql = "INSERT INTO [dbo].[Forwarding_Countries] ([Id_Forwarding_Service],[Id_Forwarding_Zone],[Id_Country] ,[Comment]) VALUES " +
+           "(@0 " +
+           ",@1 " +
+           ",@2 " +
+           ",@3)";
+
+        db.Execute(createFwCountrySql, fwService, fwZone, country, pComment);
+    }
+    try { db.Close(); }
+    catch { }
+}
+
+@section head {
+
+}
+@section menu{
+    @RenderPage("../_Menu.cshtml")
+}
+
+@if (!errMSG.IsEmpty())
+{
+    <div>
+        @Html.Raw(errMSG)
+    </div>
+}
+<form method="post" action="">
+    <fieldset>
+        <legend>New Forwarding service | <a href="~/rcAdmin/ForwardingCountries/Index">All Forwarding Countries</a> </legend>
+        <ol>
+            <li>
+                <label for="pMasterPage">Forwarding Service:</label>
+                <select id="fwService" name="fwService" @Validation.For("fwService")>
+                    @foreach (var f in dataForwardingSv)
+                    {
+                        <option value="@f.Id_Forwarding_Service" @if (pMasterPage == f.Forwarding_Service_Name) { <text> selected="selected" </text>        }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                    }
+                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
+            </li>
+
+            <li>
+                <label for="country">Country:</label>
+                <select id="country" name="country" @Validation.For("country")>
+                    @foreach (var f in dataCountry)
+                    {
+                        <option value="@f.Id_Country" @if (pMasterPage == f.Country_Name) { <text> selected="selected" </text>          }>@rcFunctions.CleanRCNames(f.Country_Name)</option>
+                    }
+                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
+            </li>
+
+            <li>
+                <label for="fwZone">Forwading Zone:</label>
+                <select id="fwZone" name="fwZone" @Validation.For("fwZone")>
+                    @foreach (var f in dataZone)
+                    {
+                        <option value="@f.Id_Forwarding_Zone" @if (pMasterPage == f.Forwarding_Zone) { <text> selected="selected" </text>           }>@rcFunctions.CleanRCNames(f.Forwarding_Zone)</option>
+                    }
+                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
+            </li>
+            <li>
+                <label for="pComment">Comments:</label>
+                <input type="text" name="pComment" id="pComment" value="@pComment" maxlength="100" @Validation.For("pComment") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("pComment")
+            </li>
+        </ol>
+        <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+    </fieldset>
+</form>

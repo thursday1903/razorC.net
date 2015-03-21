@@ -1,0 +1,96 @@
+﻿@{
+
+    Page.Title = "Edit layout & CSS files";
+
+    var pMasterPage=Request["pMasterPage"];
+    
+    var fileToEdit=Request["fileToEdit"];
+    var fileContent=Request.Unvalidated("fileContent");
+
+    var errMSG = "";
+       
+    
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));  
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+    
+    if (pMasterPage.IsEmpty()){
+    pMasterPage=fileInfo[0].Name.ToString();
+    }
+
+    //List all css files for selected layout
+    FileInfo[] fileInfoCSS=null ;
+    //some layout files may not have unique folders with the files
+    try{
+    DirectoryInfo dirInfoCSS = new DirectoryInfo(Server.MapPath("~/rcLayouts/" + rcFunctions.CleanRCNames(pMasterPage)));  
+    fileInfoCSS = dirInfoCSS.GetFiles("*.css", SearchOption.AllDirectories);
+    }catch{}
+    
+       
+    if (IsPost){
+
+        if(!fileContent.IsEmpty() && !fileToEdit.IsEmpty() && fileToEdit.Contains("rcLayouts")){
+            try {
+            System.IO.File.WriteAllText(fileToEdit,fileContent);
+            errMSG="File updated";
+            }catch(Exception ex){
+                errMSG=ex.ToString();
+                }
+        }
+    }else{
+    if (!fileToEdit.IsEmpty() && fileToEdit.Contains("rcLayouts")){
+    fileContent= System.IO.File.ReadAllText(fileToEdit);
+    }
+ }
+  
+    
+}
+
+@section head {
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $("#pMasterPage").change(function(){
+        $("#selectLayout").submit();
+        });
+
+        });
+</script>
+}
+@section menu{
+@RenderPage("_Menu.cshtml")
+}
+<form name="selectLayout" id="selectLayout" method="get" action="">
+ <fieldset>
+        <legend>Select layout</legend>
+        @errMSG
+        <ol>
+            <li>
+                <select id="pMasterPage" name="pMasterPage">
+               @foreach (var f in fileInfo )
+               {
+                <option value="@f.Name" @if(pMasterPage==f.Name){<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(f.Name)</option>
+                }
+                </select> <img src="images/help.gif" alt="help" title="All layouts are in rcLayouts folder - you can change/modify them to fit your needs" />
+            </li>
+            <li>Layout file: <a href="@Href("~/rcAdmin/Editor.cshtml?fileToEdit=" +@Server.MapPath("~/rcLayouts/") +@pMasterPage +"&pMasterPage=" +@pMasterPage)">@pMasterPage</a></li>
+            <li>CSS file(s):
+                @if (fileInfoCSS!=null){
+                    foreach (var f in fileInfoCSS ){
+               <text> <a href="@Href("~/rcAdmin/Editor.cshtml?fileToEdit=" +@f.DirectoryName +"/"  +@f.Name +"&pMasterPage=" +@pMasterPage)">@f.Name</a> , </text>  
+                    }
+                }
+            </li>
+        </ol>
+</fieldset>
+    </form>
+
+<fieldset>
+   <legend>File content (edit ONLY if you know what you are doing:)</legend>
+    <form name="fileEdit"   method="post" action="">
+    <textarea name="fileContent" rows="30" cols="90">@fileContent</textarea>
+              <p class="form-actions">
+            <input type="submit" value="Update" title="Update" />
+        </p>
+     </form>
+</fieldset>

@@ -1,0 +1,71 @@
+﻿@functions {
+/// <summary>
+/// clean names - remove _rc, .cshtml, rc from names
+/// </summary>
+/// <param name="name"></param>
+/// <returns></returns>
+    public static string CleanRCNames(string name)
+    {
+        name = name.Replace("_rc", "");
+        name = name.Replace(".cshtml", "");
+        name = name.Replace("rc", "");
+
+        return name;
+    }
+
+
+
+    /// <summary>
+    /// lists all the body pages in /rcTemplates/Body and in /rcAddon/addonName/Body folder
+    /// </summary>
+    /// <returns></returns>
+    public static List<string> pageBodies()
+    {
+
+        List<string> pBodies = new List<string>();
+        // list all the body pages
+        DirectoryInfo dirInfoBody = new DirectoryInfo(Server.MapPath("~/rcTemplates/Body"));
+        FileInfo[] fileInfoBody = dirInfoBody.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+        foreach (var f in fileInfoBody)
+        {
+            pBodies.Add(f.Name);
+        }
+        //List all  pBody files in rcaddons
+        DirectoryInfo dirInfoBody1 = new DirectoryInfo(Server.MapPath("~/rcAddons"));
+        DirectoryInfo[] listAddons = dirInfoBody1.GetDirectories("*", SearchOption.TopDirectoryOnly);
+
+        foreach (var d in listAddons)
+        {
+
+            FileInfo[] nameAddons = dirInfoBody1.GetFiles(d + "/Body/_*.cshtml", SearchOption.TopDirectoryOnly);
+
+            foreach (var n in nameAddons)
+            {
+                pBodies.Add(n.Name);
+            }
+
+        }
+
+        return pBodies;
+        
+    }
+
+
+    /// <summary>
+    /// put spaces in addons names ex. nmgGallery => nmg Gallery
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static string addonsMenu(string name)
+    {
+        string _retV;
+        _retV = string.Concat(name.Select(x => Char.IsUpper(x) ? " " + x : x.ToString())).TrimStart(' ');
+
+        return _retV;
+
+    }
+    
+    
+    
+    
+}

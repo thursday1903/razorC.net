@@ -1,0 +1,70 @@
+﻿@{
+
+    Page.Title = "Create new Country";
+    var forwardingSvName = "";
+    var pName = "";   
+    var pMasterPage = "";
+    var pEditDate = DateTime.Now;
+    var pBody = true;
+    var pBodyFile = "";
+
+    var errMSG = "";
+
+
+    
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));  
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+
+    // list all the body pages
+    List<string> pBodies = rcFunctions.pageBodies();
+
+    Validation.RequireField("countryName", "Please Enter Country Name");
+
+
+    forwardingSvName = Request["countryName"];
+
+    var db = Database.Open("Checking_Master");
+    
+    if (IsPost && Validation.IsValid()){
+        String sqlvalid = "Select count(*) from countries where Country_Name = @0";
+        int validResult = db.QueryValue(sqlvalid, forwardingSvName);
+        if (validResult > 0)
+        {
+            errMSG = "Country name existed";         
+        }
+        else
+        {
+            String sql = "insert into dbo.countries (Country_Name,Created_Date) values (@0, getdate())";
+            db.Execute(sql, forwardingSvName);       
+        }                
+    }    
+}
+
+@section head {
+
+}
+@section menu{
+@RenderPage("../_Menu.cshtml")
+}
+
+@if (!errMSG.IsEmpty())
+{
+<div> 
+@Html.Raw(errMSG)
+</div>
+}
+<form method="post" action="">
+ <fieldset>
+        <legend>New Forwarding service | <a href="~/rcAdmin/Countries">All Countries</a> </legend>
+        <ol>
+            <li >
+                <label for="pName">Country Name:</label>
+                <input type="text" name="countryName" id="countryName" value="@pName" maxlength="100" @Validation.For("countryName") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("countryName")  
+                </li>                
+        </ol>
+          <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+</fieldset>
+</form>

@@ -1,0 +1,78 @@
+﻿@{
+    Page.Title = "Create new widget";
+
+    var wName = "";
+    var wTitle = "Title Here";
+    var wText = "Text here";
+    var wEditDate = DateTime.Now;
+    var wFile = "";
+
+    var errMSG = "";
+
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcTemplates"));
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+
+    Validation.RequireField("wName","Please Enter Name");
+    Validation.RequireField("wFile","Please Select Template");
+
+        wName = Request["wName"];
+        wFile = Request["wFile"];
+
+    if (IsPost && Validation.IsValid())
+    {
+        
+      
+           var db = Database.Open("razorC");
+            var sqlIN = "Insert into rc_Widgets "
+                + "(wName, wTitle, wText, wEditDate, wFile) values "
+                + "(@0, @1, @2, @3, @4)";
+
+            try
+            {
+                db.Execute(sqlIN, wName, wTitle, wText, wEditDate, wFile );
+                Response.Redirect("EditWidget.cshtml?id=" + db.GetLastInsertId());
+            }
+            catch (Exception ex)
+            {
+                errMSG = ex.Message.ToString();
+            }
+    }
+}
+
+@section head {
+    
+}
+@section menu{
+@RenderPage("_Menu.cshtml")
+}
+
+@if (!errMSG.IsEmpty())
+{
+<div> 
+@Html.Raw(errMSG)
+</div>
+}
+<form method="post" action="">
+ <fieldset>
+        <legend>New Widget | <a href="~/rcAdmin/AllWidgets">All Widgets</a> </legend>
+        <ol>
+            <li >
+                <label for="wName">Name:</label>
+                <input type="text" name="wName" id="pName" value="@wName" maxlength="100" @Validation.For("wName")/> <img src="images/help.gif" alt="help" title="Name of the new widget. Recommended names are in format section_name-widget_name ex.: left-quick-contact or right-ads-all-pages , this way when you will be adding widgets to sections in your page you will know which widget was designed to fit in selected section" /> @Html.ValidationMessage("wName")
+                </li>
+                <li>
+                <label for="wFile">Template:</label>
+                <select id="wFile" name="wFile" @Validation.For("wFile")>
+               @foreach (var f in fileInfo )
+               {
+                <option value="@f.Name" @if(wFile==f.Name){<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(f.Name)</option>
+                }
+                </select> <img src="images/help.gif" alt="help" title="Template that razorC will use to render the widget. All are located in rcTemplates, so you can create new/change them to fit your needs" /> @Html.ValidationMessage("wFile")
+            </li>
+        </ol>
+          <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+</fieldset>
+</form>

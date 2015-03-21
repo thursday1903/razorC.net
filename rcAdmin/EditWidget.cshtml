@@ -1,0 +1,175 @@
+﻿@{
+    //fileManager
+    Response.Cookies[Session.SessionID].Value = "True";
+    Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
+    var fbURL = System.Web.VirtualPathUtility.ToAbsolute("~/tinymce/plugins/FileManager/Default.aspx?sessionid=") + Session.SessionID.ToString();
+    
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcTemplates"));
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+
+    var Id = Request["id"];
+    var errMSG = "";
+
+    var db = Database.Open("razorC");
+    var sqlSelect = " Select * from rc_Widgets where Id=@0";
+    var data = db.QuerySingle(sqlSelect, Id);
+
+    var wName = data.wName;
+    var wTitle = data.wTitle;
+    var wText = data.wText;
+    var wEditDate = data.wEditDate;
+    var wFile = data.wFile;
+
+    if (IsPost)
+    {
+        
+        
+         if (!Request["btnUpdate"].IsEmpty()){
+       
+        //create backup copy before update
+         var sqlBackup = "Insert INTO rc_Backups (pwId, pwName, pwTitle, pwText, pwFile, pwDate, BType) "
+            + "values (@0, @1, @2, @3, @4, @5,'w')";
+             db.Execute(sqlBackup, Id, wName, wTitle, wText, wFile, wEditDate);
+             
+        //update record     
+        wName = Request["wName"];
+        wTitle = Request["wTitle"];
+        wText = Request.Unvalidated("wText");
+        wEditDate = DateTime.Now;
+        wFile = Request["wFile"];
+
+        var sqlUpdate = "Update rc_Widgets set "
+            + "wTitle=@0, wText=@1, wEditdate=@2, wFile=@3 "
+            + "where Id=@4";
+
+        try{
+            db.Execute(sqlUpdate, wTitle, wText, wEditDate, wFile, Id);
+            errMSG = "Data saved !";
+            }
+        catch (Exception ex){
+
+            errMSG = ex.Message.ToString();
+            }
+         }else{
+              //from backup - load current version selected
+             if (Request["rcBackup"].AsInt() ==0){Response.Redirect("EditWidget.cshtml?id=" + Id);}
+             //load from backup - post & btnUpdate is empty
+             var loadFromBackup = "Select * from rc_Backups where Id=@0";
+             var dataFromBackup = db.QuerySingle(loadFromBackup, Request["rcBackup"]);
+
+             wName = dataFromBackup.pwName;
+             wTitle = dataFromBackup.pwTitle;
+             wText = dataFromBackup.pwText;
+             wEditDate = dataFromBackup.pwDate;
+             wFile = dataFromBackup.pwFile;
+            }
+        
+    }
+
+    int numberOfBackups = 0;
+    var selectBackups = "Select Id, pwDate from rc_Backups where bType='w' and pwID=@0 order by id Desc";
+    var dataBackups = db.Query(selectBackups, Id);
+    numberOfBackups = dataBackups.Count();
+    //delete old backups, we want keep only top 5 backups per page/widget
+    if (numberOfBackups > 5)
+    {
+        int TopRecords = numberOfBackups - 5;
+        var deleteBackups = "Delete from rc_Backups where Id in (Select TOP " + TopRecords + " Id from rc_Backups where bType='w' and pwID=@0 order by Id Asc)";
+        db.Execute(deleteBackups, Id);
+    }
+
+    }
+
+@section head {
+<!-- You can use any editor you want. We decided to use TinyMCE visit http://www.tinymce.com/ for licence and help -->
+<!-- TinyMCE -->
+<script src="@Href("~/tinymce/tinymce.min.js")" type="text/javascript"></script>
+<script type="text/javascript">
+        var language = navigator.userLanguage;
+
+        tinymce.init({
+            relative_urls: false,
+            // General options
+            selector: "textarea",
+            theme: "modern",
+            height: "400",
+            plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor"],
+            
+            file_browser_callback: function(field_name, url, type, win) { 
+            tinymce.activeEditor.windowManager.open({
+            title: "My file browser",
+            url: "@fbURL",
+            width: 950,
+            height: 650
+        }, {
+                window: win,
+                input: field_name,
+                sessionid: '@Session.SessionID.ToString()'
+                
+        });
+    }
+
+
+          });
+
+
+
+    </script>
+<!-- /TinyMCE -->
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#rcBackup").change(function () {
+            $("#editWidget").submit();
+        });
+
+    });
+</script>
+}
+@section menu{
+@RenderPage("_Menu.cshtml")
+}
+
+<form action="" method="post" id="editWidget">
+ <fieldset>
+        <legend>Edit Widget | <a href="~/rcAdmin/AllWidgets">All Widgets</a> | <a href="~/rcAdmin/NewWidget">Create Widget</a> </legend>
+        @errMSG
+        Edited: @wEditDate 
+        <ol>
+                <li>
+                <label for="wName">Name:</label>
+                <input type="text" name="wName" id="wName" value="@wName" readonly="readonly" maxlength="100" /> <img src="images/help.gif" alt="help" title="Name of the widget. You CANNOT change this" />
+                </li>
+
+               <li>
+                <label for="wFile">Template:</label>
+                <select id="wFile" name="wFile">
+               @foreach (var f in fileInfo)
+               {
+                <option value="@f.Name" @if (wFile == f.Name)
+                                        {<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(f.Name)</option>
+               }
+                </select> <img src="images/help.gif" alt="help" title="Template used to render widget - it changes the way how the content of this widget is displayed to end user. All templates are located in rcTemplates folder" />
+            </li>
+
+                <li>
+                <label for="wTitle">Title:</label>
+                <input type="text" name="wTitle" id="wTitle" value="@wTitle"  maxlength="100" /> <img src="images/help.gif" alt="help" title="Title of widget. Depending on selected template it will or will not be visible to end user" />
+                </li>
+               
+            </ol>
+            <textarea id="wText" name="wText" cols="80" rows="15">@wText</textarea>
+     <input type="submit" name="btnUpdate" value="Update" />
+        <select id="rcBackup" name="rcBackup">
+     <option value="-1">Load from backup</option>
+               @foreach (var f in dataBackups.Take(5) )
+               {
+                <option value="@f.Id">@f.pwDate</option>
+               }
+            <option value="0">Load current version</option>
+                </select> <img src="images/help.gif" alt="help" title="Load content from backup. Every time you update widget/page razorC will create backup of that widget/page. By default last 5 version of widget/page are stored in rc_Backups table." />
+       
+</fieldset> 
+
+</form>

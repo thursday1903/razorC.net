@@ -1,0 +1,104 @@
+﻿@{  
+    //check what page is requested and load data from database
+    var pageName = Context.GetRouteValue("rcPageName");
+    if (pageName == null){pageName = "default";}
+
+    var db = Database.Open("razorC"); 
+    var selectQueryString = "SELECT pId, pName, pTitle, pText, mTitle, mDescription, mKeywords, pMasterPage, pBody, pBodyFile "
+                            + "FROM rc_Pages "
+                            + "WHERE pName = @0 and rcPage=1";
+
+
+    var data = db.QuerySingle (selectQueryString, pageName);
+    if (data == null){Response.Redirect("~/rcError");}
+    
+    //set layout for requested page
+    Layout = "~/rcLayouts/"+ data.pMasterpage;
+    
+    //set meta tags for requested page
+    Page.mTitle = data.mTitle;
+    Page.mKeywords = data.mKeywords;
+    Page.mDescription = data.mDescription;
+
+    if (data.pBodyFile.StartsWith("_addon_") && !Context.GetRouteValue("rc0").IsEmpty())
+    {
+        //load tags based on urldata[0] 
+        var selectQueryString1 = "SELECT mTitle, mDescription, mKeywords FROM rc_Pages WHERE pName = @0 and rcPage=0";
+
+        var data1 = db.QuerySingle(selectQueryString1, Context.GetRouteValue("rc0"));
+        if (data1 != null)
+        {
+            Page.mTitle = data1.mTitle;
+            Page.mKeywords = data1.mKeywords;
+            Page.mDescription = data1.mDescription;
+        }
+    }
+
+    //this will select all widgets for selected page. widgets will be loaded to sections rcTOP, rcLeft, rcRight, rcBottom
+    var selectWidgets = "Select rc_PageWidget.pId, rc_PageWidget.sName, rc_PageWidget.wId, rc_Widgets.wTitle, rc_Widgets.wText, rc_Widgets.wFile, rc_Widgets.wName "
+                        + "from rc_PageWidget inner join rc_Widgets on rc_PageWidget.wId = rc_Widgets.Id "
+                        + "where rc_PageWidget.pId=@0 order by sName, rc_PageWidget.wOrderId desc";
+
+              
+    //query based on ID of already selected page data.pID                         
+    var widgets = db.Query(selectWidgets, data.pId);
+
+}
+@section head{
+@* DO NOT REMOVE THIS COPYRIGHT *@
+<!--
+razorC.net v1.1.0 - http://www.razorC.net 
+Copyright (c) @DateTime.Now.Year  by New Media Group, Inc. 
+Released for free under MS-PL
+-->
+}
+@*render body*@
+@if (data.pBody){
+    //standard body : _rcName.cshtml
+    if (data.pBodyFile.StartsWith("_rc")){
+      @RenderPage("~/rcTemplates/Body/" + data.pBodyFile, data); 
+    }
+    else
+    { //rcAddons : _addon_ADDONNAME_something.cshtml
+        var addon = data.pBodyFile.ToString().Replace("_addon_", "");
+        addon = addon.Remove(addon.IndexOf("_"));
+        @RenderPage("~/rcAddons/" + addon + "/Body/" + data.pBodyFile, data);     
+    }
+}
+
+@*render sections: rcTOP, rcLeft, rcRight, rcBottom by default we have 4 sections but you can create as many as you need in your layout pages*@
+@{
+   var sn = "";
+   foreach (var widget in widgets) { 
+   
+   var sectionName = (string)widget.sName;
+   var wFile = (string)widget.wFile;
+   if(sn!=sectionName)
+   {
+       
+       DefineSection(sectionName, () => {
+       foreach (var row in widgets)
+       {
+           if (row.sName == sectionName) { 
+               //standard widget : _rcName.cshtml
+               if (row.wFile.StartsWith("_rc")){
+           Write(RenderPage("~/rcTemplates/" + row.wFile , row)); 
+               }
+               else
+               { //rcAddons : _addon_ADDONNAME_something.cshtml
+                   var addon = row.wFile.ToString().Replace("_addon_", "");
+                   addon = addon.Remove(addon.IndexOf("_"));
+                   Write(RenderPage("~/rcAddons/" + addon +"/" + row.wFile, row));     
+               }
+           }
+       }
+       
+   }); 
+       
+       
+   }
+   sn = sectionName;
+   
+}
+}
+

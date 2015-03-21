@@ -1,0 +1,49 @@
+﻿@{
+    Page.Title = "Show All Widgets";
+    
+    var db = Database.Open("razorC");
+
+    //delete record 
+    var deleteID = Request["id"];
+    if (!deleteID.IsEmpty())
+    {
+        var sqlDelete = "delete from rc_Widgets where Id=@0";
+        db.Execute(sqlDelete, deleteID);
+        Response.Redirect("AllWidgets");
+    }
+    
+    
+    var qStr = "Select Id, wName, wEditDate, wFile from rc_Widgets order by wEditDate DESC";
+    var data = db.Query(qStr);
+
+    var grid = new WebGrid(source: data,
+                            rowsPerPage:20);
+
+    
+}
+
+@section head {
+
+}
+@section menu{
+@RenderPage("_Menu.cshtml")
+}
+ <fieldset>
+        <legend>All Widgets | <a href="~/rcAdmin/NewWidget">Create Widget</a> </legend>
+<div id ="grid">
+ @grid.GetHtml( 
+                tableStyle: "rcGrid", 
+                headerStyle: "head", 
+                alternatingRowStyle: "alt", 
+                footerStyle:"pgr",
+                columns: grid.Columns( 
+                    grid.Column(format:@<text>@rcHelpers.EditWidgetImg(item.Id,item.wFile)</text>),
+                    grid.Column("wName", "Widget Name", style: "rcGB"), 
+                    grid.Column("Last Edited", format:@<i>@item.wEditDate</i>),
+                    grid.Column(format:@<text>@rcHelpers.DeleteWidgetImg(item.Id,item.wFile)</text>)
+                ) 
+            ) 
+
+
+</div>
+</fieldset> 

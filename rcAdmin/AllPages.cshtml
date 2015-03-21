@@ -1,0 +1,47 @@
+﻿@{
+    Page.Title = "Show all pages";
+    var db = Database.Open("razorC");
+
+    //delete record 
+    var deleteID = Request["id"];
+    if (!deleteID.IsEmpty())
+    {
+        var sqlDelete = "delete from rc_Pages where pId=@0";
+        db.Execute(sqlDelete, deleteID);
+        Response.Redirect("AllPages");
+    }
+
+
+    var qStr = "Select pId, pName, pEditDate from rc_Pages where rcPage=1 order by pEditDate DESC";
+    var data = db.Query(qStr);
+
+    var grid = new WebGrid(source: data,
+                            rowsPerPage: 20);
+
+    
+}
+@section head {}
+@section menu{
+    @RenderPage("_Menu.cshtml")
+}
+<fieldset>
+    <legend>All Pages | <a href="~/rcAdmin/NewPage">Create Page</a> </legend>
+    <div id="grid">
+        @grid.GetHtml(
+                tableStyle: "rcGrid",
+                headerStyle: "head",
+                alternatingRowStyle: "alt",
+                footerStyle: "pgr",
+                columns: grid.Columns(
+                    grid.Column(format: @<a href="EditPage.cshtml?id=@item.pId" title="Edit Page" ><img
+                        src="images/edit_page.gif" alt="Edit" class="rcGC" /></a>),
+                    grid.Column(format: @<a href="WidgetsInSection.cshtml?pid=@item.pId&pName=@item.pName" title="Widgets"><img
+                        src="images/widgets.gif" alt="Delete" class="rcGC" /></a>),
+                    grid.Column("pName", "Page Name", style: "rcGB"),
+                    grid.Column("Last Edited", format: @<i>@item.pEditDate</i>),
+                    grid.Column(format: @<a href="AllPages.cshtml?id=@item.pId" title="Delete" onclick="return confirm('Are you sure you want to delete ?')"><img
+                        src="images/delete.gif" alt="Delete" class="rcGC" /></a>)
+                )
+            )
+    </div>
+</fieldset>

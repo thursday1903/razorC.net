@@ -1,0 +1,17 @@
+﻿AFM - asp.net Ajax File Manager V1
+---------------------
+Copyright (c) 2010 mohamed antar (FileManager.3ntar.net)
+you can use this software under your responsibility and without 
+warrant of any kind and I am not responsible of any damage that software may make and under the MIT and/or GPL licenses
+http://www.opensource.org/licenses/mit-license.php
+http://www.gnu.org/licenses/gpl.html
+
+this software make use of
+---------------------------
+jsTree 1.0-rc1 http://jstree.com/ 
+Jquery 
+Jquery UI 
+jquery.contextmenu javascripttoolbox.com
+icons from www.iconfinder.com under GPL
+---------------------------------------
+I hope you like it.
