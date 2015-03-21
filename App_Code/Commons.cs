@@ -20,4 +20,9 @@ public class Commons
         try{db.Close();}
         catch{}
     }
+
+    public static String generateInvoiceNumber()
+    {
+        return null;
+    }
 }

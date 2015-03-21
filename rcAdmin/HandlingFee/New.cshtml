@@ -1,0 +1,107 @@
+﻿@{
+
+    Page.Title = "Create new Handling Fee";
+
+    var pComment = "";
+    
+    var pEditDate = DateTime.Now;
+    var fwService = "";    
+    var fwZone = "";
+    var pType = "";
+    var weightFrom = "";
+    var weightTo = "";
+    var fee="";
+    var hdlFeeType = "";
+    var errMSG = "";
+
+
+
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+
+    // list all the body pages
+    List<string> pBodies = rcFunctions.pageBodies();
+
+
+    
+    fwZone = Request["fwZone"];
+    fwService = Request["fwService"];
+    weightFrom = Request["weightFrom"];
+    weightTo = Request["weightTo"];
+    pType = Request["pType"];
+    fee = Request["fee"];
+    hdlFeeType = Request["hdlFeeType"];
+    
+
+    errMSG = fwService  + fwZone + pComment;
+
+
+    var db = Database.Open("Checking_Master");
+
+    
+    if (IsPost && Validation.IsValid())
+    {
+        String createFwQuotation = "INSERT INTO dbo.[Handling_Fee] ([Handling_Fee_Type] "+
+           ",[Weight_From]"+
+           ",[Weight_To] "+
+           ",[Handling_Fee]) VALUES " +
+           "(@0 " +
+           ",@1 " +
+           ",@2 " +
+           ",@3 )";
+
+        try {
+            db.Execute(createFwQuotation, hdlFeeType, weightFrom, weightTo, fee);
+        }
+        catch { }
+        
+    }
+
+    var test = int.Parse("d");
+
+    Commons.releaseDBConnecttion(db);
+}
+
+@section head {
+
+}
+@section menu{
+    @RenderPage("../_Menu.cshtml")
+}
+
+@if (!errMSG.IsEmpty())
+{
+    <div>
+        @Html.Raw(errMSG)
+    </div>
+}
+<form method="post" action="">
+    <fieldset>
+        <legend>New Handing Fee | <a href="~/rcAdmin/HandlingFee">All Handling Fee</a> </legend>
+        <ol>
+            <li>
+                <label for="pMasterPage">Handling Fee Type:</label>
+                <select id="hdlFeeType" name="hdlFeeType" @Validation.For("hdlFeeType")>
+                <option value="0" selected="selected">zzz</option>
+                    <option value="1" selected="selected">xxx</option>
+                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("hdlFeeType")
+            </li>
+            <li>
+                <label for="pComment">Weight From:</label>
+                <input type="text" name="weightFrom" id="weightFrom" value="@weightFrom" maxlength="100" @Validation.For("weightFrom") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("weightFrom")
+            </li>
+            <li>
+                <label for="pComment">Weight To:</label>
+                <input type="text" name="weightTo" id="weightTo" value="@weightTo" maxlength="100" @Validation.For("weightTo") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("weightTo")
+            </li>
+            <li>
+                <label for="pComment">Handling Fee:</label>
+                <input type="text" name="price" id="price" value="@fee" maxlength="100" @Validation.For("price") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("fee")
+            </li>
+        </ol>
+        <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+    </fieldset>
+</form>
