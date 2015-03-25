@@ -196,17 +196,7 @@
                                                                            {<text>checked="checked"</text>} /> <img src="images/help.gif" alt="help" title="Should be selected for most of the pages, unless you need page that ONLY renders widgets in sections..." />
                 </li>
             </ol>
-            <textarea id="pText" name="pText" cols="80" rows="15">@pText</textarea>
-     <input type="submit" name="btnUpdate" value="Update" />
-      <select id="rcBackup" name="rcBackup">
-     <option value="-1">Load from backup</option>
-               @foreach (var f in dataBackups.Take(5) )
-               {
-                <option value="@f.Id">@f.pwDate</option>
-               }
-          <option value="0">Load current version</option>
-                </select> <img src="images/help.gif" alt="help" title="Load content from backup. Every time you update widget/page razorC will create backup of that widget/page. By default last 5 version of widget/page are stored in rc_Backups table." />
-       
+            
 </fieldset> 
 
 
