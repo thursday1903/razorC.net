@@ -62,7 +62,7 @@ h5, h6 {
 #menu a.top{background-position: left center;background: url('../images/arr_up.jpg'); background-repeat: no-repeat; height:30px; display:block; padding-left:45px;padding-top:10px; font-size:1.25em;}
 #menu a.back{background-position: left center;background: url('../images/arr_back.jpg'); background-repeat: no-repeat; height:30px; display:block; padding-left:45px;padding-top:10px; font-size:1.25em;}
 #menu ul li{list-style-type:none; }
-#menu ul li a{ color:#ffffff; text-decoration:none; font-weight:bold; display:block; height:20px; width:168px;padding:10px 10px 10px 20px; margin-left:-26px;}
+#menu ul li a{ color:#ffffff; text-decoration:none; font-weight:bold; display:block; height:20px; width:198px;padding:10px 10px 10px 20px; margin-left:-26px;}
 #menu ul li a:hover{background-color:#7CC1DE;}
 #menu ul li a.selected{ color:#3C444F; font-weight:bold; background-color:#ffffff;}
 
