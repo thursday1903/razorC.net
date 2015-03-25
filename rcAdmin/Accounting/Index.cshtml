@@ -1,8 +1,9 @@
 ﻿@{
     Page.Title = "Account";
 
+    //Connect DB
     var db = Database.Open("Checking_Master");
-
+    //Get List Accounting
     var qStr = "Select * from Accounting INNER JOIN Countries ON Accounting.Id_Country = Countries.Id_Country order by Id_Accounting desc";
     var data = db.Query(qStr);
 
