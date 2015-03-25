@@ -1,0 +1,73 @@
+﻿@{
+    Page.Title = "Create New Forwarding Status";
+    var forwardingStatus = "";
+    var forwardingStatusDesc = "";
+    var comments = "";
+    var keyWords = "";
+    var errMsg = "";
+
+    forwardingStatus = Request["forwardingStatus"];
+    forwardingStatusDesc = Request["forwardingStatusDesc"];
+    comments = Request["comments"];
+    keyWords = Request["keyWords"];
+    
+    //Connect DB
+    var db = Database.Open("Checking_Master");
+
+    //Add New Sub Accounting
+    if (IsPost && Validation.IsValid())
+    {
+        String createFwCountrySql = "INSERT INTO Forwarding_Status(Forwarding_Status, Forwarding_Status_Desc, Comments, Key_Words) VALUES " +
+           "(@0 " +
+           ",@1 " +
+           ",@2 " +
+           ",@3)";
+
+        db.Execute(createFwCountrySql, forwardingStatus, forwardingStatusDesc, comments, keyWords);
+
+        Response.Redirect("Index");
+    }
+
+    db.Close();
+}
+
+@section head {
+
+}
+@section menu{
+    @RenderPage("../_Menu.cshtml")
+}
+
+@if (!errMsg.IsEmpty())
+{
+    <div>
+        @Html.Raw(errMsg)
+    </div>
+}
+
+<form method="post" action="">
+ <fieldset>
+        <legend>New Forwarding Status | <a href="~/rcAdmin/ForwardingStatus/">All Forwarding Status</a> </legend>
+        <ol>
+            <li >
+                <label for="forwardingStatus">Forwarding Status:</label>
+                <input type="text" name="forwardingStatus" id="subAccountingName" value="@forwardingStatus" maxlength="50" @Validation.For("forwardingStatus")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("forwardingStatus")
+            </li>  
+            <li>
+                <label for="forwardingStatusDesc">Forwarding Status Desc: </label>
+                <input type="text" name="forwardingStatusDesc" id="forwardingStatusDesc" value="@forwardingStatusDesc" maxlength="50" @Validation.For("forwardingStatusDesc")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("forwardingStatusDesc")
+            </li>
+            <li>
+                <label for="comments">Comments: </label>
+                <input type="text" name="comments" id="comments" value="@comments" maxlength="50" @Validation.For("comments")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("comments")
+            </li> 
+            <li>
+                <label for="keyWords">Keywords: </label>
+                <input type="text" name="keyWords" id="keyWords" value="@keyWords" maxlength="50" @Validation.For("keyWords")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("keyWords")
+            </li>             
+        </ol>
+          <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+</fieldset>
+</form>
