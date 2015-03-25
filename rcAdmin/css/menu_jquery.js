@@ -71,8 +71,11 @@ $(document).ready(function() {
         url += arrHref[i] + "/";
     }
     $("#cssmenu>ul>li.has-sub>ul>li>a").each(function(key, value) {
-        $(value).attr("href");
-        if (url == $(value).attr("href") + "/") {
+        alert($(value).attr("href"));
+        
+        var pos = url.search($(value).attr("href"));
+        //if (url == $(value).attr("href") + "/") {
+        if(pos > -1){
             $(this).parent().parent().parent().addClass("open");
             $(this).parent().parent().css("display", "block");
             $(this).css("background", "rgb(148, 16, 16)");
