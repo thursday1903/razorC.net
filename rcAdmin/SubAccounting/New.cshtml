@@ -1,3 +1,92 @@
-﻿@{
-    
+﻿﻿@{
+    Page.Title = "Create New Sub Accounting";
+    var idAccounting = "";
+    var subAccountingName = "";
+    var idCountry = "";
+    var contactPerson = "";
+    var errMsg = "";
+
+    idAccounting = Request["accounting"];
+    subAccountingName = Request["subAccountingName"];
+    idCountry = Request["country"];
+    contactPerson = Request["contactPerson"];
+
+    //Connect DB
+    var db = Database.Open("Checking_Master");
+
+    //Load dữ liệu combo box Accounting
+    var sqlAccounting = "SELECT Id_Accounting, Account_Name FROM Accounting";
+    var dbAccounting = db.Query(sqlAccounting);
+
+    //Load dữ liệu combo box
+    var sqlCountry = "SELECT Id_Country, Country_Name FROM Countries";
+    var dbCountry = db.Query(sqlCountry);
+
+    //Add New Sub Accounting
+    if (IsPost && Validation.IsValid())
+    {
+        String createFwCountrySql = "INSERT INTO Sub_Accounting(Id_Accounting, Sub_Accounting_Name, Id_Country, Contact_Person) VALUES " +
+           "(@0 " +
+           ",@1 " +
+           ",@2 " +
+           ",@3)";
+
+        db.Execute(createFwCountrySql, idAccounting, subAccountingName, idCountry, contactPerson);
+
+        Response.Redirect("Index");
+    }
+
+    db.Close();
 }
+
+
+@section head {
+
+}
+@section menu{
+    @RenderPage("../_Menu.cshtml")
+}
+
+@if (!errMsg.IsEmpty())
+{
+    <div>
+        @Html.Raw(errMsg)
+    </div>
+}
+
+<form method="post" action="">
+ <fieldset>
+        <legend>New Sub Accounting | <a href="~/rcAdmin/SubAccounting/">All Sub Accounting</a> </legend>
+        <ol>
+            <li >
+                <label for="accountName">Account Name:</label>
+                <select id="accounting" name="accounting" @Validation.For("accounting")>
+                    @foreach(var a in dbAccounting)
+                    {
+                        <option value="@a.Id_Accounting">@a.Account_Name</option>
+                    }
+                </select>
+            </li>  
+            <li>
+                <label for="subAccountingName">Sub Account Name: </label>
+                <input type="text" name="subAccountingName" id="subAccountingName" value="@subAccountingName" maxlength="50" @Validation.For("subAccountingName")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("subAccountingName")
+            </li>
+            <li>
+                <label for="country">Country: </label>
+                <select id="country" name="country" @Validation.For("country")>
+                    @foreach(var c in dbCountry)
+                    {
+                        <option value="@c.Id_Country">@c.Country_Name</option>
+                    }
+                </select>
+            </li> 
+            <li>
+                <label for="contactPerson">Contact Person: </label>
+                <input type="text" name="contactPerson" id="contactPerson" value="@contactPerson" maxlength="50" @Validation.For("contactPerson")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("contactPerson")
+            </li>             
+        </ol>
+          <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+</fieldset>
+</form>
