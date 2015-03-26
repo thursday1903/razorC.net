@@ -6,7 +6,7 @@
 <script type='text/javascript' src='~/rcAdmin/js/menu_jquery.js'></script>
 
 <a href="~/Default" class="top">Your Site</a>
-<a href="~/Default.cshtml" class="logout" onclick="logout();">Logout</a>
+<a href="~/Account/Logout.cshtml" class="logout">Logout</a>
 <div id="cssmenu">
     <ul>
         <li class="has-sub"><a href="#"><span>Products</span></a>
@@ -51,16 +51,3 @@
     }
     $('#' + pageName).toggleClass('selected');
 </script>*@
-<script>
-    @*$("#menu>a.logout").click(function() {
-        @{
-            FormsAuthentication.SignOut();
-        };
-    });*@
-    function logout()
-    {
-        @{
-            FormsAuthentication.SignOut();
-        };
-    }
-</script>
