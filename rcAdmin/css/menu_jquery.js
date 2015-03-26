@@ -71,7 +71,6 @@ $(document).ready(function() {
         url += arrHref[i] + "/";
     }
     $("#cssmenu>ul>li.has-sub>ul>li>a").each(function(key, value) {
-        alert($(value).attr("href"));
         
         var pos = url.search($(value).attr("href"));
         //if (url == $(value).attr("href") + "/") {
