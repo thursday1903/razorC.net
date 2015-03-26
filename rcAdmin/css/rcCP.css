@@ -11,8 +11,8 @@
 }
 
 a:link {
-    color: #034af3;
-    text-decoration: underline;
+    /*color: #034af3;
+    text-decoration: underline;*/
 }
 
 a:visited {
@@ -57,9 +57,10 @@ h5, h6 {
 ----------------------------------------------------------*/
 #page {width: 100%;}
 
-#menu{float:left;width:200px;/*text-transform:uppercase;*/}
+#menu{float:left;/*width:200px;text-transform:uppercase;*/width: 200px;/*background: url("../images/backgrounds/sidebar.jpg");position: fixed;*/ height: 100%}
 #menu a{color:#ffffff; text-decoration:none; font-weight:bold; }
-#menu a.top{background-position: left center;background: url('../images/arr_up.jpg'); background-repeat: no-repeat; height:30px; display:block; padding-left:45px;padding-top:10px; font-size:1.25em;}
+#menu a.top{background-position: left center;background: url('../images/arr_up.png'); background-repeat: no-repeat; height:30px; display:block; padding-left:45px;padding-top:10px; font-size:1.25em;background-color:rgb(46, 166, 230)}
+#menu a.logout{background-position: left center;background: url('../images/arr_back.png'); background-repeat: no-repeat; height:30px; display:block; padding-left:45px;padding-top:10px; font-size:1.25em;background-color:rgb(46, 166, 230)}
 #menu a.back{background-position: left center;background: url('../images/arr_back.jpg'); background-repeat: no-repeat; height:30px; display:block; padding-left:45px;padding-top:10px; font-size:1.25em;}
 #menu ul li{list-style-type:none; }
 #menu ul li a{ color:#ffffff; text-decoration:none; font-weight:bold; display:block; height:20px; width:198px;padding:10px 10px 10px 20px; margin-left:-26px;}
@@ -70,7 +71,7 @@ h5, h6 {
 
 #renderBody
 {
-    background-color:#ffffff;
+    /*background-color:#ffffff;*/
    }
    
    
