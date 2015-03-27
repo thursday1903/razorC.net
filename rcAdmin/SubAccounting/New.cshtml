@@ -1,4 +1,5 @@
-﻿﻿@{
+﻿﻿
+@{
     Page.Title = "Create New Sub Accounting";
     var idAccounting = "";
     var subAccountingName = "";
@@ -53,40 +54,57 @@
         @Html.Raw(errMsg)
     </div>
 }
-
-<form method="post" action="">
- <fieldset>
-        <legend>New Sub Accounting | <a href="~/rcAdmin/SubAccounting/">All Sub Accounting</a> </legend>
-        <ol>
-            <li >
-                <label for="accountName">Account Name:</label>
-                <select id="accounting" name="accounting" @Validation.For("accounting")>
-                    @foreach(var a in dbAccounting)
-                    {
-                        <option value="@a.Id_Accounting">@a.Account_Name</option>
-                    }
-                </select>
-            </li>  
-            <li>
-                <label for="subAccountingName">Sub Account Name: </label>
-                <input type="text" name="subAccountingName" id="subAccountingName" value="@subAccountingName" maxlength="50" @Validation.For("subAccountingName")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("subAccountingName")
-            </li>
-            <li>
-                <label for="country">Country: </label>
-                <select id="country" name="country" @Validation.For("country")>
-                    @foreach(var c in dbCountry)
-                    {
-                        <option value="@c.Id_Country">@c.Country_Name</option>
-                    }
-                </select>
-            </li> 
-            <li>
-                <label for="contactPerson">Contact Person: </label>
-                <input type="text" name="contactPerson" id="contactPerson" value="@contactPerson" maxlength="50" @Validation.For("contactPerson")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("contactPerson")
-            </li>             
-        </ol>
-          <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" />
-        </p>
-</fieldset>
-</form>
+<div class="fluid">
+    <form method="post" action="">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>New Sub Accounting | <a href="~/rcAdmin/SubAccounting/">All Sub Accounting</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="accountName">Account Name:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="accounting" class="selectReq" name="accounting" @Validation.For("accounting")>
+                                @foreach(var a in dbAccounting)
+                                {
+                                    <option value="@a.Id_Accounting">@a.Account_Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="subAccountingName">Sub Account Name: </label></div>
+                    <div class="grid9"><input type="text" name="subAccountingName" id="subAccountingName" value="@subAccountingName" maxlength="50" @Validation.For("subAccountingName") /> @Html.ValidationMessage("subAccountingName")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="country">Country: </label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="country" class="selectReq" name="country" @Validation.For("country")>
+                                @foreach(var c in dbCountry)
+                                {
+                                    <option value="@c.Id_Country">@c.Country_Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="contactPerson">Contact Person: </label></div>
+                    <div class="grid9"><input type="text" name="contactPerson" id="contactPerson" value="@contactPerson" maxlength="50" @Validation.For("contactPerson") /> @Html.ValidationMessage("contactPerson")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit" />
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

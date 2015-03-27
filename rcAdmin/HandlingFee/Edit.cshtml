@@ -1,4 +1,5 @@
 ﻿@{
+    Page.Title = "Edit Handing Fee";
     //fileManager
     Response.Cookies[Session.SessionID].Value = "True";
     Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
@@ -12,8 +13,8 @@
     var db = Database.Open("Checking_Master");
     var sqlSelect = " Select * from Handling_Fee where Id_Handing_Fee=@0";
     var data = db.QuerySingle(sqlSelect, pId);
-            
-    
+
+
     var Handling_Fee_Type = data.Handling_Fee_Type;
     var Weight_From = data.Weight_From;
     var Weight_To = data.Weight_To;
@@ -26,19 +27,19 @@
         Validation.RequireField("Handling_Fee", Constants_.INPUT_A_DECIMAL_VALUE);
         try
         {
-            
+
             Handling_Fee_Type = int.Parse(Request["Handling_Fee_Type"]);
             Weight_From = Request["Weight_From"];
             Weight_To = Request["Weight_To"];
             Handling_Fee = Request["Handling_Fee"];    
-           
+
         }
         catch(Exception e) {
             errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
         }
-        
-        
-        
+
+
+
         if (!Request["btnUpdate"].IsEmpty())
         {
             String sqlUpdate = "Update Handling_Fee set Handling_Fee_Type = @0,Weight_From=@1,Weight_To=@2,Handling_Fee=@3 where Id_Handing_Fee=@4";
@@ -54,7 +55,7 @@
     <script src="@Href("~/tinymce/tinymce.min.js")" type="text/javascript"></script>
     <script type="text/javascript">
         var language = navigator.userLanguage;
-
+        
         tinymce.init({
             relative_urls: false,
             // General options
@@ -62,7 +63,7 @@
             theme: "modern",
             height: "400",
             plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor"],
-
+        
             file_browser_callback: function (field_name, url, type, win) {
                 tinymce.activeEditor.windowManager.open({
                     title: "My file browser",
@@ -73,56 +74,69 @@
                     window: win,
                     input: field_name,
                     sessionid: '@Session.SessionID.ToString()'
-
+        
                 });
             }
         });
     </script>
     <!-- /TinyMCE -->
-
     <script type="text/javascript">
         $(document).ready(function () {
-
+        
             $("#rcBackup").change(function () {
                 $("#editPage").submit();
             });
-
+        
         });
     </script>
 }
 @section menu{
     @RenderPage("../_Menu.cshtml")
 }
-<form action="" method="post" id="editPage">
-    <fieldset>
-        <legend>Edit Page | <a href="~/rcAdmin/HandlingFee">All Handling Fee</a> | <a href="~/rcAdmin/HandlingFee/New">Create Handling Fee</a> </legend>
-        @errMSG
-        Edited: @pEditDate
-        <ol>
-            <li>
-                <label for="pName">Hangling fee Type:</label>
-                <select id="Handling_Fee_Type" name="Handling_Fee_Type" @Validation.For("Handling_Fee_Type")>
-                    <option value="0" @if (Handling_Fee_Type == 0)
-                                      { <text> selected="selected" </text>     }>Fixed</option>
-                    <option value="1" @if (Handling_Fee_Type == 1)
-                                      { <text> selected="selected" </text>      }>Transhipments</option>
-                </select>
-            </li>
-
-            <li>
-                <label for="pMasterPage">Weight From:</label>
-                <input type="text" name="Weight_From" id="Weight_From" value="@Weight_From" maxlength="250" /> 
-            </li>
-
-            <li>
-                <label for="pTitle">Weight_To:</label>
-                <input type="text" name="Weight_To" id="Weight_To" value="@Weight_To" maxlength="250" /> 
-            </li>
-            <li>
-                <label for="pBody">Handling Fee</label>
-                <input type="text" name="Handling_Fee" id="Handling_Fee" value="@Handling_Fee" maxlength="250" /> 
-            </li>
-        </ol>    
-        <input type="submit" name="btnUpdate" value="Update" />    
-    </fieldset>    
-</form>
+<div class="fluid">
+    <form action="" method="post" id="editPage">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>Edit Page | <a href="~/rcAdmin/HandlingFee">All Handling Fee</a> | <a href="~/rcAdmin/HandlingFee/New">Create Handling Fee</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                @*@errMSG
+                Edited: @pEditDate*@
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Hangling fee Type:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Handling_Fee_Type" class="selectReq" name="Handling_Fee_Type" @Validation.For("Handling_Fee_Type")>
+                                <option value="0" @if (Handling_Fee_Type == 0)
+                                                  { <text> selected="selected" </text>       }>Fixed</option>
+                                <option value="1" @if (Handling_Fee_Type == 1)
+                                                  { <text> selected="selected" </text>        }>Transhipments</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Weight From:</label></div>
+                    <div class="grid9"><input type="text" name="Weight_From" id="Weight_From" value="@Weight_From" maxlength="250" /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pTitle">Weight_To:</label></div>
+                    <div class="grid9"><input type="text" name="Weight_To" id="Weight_To" value="@Weight_To" maxlength="250" /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pBody">Handling Fee</label></div>
+                    <div class="grid9"><input type="text" name="Handling_Fee" id="Handling_Fee" value="@Handling_Fee" maxlength="250" /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" name="btnUpdate" value="Update" class="buttonM bBlue formSubmit" />
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
