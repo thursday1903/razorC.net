@@ -46,30 +46,48 @@
     </div>
 }
 
-<form method="post" action="">
- <fieldset>
-        <legend>New Account | <a href="~/rcAdmin/Accounting/">All Account</a> </legend>
-        <ol>
-            <li >
-                <label for="accountName">Account Name:</label>
-                <input type="text" name="accountName" id="accountName" value="@accountName" maxlength="50" @Validation.For("accountName") /> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("accountName")
-            </li>  
-            <li>
-                <label for="country">Country: </label>
-                <select id="country" name="country" @Validation.For("country")>
-                    @foreach(var c in dbCountry)
-                    {
-                        <option value="@c.Id_Country">@c.Country_Name</option>
-                    }
-                </select>
-            </li> 
-            <li>
-                <label for="contactPerson">Contact Person: </label>
-                <input type="text" name="contactPerson" id="contactPerson" value="@contactPerson" maxlength="50" @Validation.For("contactPerson")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("contactPerson")
-            </li>             
-        </ol>
-          <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" />
-        </p>
-</fieldset>
-</form>
+<div class="fluid">
+    <form method="post" action="">
+     <fieldset>
+         <div class="widget">
+             <div class="whead">
+                 <h6>New Account | <a href="~/rcAdmin/Accounting/">All Account</a> </h6>
+                 <div class="clear"></div>
+             </div>
+             <div class="formRow">
+                 <div class="grid3"><label for="accountName">Account Name:</label></div>
+                 <div class="grid9"><input type="text" name="accountName" id="accountName" value="@accountName" maxlength="50" @Validation.For("accountName") /> @Html.ValidationMessage("accountName")</div>
+                 <div class="clear"></div>
+             </div> 
+             <div class="formRow">
+                 <div class="grid3"><label for="country">Country: </label></div>
+                 <div class="grid9">
+                     <div class="selector" id="uniform-selectReq">
+                         @*<span></span>*@
+                         <select id="selectReq" @*style="opacity: 0"*@ name="country" @Validation.For("country")>
+                            @foreach(var c in dbCountry)
+                            {
+                                <option value="@c.Id_Country">@c.Country_Name</option>
+                            }
+                         </select>
+                     </div>
+                 </div>
+                 <div class="clear"></div>
+             </div>
+             <div class="formRow">
+                 <div class="grid3"><label for="contactPerson">Contact Person: </label></div>
+                 <div class="grid9"><input type="text" name="contactPerson" id="contactPerson" value="@contactPerson" maxlength="50" @Validation.For("contactPerson")/> @Html.ValidationMessage("contactPerson")</div>
+                 <div class="clear"></div>
+             </div>  
+             <div class="formRow">
+                <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit"/>
+                 <div class="clear"></div>
+             </div>
+        </div>
+    </fieldset>
+    </form>
+</div>
+
+<script>
+    
+</script>

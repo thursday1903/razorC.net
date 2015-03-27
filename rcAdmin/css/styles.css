@@ -1443,7 +1443,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', end
 
 /* ===== Search widget  ===== */
 
-.searchLine { position: relative; box-shadow: 0 1px 1px #fcfcfc; -webkit-box-shadow: 0 1px 1px #fcfcfc; -moz-box-shadow: 0 1px 1px #fcfcfc; /*margin-top: 35px;*/width: 30%;margin-left: 70%;margin-bottom: 10px }
+.searchLine { position: relative; box-shadow: 0 1px 1px #fcfcfc; -webkit-box-shadow: 0 1px 1px #fcfcfc; -moz-box-shadow: 0 1px 1px #fcfcfc; /*margin-top: 35px;*/width: 30%;margin-left: 70%;margin-bottom: 2px;margin-top: 2px }
 .searchLine input[type=text] { border: 1px solid #cdcdcd; padding: 9px; /*width: 100%;*/ -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; border-radius: 2px; -webkit-border-radius: 2px; -moz-border-radius: 2px; }
 .searchLine button { position: absolute; top: 0; right: 0; width: 32px; height: 100%; max-height: 100%; z-index: 99; -webkit-border-top-right-radius: 2px; -moz-border-radius-topright: 2px; -webkit-border-bottom-right-radius: 2px; -moz-border-radius-bottomright: 2px; }
 .searchLine .icos-search { width: 14px; margin: 8px; padding: 0; }
@@ -1609,7 +1609,7 @@ input.error { border-color: #DDBEBE!important; }
 
 div.selector { background: #fcfcfc; background: -moz-linear-gradient(top, #fcfcfc 0%, #f1f1f1 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fcfcfc), color-stop(100%,#f1f1f1)); background: -webkit-linear-gradient(top, #fcfcfc 0%,#f1f1f1 100%); background: -o-linear-gradient(top, #fcfcfc 0%,#f1f1f1 100%); background: -ms-linear-gradient(top, #fcfcfc 0%,#f1f1f1 100%); background: linear-gradient(top, #fcfcfc 0%,#f1f1f1 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#f1f1f1',GradientType=0 ); border: 1px solid #D2D2D2; line-height: 27px; height: 27px; box-sizing: content-box; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; -ms-box-sizing: content-box;  border-radius: 2px; -webkit-border-radius: 2px; -moz-border-radius: 2px; box-shadow: 0 1px 0 #fff inset, 0 1px 0px #eeeeee; -webkit-box-shadow: 0 1px 0 #fff inset, 0 1px 0px #eeeeee; -moz-box-shadow: 0 1px 0 #fff inset, 0 1px 0px #eeeeee; display: -moz-inline-box; display: inline-block; vertical-align: middle; zoom: 1; margin: 0; padding: 0 0 0 8px; cursor: pointer; width: auto; max-width: 280px; font-size: 12px; position: relative; overflow: hidden; }
 div.selector span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #808080; text-shadow: 0 1px #f5f5f5; padding: 0px 37px 0px 2px; background: url(../images/elements/forms/selectArrow.png) no-repeat 100%; cursor: pointer; font-size: 11px; height: 27px; line-height: 27px; }
-div.selector select { position: absolute; opacity: 0; filter: alpha(opacity:0); height: 28px; border: none; background: none; font-family: Arial, Helvetica, sans-serif; font-size: 12px; border: solid 1px white; width: 100%; top: 0px; left: 0px; }
+div.selector select { /*position: absolute; opacity: 0;*/ filter: alpha(opacity:0); height: 28px; border: none; background: none; font-family: Arial, Helvetica, sans-serif; font-size: 12px; /*border: solid 1px white;*/ width: 100%; top: 0px; left: 0px; }
 .disabled { opacity: 0.6; filter: alpha(opacity=60);; }
 .labelDisabled { color: #B7B7B7; }
 
@@ -2302,4 +2302,9 @@ table .dropdown-menu.pull-right { right: auto; left: 0; }
 
 .loginWrapper { top: 100px; margin-top: 0; }
 .logControl { padding-bottom: 50px; }
+}
+
+/*Page header*/
+#content h1 {
+  margin-bottom: 10px;
 }

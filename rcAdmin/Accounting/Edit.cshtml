@@ -1,4 +1,5 @@
 ﻿@{
+    Page.Title = "Edit Account";
     //Get Account ID
     var accId = Request["aid"];
     var errMSG = "";
@@ -42,31 +43,41 @@
 {
     @RenderPage("../_Menu.cshtml")
 }
-
+<div class="fluid">
 <form action="" method="POST" id="editPage">
     <fieldset>
-        <legend>Edit Page | <a href="~/rcAdmin/Accounting/">All Account</a> | <a href="~/rcAdmin/Accounting/New.cshtml"></a></legend>
-        <ol>
-            <li>
-                <label for="accountName">Account Name: </label>
-                <input type="text" name="accountName" id="accountName" value="@accountName" maxlength="50"/>
-            </li>
-            <li>
-                <label for="country">Country: </label>
-                <select id="country" name="country" @Validation.For("country")>
-                    @foreach(var c in dbCountry)
-                    {
-                        <option value="@c.Id_Country" @if(country == c.Id_Country){<text>selected="selected"</text>}>@c.Country_Name</option>
-                    }
-                </select>
-            </li>
-            <li>
-                <label for="contactPerson">Contact Person: </label>
-                <input type="text" name="contactPerson" id="contactPerson" value="@contactPerson" maxlength="50" @Validation.For("contactPerson")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("contactPerson")
-            </li>
-        </ol>
-        <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" name="btnUpdate"/>
-        </p>
+        <div class="widget">
+             <div class="whead">
+                 <h6>Edit Page | <a href="~/rcAdmin/Accounting/">All Account</a> | <a href="~/rcAdmin/Accounting/New.cshtml"></a></h6>
+                 <div class="clear"></div>
+             </div>
+             <div class="formRow">
+                <div class="grid3"><label for="accountName">Account Name: </label></div>
+                <div class="grid9"><input type="text" name="accountName" id="accountName" value="@accountName" maxlength="50"/></div>
+                <div class="clear"></div>
+             </div>
+             <div class="formRow">
+                <div class="grid3"><label for="country">Country: </label></div>
+                <div class="grid9">
+                    <select  id="selectReq" name="country" @Validation.For("country")>
+                        @foreach(var c in dbCountry)
+                        {
+                            <option value="@c.Id_Country" @if(country == c.Id_Country){<text>selected="selected"</text>}>@c.Country_Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="clear"></div>
+             </div>
+             <div class="formRow">
+                <div class="grid3"><label for="contactPerson">Contact Person: </label></div>
+                <div class="grid9"><input type="text" name="contactPerson" id="contactPerson" value="@contactPerson" maxlength="50" @Validation.For("contactPerson")/> @Html.ValidationMessage("contactPerson")</div>
+                <div class="clear"></div>
+             </div>
+            <div class="formRow">
+                <input type="submit" value="Insert" title="Insert" name="btnUpdate" class="buttonM bBlue formSubmit"/>
+                <div class="clear"></div>
+            </div>
+        </div>
     </fieldset>
 </form>
+</div>
