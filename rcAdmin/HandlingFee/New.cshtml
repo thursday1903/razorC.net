@@ -32,9 +32,11 @@
     pType = Request["pType"];
     fee = Request["fee"];
     hdlFeeType = Request["hdlFeeType"];
-    
 
-    errMSG = fwService  + fwZone + pComment;
+    Validation.RequireField("weightFrom", Constants_.INPUT_A_FLOAT_VALUE);
+    Validation.RequireField("weightTo", Constants_.INPUT_A_FLOAT_VALUE);
+    Validation.RequireField("fee", Constants_.INPUT_A_DECIMAL_VALUE);
+    
 
 
     var db = Database.Open("Checking_Master");
@@ -53,9 +55,11 @@
 
         try {
             db.Execute(createFwQuotation, hdlFeeType, weightFrom, weightTo, fee);
+            errMSG = Constants_.UPDATE_SUCCESS;
         }
-        catch { }
-        
+        catch(Exception ex) {
+            errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
+        }        
     }
 
     
@@ -83,9 +87,9 @@
             <li>
                 <label for="pMasterPage">Handling Fee Type:</label>
                 <select id="hdlFeeType" name="hdlFeeType" @Validation.For("hdlFeeType")>
-                <option value="0" selected="selected">zzz</option>
-                    <option value="1" selected="selected">xxx</option>
-                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("hdlFeeType")
+                <option value="0" selected="selected">Fixed</option>
+                    <option value="1" selected="selected">Transhipments</option>
+                </select>  @Html.ValidationMessage("hdlFeeType")
             </li>
             <li>
                 <label for="pComment">Weight From:</label>
@@ -97,7 +101,7 @@
             </li>
             <li>
                 <label for="pComment">Handling Fee:</label>
-                <input type="text" name="price" id="price" value="@fee" maxlength="100" @Validation.For("price") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("fee")
+                <input type="text" name="fee" id="fee" value="@fee" maxlength="100" @Validation.For("fee") />  @Html.ValidationMessage("fee")
             </li>
         </ol>
         <p class="form-actions">

@@ -14,7 +14,7 @@
     var searchAcc = Request["searchAcc"];
     
     
-    var qStr = "Select * from dbo.Forwarding_FSC order by Id_Forwarding_FSC desc";
+    var qStr = "Select t1.Id_Forwarding_Service,[Id_Forwarding_FSC],Forwarding_service_name,case when [FSC] = 0 THEN 'WPX' when [FSC] = 1 then 'DOX' END as FSC,[VAT],[From_Date],[To_Date] from dbo.Forwarding_FSC t1 inner join Forwarding_service t2 on t1.Id_Forwarding_Service = t2.Id_Forwarding_Service  order by Id_Forwarding_FSC desc";
     var data = db.Query(qStr);    
     
     var grid = new WebGrid(source: data,
@@ -42,10 +42,11 @@
                     grid.Column(format: @<a href="~/rcAdmin/ForwardingFSC/Edit?id=@item.Id_Forwarding_FSC" title="Edit Page">
     <img src="images/edit_page.gif" alt="Edit" class="rcGC" />
 </a>),
+                             grid.Column("Forwarding_Service_Name", "Forwarding Service Name", style: "rcGB"),
                                         grid.Column("FSC", "FSC", style: "rcGB"),
                                         grid.Column("VAT", "VAT", style: "rcGB"),
-                                        grid.Column("From_Date", "From_Date", style: "rcGB"),
-                                        grid.Column("From_Date", "From_Date", style: "rcGB"),
+                                        grid.Column("From_Date", "From Date", style: "rcGB"),
+                                        grid.Column("To_Date", "To Date", style: "rcGB"),
                                          @*grid.Column("Created_Date", format: @<i>@item.Created_Date</i>),*@
                     grid.Column(format: @<a href="~/rcAdmin/ForwardingFSC/Index?id=@item.Id_Forwarding_FSC" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
     <img src="images/delete.gif" alt="Delete" class="rcGC" />
