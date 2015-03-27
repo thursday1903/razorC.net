@@ -13,7 +13,9 @@
     var editId = Request["id"];
     var fwService = 0;
     var fsc = 0;
-       
+    var from_date = "";
+    var to_date = "";
+
     var errMSG = "";
 
     var db = Database.Open("Checking_Master");
@@ -25,37 +27,45 @@
     fwService = data.Id_Forwarding_Service;
     fsc = data.FSC;
     var vat = data.vat;
-    var from_date = data.from_date;
-    var to_date = data.to_date;
+    var from_date_ = data.from_date;
+    var to_date_ = data.to_date;
 
+    from_date = Commons.convertIntoSystemFormat(from_date_);
+    to_date = Commons.convertIntoSystemFormat(to_date_);
 
     var sqlFwdSv = "SELECT [Id_Forwarding_Service] ,[Forwarding_Service_Name] FROM [dbo].[Forwarding_Service]";
     var dataForwardingSv = db.Query(sqlFwdSv);
+
+
 
     if (IsPost)
     {
         if (!Request["btnUpdate"].IsEmpty())
         {
             fwService = Int32.Parse(Request["fwService"]);
-            fsc =  Int32.Parse(Request["fsc"]);
+            fsc = Int32.Parse(Request["fsc"]);
             vat = Request["vat"];
             from_date = Request["from_date"];
             to_date = Request["to_date"];
             errMSG = "Edit new FCS Success";
+            if (Commons.dateCompare(from_date, to_date))
+            {
+                String sql = "UPDATE Forwarding_FSC " +
+                "SET [Id_Forwarding_Service] = @0 " +
+                ",[FSC] = @1 " +
+                ",[vat] = @2 " +
+                ",[from_date] = @3 " +
+                ",[to_date] = @4 " +
+                "WHERE Id_Forwarding_FSC = @5";
 
-            String sql = "UPDATE Forwarding_FSC " +
-            "SET [Id_Forwarding_Service] = @0 " +
-            ",[FSC] = @1 " +
-            ",[vat] = @2 " +
-            ",[from_date] = @3 " +
-            ",[to_date] = @4 " +
-            "WHERE Id_Forwarding_FSC = @5";
-
-            db.Execute(sql, fwService, fsc, vat, from_date, to_date, editId);
+                db.Execute(sql, fwService, fsc, vat, from_date, to_date, editId);
+            }
+            else
+            {
+                errMSG = Constants_.DATECOMPARE_INVALID;
+            }
         }
     }
-
-
 }
 
 @section head {
@@ -116,23 +126,22 @@
 <form action="" method="post" id="editPage">
     <fieldset>
         <legend>Edit Page | <a href="~/rcAdmin/ForwardingFSC">All Forwarding FSC</a> | <a href="~/rcAdmin/ForwardingFSC/New">Create Forwarding FSC</a> </legend>
-        @errMSG
-        Edited: @pEditDate
+        @errMSG             
         <ol>
             <li>
                 <label for="pMasterPage">Forwarding Service:</label>
                 <select id="fwService" name="fwService" @Validation.For("fwService")>
                     @foreach (var f in dataForwardingSv)
                     {
-                        <option value="@f.Id_Forwarding_Service" @if (fwService == f.Id_Forwarding_Service) { <text> selected="selected" </text>           }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                        <option value="@f.Id_Forwarding_Service" @if (fwService == f.Id_Forwarding_Service) { <text> selected="selected" </text>             }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
                     }
                 </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("fwService")
             </li>
             <li>
                 <label for="pMasterPage">FSC:</label>
                 <select id="fsc" name="fsc" @Validation.For("fsc")>
-                    <option value="0" @if(fsc==0){<text> selected="selected" </text>}>DOX</option>
-                    <option value="1" @if (fsc == 1) { <text> selected="selected" </text> }>WPX</option>
+                    <option value="0" @if (fsc == 0) { <text> selected="selected" </text>  }>DOX</option>
+                    <option value="1" @if (fsc == 1) { <text> selected="selected" </text>   }>WPX</option>
                 </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
             </li>
             <li>
@@ -156,7 +165,7 @@
                 </script>
 
             </li>
-           
+
         </ol>
 
         <input type="submit" name="btnUpdate" value="Update" />

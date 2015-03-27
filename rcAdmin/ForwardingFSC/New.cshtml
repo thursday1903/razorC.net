@@ -21,7 +21,7 @@
 
     Validation.RequireField("vat", "Please enter vat as numeric");
     Validation.RequireField("from_date", "Select from date");
-    Validation.RequireField("to_date", "Select to date");    
+    Validation.RequireField("to_date", "Select to date");
 
     fwService = Request["fwService"];
     fsc = Request["fsc"];
@@ -29,28 +29,32 @@
     from_date = Request["from_date"];
     to_date = Request["to_date"];
     errMSG = "Create new FCS Success";
-    
+
     var db = Database.Open("Checking_Master");
 
     var sqlFwdSv = "SELECT [Id_Forwarding_Service] ,[Forwarding_Service_Name] FROM [dbo].[Forwarding_Service]";
     var dataForwardingSv = db.Query(sqlFwdSv);
 
-
-    if (IsPost && Validation.IsValid())
+    if (Commons.dateCompare(from_date, to_date))
     {
-        String sqlInsert = "INSERT INTO [Forwarding_FSC] ([Id_Forwarding_Service] ,[FSC],[VAT],[From_Date],[To_Date]) " +
-            "VALUES (@0,@1,@2,convert(datetime,@3,101),convert(datetime,@4,101))";
-        try
+        if (IsPost && Validation.IsValid())
         {
-            db.Execute(sqlInsert, fwService, fsc, vat, from_date, to_date);
-        }
-        catch (Exception ex)
-        {
-            errMSG = "Create new FSC fail[" + ex.ToString() + "]";
+            String sqlInsert = "INSERT INTO [Forwarding_FSC] ([Id_Forwarding_Service] ,[FSC],[VAT],[From_Date],[To_Date]) " +
+                "VALUES (@0,@1,@2,convert(datetime,@3,101),convert(datetime,@4,101))";
+            try
+            {
+                db.Execute(sqlInsert, fwService, fsc, vat, from_date, to_date);
+            }
+            catch (Exception ex)
+            {
+                errMSG = "Create new FSC fail[" + ex.ToString() + "]";
+            }
         }
     }
-
-
+    else
+    {
+        errMSG = Constants_.DATECOMPARE_INVALID;
+    }
     Commons.releaseDBConnecttion(db);
 }
 
@@ -82,7 +86,7 @@
                 <select id="fwService" name="fwService" @Validation.For("fwService")>
                     @foreach (var f in dataForwardingSv)
                     {
-                        <option value="@f.Id_Forwarding_Service" @if (fwService == f.Forwarding_Service_Name) { <text> selected="selected" </text>         }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                        <option value="@f.Id_Forwarding_Service" @if (fwService == f.Forwarding_Service_Name) { <text> selected="selected" </text>            }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
                     }
                 </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
             </li>

@@ -81,15 +81,3 @@ $(document).ready(function() {
         }
     });
 });
-
-//Table css
-$(document).ready(function() {
-    $("div.widget>table").attr("cellpadding", 0);
-    $("div.widget>table").attr("cellspacing", 0);
-    $("div.widget>table").attr("width", "100%");
-});
-window.onresize = function () {
-    var w = window.innerWidth;
-    contentWidth = w - 300;
-    $("#content").css("width", contentWidth + "px");
-};

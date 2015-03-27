@@ -1,0 +1,284 @@
+﻿@{
+    //fileManager
+    Response.Cookies[Session.SessionID].Value = "True";
+    Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
+
+    var fbURL = "";
+    var pEditDate = DateTime.Now;
+    var pId = Request["id"];
+    var errMSG = "";
+
+    var dbcore = Database.Open("Checking_Master");
+
+    String sqlInnit = "select * from [Forwarding_Invoice] where Id_Forwarding_Invoice=@0";
+
+    var data = dbcore.QuerySingle(sqlInnit, pId);
+    
+    ///Khai bao bien
+    var Original_Invoice_Number = data.Original_Invoice_Number;
+    var Type = data.Type;
+    var Weight = data.Weight;
+    var Id_Country = data.Id_Country;
+    var Pricing = data.Pricing;
+    var FSC = data.FSC;
+    var VAT = data.VAT;
+    var Consignor_Name = data.Consignor_Name;
+    var Consignor_Telephone = data.Consignor_Telephone;
+    var Consignee_Telephone = data.Consignee_Telephone;
+    var Id_Forwarding_Service = data.Id_Forwarding_Service;
+    var Contents = data.Contents;
+    var Id_Accounting = data.Id_Accounting;
+    var Id_Sub_Accounting = data.Id_Sub_Accounting;
+    var Id_Forwarding_MABW = data.Id_Forwarding_MABW;
+    var Handling_Fee = data.Handling_Fee;
+    var L_Weight = data.L_Weight;
+    var H_Weight = data.H_Weight;
+    var W_Weight = data.W_Weight;
+    var Volumetric_Weight = data.Volumetric_Weight;
+    var Comments = data.Comments;
+    var Sending_Date = data.Sending_Date;
+    var Id_Forwarding_Status = data.Id_Forwarding_Status;
+    var Ref_Invoice_Number = data.Ref_Invoice_Number;
+    var Consignee_Name = data.Consignee_Name;
+
+
+    String sql = "select * from Forwarding_Service";
+    String sqlForwardingMabw = "select * from Forwarding_MAWB";
+    String sqlCountry = "select * from dbo.Countries";
+    String sqlAccounting = "select * from dbo.Accounting";
+    String sqlSubAccounting = "select * from dbo.Sub_Accounting";
+    String sqlHandingFee = "select * from dbo.Handling_Fee";
+    String sqlForwardingStatus = "select * from dbo.Forwarding_Status";
+    var forwardingSv = dbcore.Query(sql);
+    var forwardingMABW = dbcore.Query(sqlForwardingMabw);
+    var countries = dbcore.Query(sqlCountry);
+    var accounting = dbcore.Query(sqlAccounting);
+    var subAccounting = dbcore.Query(sqlSubAccounting);
+    var handlingFee = dbcore.Query(sqlHandingFee);
+    var forwardingStt = dbcore.Query(sqlForwardingStatus);
+    if (IsPost)
+    {
+        if (!Request["btnUpdate"].IsEmpty())
+        {
+
+            
+        }
+        else
+        {
+           
+        }
+    }
+
+    Commons.releaseDBConnecttion(dbcore);
+ }
+
+@section head {
+    <!-- You can use any editor you want. We decided to use TinyMCE visit http://www.tinymce.com// for licence and help -->
+    <!-- TinyMCE -->
+    <script src="@Href("~/tinymce/tinymce.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        var language = navigator.userLanguage;
+
+        tinymce.init({
+            relative_urls: false,
+            // General options
+            selector: "textarea",
+            theme: "modern",
+            height: "400",
+            plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor"],
+
+            file_browser_callback: function (field_name, url, type, win) {
+                tinymce.activeEditor.windowManager.open({
+                    title: "My file browser",
+                    url: "@fbURL",
+                    width: 950,
+                    height: 650
+                }, {
+                    window: win,
+                    input: field_name,
+                    sessionid: '@Session.SessionID.ToString()'
+
+                });
+            }
+
+
+        });
+
+
+
+    </script>
+    <!-- /TinyMCE -->
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#rcBackup").change(function () {
+                $("#editPage").submit();
+            });
+
+        });
+    </script>
+}
+@section menu{
+    @RenderPage("../_Menu.cshtml")
+}
+<form action="" method="post" id="editPage">
+    <fieldset>
+        <legend>Edit Page | <a href="~/rcAdmin/ForwardingInvoice">All Forwarding Invoice</a> | <a href="~/rcAdmin/ForwardingInvoice/New">Create Forwarding Invoice</a> </legend>
+        @errMSG
+        Edited: @pEditDate
+        <ol>
+            <li>
+                <label for="pName">Invoice Number:</label>
+                <input type="text" name="Original_Invoice_Number" id="Original_Invoice_Number" value="@Original_Invoice_Number" maxlength="50" @Validation.For("pName") /> @Html.ValidationMessage("Original_Invoice_Number")
+
+                <label for="pMasterPage">Type:</label>
+                <select id="Type" name="Type" @Validation.For("Type")>
+                    <option value="0" selected="selected">DOX</option>
+                    <option value="1">WPX</option>
+                </select>  @Html.ValidationMessage("Type")
+            </li>
+            <li>
+
+            </li>
+            <li>
+                <label for="pBodyFile">Weight:</label>
+                <input type="text" name="Weight" id="Weight" value="@Weight" maxlength="50" @Validation.For("Weight") /> @Html.ValidationMessage("Weight")
+            </li>
+            <li>
+                <label for="pMasterPage">Countries:</label>
+                <select id="Id_Country" name="Id_Country" @Validation.For("Id_Country")>
+                    @foreach (var f in countries)
+                    {
+                        <option value="@f.Id_Country" @if (Id_Country == f.Id_Country)
+                                                      { <text> selected="selected" </text>               }>@f.Country_Name</option>
+                    }
+                </select>  @Html.ValidationMessage("Id_Country")
+            </li>
+            <li>
+                <label for="pName">Price:</label>
+                <input type="text" name="Pricing" id="Pricing" value="@Pricing" maxlength="50" @Validation.For("Pricing") />  @Html.ValidationMessage("Pricing")
+            </li>
+            <li>
+                <label for="pName">FSC:</label>
+                <input type="text" name="FSC" id="FSC" value="@FSC" maxlength="50" @Validation.For("FSC") />  @Html.ValidationMessage("FSC")
+            </li>
+            <li>
+                <label for="pName">VAT:</label>
+                <input type="text" name="VAT" id="VAT" value="@VAT" maxlength="50" @Validation.For("VAT") />  @Html.ValidationMessage("VAT")
+            </li>
+            <li>
+                <label for="pName">Consignor Name:</label>
+                <input type="text" name="Consignor_Name" id="Consignor_Name" value="@Consignor_Name" maxlength="50" @Validation.For("Consignor_Name") />  @Html.ValidationMessage("Consignor_Name")
+            </li>
+            <li>
+                <label for="pName">Consignor Telephone:</label>
+                <input type="text" name="Consignor_Telephone" id="Consignor_Telephone" value="@Consignor_Telephone" maxlength="50" @Validation.For("Consignor_Telephone") /> @Html.ValidationMessage("Consignor_Telephone")
+            </li>
+            <li>
+                <label for="pName">Consignee Name:</label>
+                <input type="text" name="Consignee_Name" id="Consignee_Name" value="@Consignee_Name" maxlength="50" @Validation.For("Consignee_Name") /> @Html.ValidationMessage("Consignee_Name")
+            </li>
+            <li>
+                <label for="pName">Consignee Telephone:</label>
+                <input type="text" name="Consignee_Telephone" id="Consignee_Telephone" value="@Consignee_Telephone" maxlength="50" @Validation.For("Consignee_Telephone") />
+            </li>
+            <li>
+                <label for="pMasterPage">Forwarding Service:</label>
+                <select id="Id_Forwarding_Service" name="Id_Forwarding_Service" @Validation.For("Id_Forwarding_Service")>
+                    @foreach (var f in forwardingSv)
+                    {
+                        <option value="@f.Id_Forwarding_Service" @if (Id_Forwarding_Service == f.Forwarding_Service_Name) { <text> selected="selected" </text>             }>@f.Forwarding_Service_Name</option>
+                    }
+                </select>  @Html.ValidationMessage("pMasterPage")
+            </li>
+            <li>
+                <label for="pName">Content:</label>
+                <input type="text" name="Contents" id="Contents" value="@Contents" maxlength="50" @Validation.For("Contents") />
+            </li>
+            <li>
+                <label for="pMasterPage">Accounting:</label>
+                <select id="Id_Accounting" name="Id_Accounting" @Validation.For("Id_Accounting")>
+                    @foreach (var f in accounting)
+                    {
+                        <option value="@f.Id_Accounting" @if (Id_Accounting == f.Account_Name)
+                                                         { <text> selected="selected" </text>              }>@f.Account_Name</option>
+                    }
+                </select>  @Html.ValidationMessage("Id_Accounting")
+            </li>
+            <li>
+                <label for="pMasterPage">Sub Accounting:</label>
+                <select id="Id_Sub_Accounting" name="Id_Sub_Accounting" @Validation.For("Id_Sub_Accounting")>
+                    @foreach (var f in subAccounting)
+                    {
+                        <option value="@f.Id_Sub_Accounting" @if (Id_Sub_Accounting == f.Id_Sub_Accounting)
+                                                             { <text> selected="selected" </text>                 }> @f.Sub_Accounting_Name</option>
+                    }
+                </select>  @Html.ValidationMessage("Id_Sub_Accounting")
+            </li>
+            <li>
+                <label for="pMasterPage">Forwarding MAWB:</label>
+                <select id="Id_Forwarding_MABW" name="Id_Forwarding_MABW" @Validation.For("Id_Forwarding_MABW")>
+                    @foreach (var f in forwardingMABW)
+                    {
+                        <option value="@f.Id_Forwarding_MAWB" @if (Id_Forwarding_MABW == f.Forwarding_MAWB_Number) { <text> selected="selected" </text>                    }>@f.Forwarding_MAWB_Number</option>
+                    }
+                </select> @Html.ValidationMessage("pMasterPage")
+            </li>
+            <li>
+                <label for="pMasterPage">Handing Fee:</label>
+                <select id="Handling_Fee" name="Handling_Fee" @Validation.For("Handling_Fee")>
+                    @foreach (var f in handlingFee)
+                    {
+                        <option value="@f.Id_Handing_Fee" @if (Handling_Fee == f.Handling_Fee) { <text> selected="selected" </text>                       }>@f.Handling_Fee</option>
+                    }
+                </select> @Html.ValidationMessage("Handling_Fee")
+            </li>
+            <li>
+                <label for="pMasterPage">L weight:</label>
+                <input type="text" name="L_Weight" id="L_Weight" value="@L_Weight" maxlength="50" @Validation.For("L_Weight") />
+            </li>
+            <li>
+                <label for="pMasterPage">H Weight:</label>
+                <input type="text" name="H_Weight" id="H_Weight" value="@H_Weight" maxlength="50" @Validation.For("H_Weight") />
+            </li>
+            <li>
+                <label for="pMasterPage">W Weight:</label>
+                <input type="text" name="W_Weight" id="W_Weight" value="@W_Weight" maxlength="50" @Validation.For("W_Weight") />
+            </li>
+            <li>
+                <label for="pMasterPage">Volumetric Weight:</label>
+                <input type="text" name="Volumetric_Weight" id="Volumetric_Weight" value="@Volumetric_Weight" maxlength="50" @Validation.For("Volumetric_Weight") />
+            </li>
+            <li>
+                <label for="pMasterPage">Comments:</label>
+                <input type="text" name="Comments" id="Comments" value="@Comments" maxlength="50" @Validation.For("Comments") />
+            </li>
+            <li>
+                <label for="pMasterPage">Sending Date:</label>
+                <input type="text" name="Sending_Date" id="Sending_Date" value="@Sending_Date" maxlength="50" @Validation.For("Sending_Date") />
+                <script>
+                    $("#Sending_Date").datepicker();
+                </script>
+
+            </li>
+            <li>
+                <label for="pMasterPage">Forwarding Status:</label>
+                <select id="Id_Forwarding_Status" name="Id_Forwarding_Status" @Validation.For("Id_Forwarding_Status")>
+                    @foreach (var f in forwardingStt)
+                    {
+                        <option value="@f.Forwarding_Status" @if (Id_Forwarding_Status == f.Id_Forwarding_Status)
+                                                             { <text> selected="selected" </text>                          }>@f.Forwarding_Status_Desc</option>
+                    }
+                </select> @Html.ValidationMessage("Id_Forwarding_Status")
+            </li>
+            <li>
+                <label for="pMasterPage">Ref Invoice Number:</label>
+                <input type="text" name="Ref_Invoice_Number" id="Ref_Invoice_Number" value="@Ref_Invoice_Number" maxlength="50" @Validation.For("Ref_Invoice_Number") />
+            </li>
+        </ol>
+        <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+    </fieldset>
+</form>
