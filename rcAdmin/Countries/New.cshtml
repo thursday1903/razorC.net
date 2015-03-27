@@ -54,17 +54,24 @@
 @Html.Raw(errMSG)
 </div>
 }
-<form method="post" action="">
-    <fieldset>
-        <legend>New Forwarding service | <a href="~/rcAdmin/Countries">All Countries</a> </legend>
-        <ol>
-            <li >
-                <label for="pName">Country Name:</label>
-                <input type="text" name="countryName" id="countryName" value="@pName" maxlength="100" @Validation.For("countryName") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("countryName")  
-                </li>                
-        </ol>
-          <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" />
-        </p>
-    </fieldset>
-</form>
+<div class="fluid">
+    <form method="post" action="">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>New Forwarding service | <a href="~/rcAdmin/Countries">All Countries</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Country Name:</label></div>
+                    <div class="grid9"><input type="text" name="countryName" id="countryName" value="@pName" maxlength="100" @Validation.For("countryName") /> @Html.ValidationMessage("countryName")  </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit"/>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

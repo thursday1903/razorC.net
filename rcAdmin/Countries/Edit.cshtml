@@ -91,27 +91,36 @@
 @section menu{
     @RenderPage("../_Menu.cshtml")
 }
-<form action="" method="post" id="editPage">
-    <fieldset>
-        <legend>Edit Page | <a href="~/rcAdmin/Countries">All Countries</a> | <a href="~/rcAdmin/Countries/New">Create Country</a> </legend>
-        @errMSG
-        Edited: @pEditDate
-        <ol>
-            <li>
-                <label for="pName">Id Country:</label>
-                <input type="text" name="idCountry" id="idCountry" value="@idCountry" readonly="readonly" maxlength="100" />
-            </li>
-            <li>
-                <label for="pName">Country name:</label>
-                <input type="text" name="pCountryName" id="pCountryName" value="@pCountryName" maxlength="100" /> <img src="images/help.gif" alt="help" title="Name of the page. You CANNOT change this." />
-            </li>
-
-            <li>
-                <label for="pMasterPage">Comments:</label>
-                <input type="text" name="pComments" id="pComments" value="@pComments" maxlength="50" />
-            </li>
-        </ol>
-        <input type="submit" name="btnUpdate" value="Update" />
-
-    </fieldset>   
-</form>
+<div class="fluid">
+    <form action="" method="post" id="editPage">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>Edit Page | <a href="~/rcAdmin/Countries">All Countries</a> | <a href="~/rcAdmin/Countries/New">Create Country</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                @*@errMSG
+                Edited: @pEditDate*@
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Id Country:</label></div>
+                    <div class="grid9"><input type="text" name="idCountry" id="idCountry" value="@idCountry" readonly="readonly" maxlength="100" /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Country name:</label></div>
+                    <div class="grid9"><input type="text" name="pCountryName" id="pCountryName" value="@pCountryName" maxlength="100" /> @*<img src="images/help.gif" alt="help" title="Name of the page. You CANNOT change this." />*@</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Comments:</label></div>
+                    <div class="grid9"><input type="text" name="pComments" id="pComments" value="@pComments" maxlength="50" /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" name="btnUpdate" value="Update" class="buttonM bBlue formSubmit"/>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>   
+    </form>
+</div>

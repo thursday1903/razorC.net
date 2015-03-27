@@ -67,30 +67,43 @@
         @Html.Raw(errMSG)
     </div>
 }
-<form method="post" action="">
-    <fieldset>
-        <legend>New Forwarding Zone | <a href="~/rcAdmin/ForwardingZone">All Forwarding Zone</a> </legend>
-        <ol>
-            <li>
-                <label for="pMasterPage">Forwarding Service:</label>
-                <select id="fwService" name="fwService" @Validation.For("fwService")>
-                    @foreach (var f in dataForwardingSv)
-                    {
-                        <option value="@f.Id_Forwarding_Service" @if (pMasterPage == f.Forwarding_Service_Name) { <text> selected="selected" </text> }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
-                    }
-                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
-            </li>                       
-            <li>
-                <label for="pComment">Forwarding Zone:</label>
-                <input type="text" name="fwZone" id="fwZone" value="@fwZone" maxlength="100" @Validation.For("fwZone") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("fwZone")
-            </li>
-            <li>
-                <label for="pComment">Comments:</label>
-                <input type="text" name="pComment" id="pComment" value="@pComment" maxlength="100" @Validation.For("pComment") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("pComment")
-            </li>
-        </ol>
-        <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" />
-        </p>
-    </fieldset>
-</form>
+<div class="fluid">
+    <form method="post" action="">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>New Forwarding Zone | <a href="~/rcAdmin/ForwardingZone">All Forwarding Zone</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Forwarding Service:</label></div>
+                    <div class="grid9">
+                        <div class="selector" id="uniform-selectReq">
+                        <select id="fwService" class="selectReq" name="fwService" @Validation.For("fwService")>
+                            @foreach (var f in dataForwardingSv)
+                            {
+                                <option value="@f.Id_Forwarding_Service" @if (pMasterPage == f.Forwarding_Service_Name) { <text> selected="selected" </text> }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                            }
+                        </select> @*<img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" />*@ @Html.ValidationMessage("pMasterPage")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pComment">Forwarding Zone:</label></div>
+                    <div class="grid9"><input type="text" name="fwZone" id="fwZone" value="@fwZone" maxlength="100" @Validation.For("fwZone") /> @*<img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" />*@ @Html.ValidationMessage("fwZone")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pComment">Comments:</label></div>
+                    <div class="grid9"><input type="text" name="pComment" id="pComment" value="@pComment" maxlength="100" @Validation.For("pComment") /> @*<img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" />*@ @Html.ValidationMessage("pComment")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit"/>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
