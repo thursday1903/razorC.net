@@ -68,46 +68,66 @@
         @Html.Raw(errMSG)
     </div>
 }
-<form method="post" action="">
-    <fieldset>
-        <legend>New Forwarding service | <a href="~/rcAdmin/ForwardingCountries/Index">All Forwarding Countries</a> </legend>
-        <ol>
-            <li>
-                <label for="pMasterPage">Forwarding Service:</label>
-                <select id="fwService" name="fwService" @Validation.For("fwService")>
-                    @foreach (var f in dataForwardingSv)
-                    {
-                        <option value="@f.Id_Forwarding_Service" @if (pMasterPage == f.Forwarding_Service_Name) { <text> selected="selected" </text>        }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
-                    }
-                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
-            </li>
-
-            <li>
-                <label for="country">Country:</label>
-                <select id="country" name="country" @Validation.For("country")>
-                    @foreach (var f in dataCountry)
-                    {
-                        <option value="@f.Id_Country" @if (pMasterPage == f.Country_Name) { <text> selected="selected" </text>          }>@rcFunctions.CleanRCNames(f.Country_Name)</option>
-                    }
-                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
-            </li>
-
-            <li>
-                <label for="fwZone">Forwading Zone:</label>
-                <select id="fwZone" name="fwZone" @Validation.For("fwZone")>
-                    @foreach (var f in dataZone)
-                    {
-                        <option value="@f.Id_Forwarding_Zone" @if (pMasterPage == f.Forwarding_Zone) { <text> selected="selected" </text>           }>@rcFunctions.CleanRCNames(f.Forwarding_Zone)</option>
-                    }
-                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
-            </li>
-            <li>
-                <label for="pComment">Comments:</label>
-                <input type="text" name="pComment" id="pComment" value="@pComment" maxlength="100" @Validation.For("pComment") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("pComment")
-            </li>
-        </ol>
-        <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" />
-        </p>
-    </fieldset>
-</form>
+<div class="fluid">
+    <form method="post" action="">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>New Forwarding service | <a href="~/rcAdmin/ForwardingCountries/Index">All Forwarding Countries</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Forwarding Service:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="fwService" class="selectReq" name="fwService" @Validation.For("fwService")>
+                                @foreach (var f in dataForwardingSv)
+                                {
+                                    <option value="@f.Id_Forwarding_Service" @if (pMasterPage == f.Forwarding_Service_Name) { <text> selected="selected" </text>        }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                                }
+                            </select> @Html.ValidationMessage("pMasterPage")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="country">Country:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="country" class="selectReq" name="country" @Validation.For("country")>
+                                    @foreach (var f in dataCountry)
+                                    {
+                                        <option value="@f.Id_Country" @if (pMasterPage == f.Country_Name) { <text> selected="selected" </text>          }>@rcFunctions.CleanRCNames(f.Country_Name)</option>
+                                    }
+                            </select> @Html.ValidationMessage("pMasterPage")
+                        </div>
+                    </div>  
+                    <div class="clear"></div>  
+                 </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="fwZone">Forwading Zone:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="fwZone" class="selector" name="fwZone" @Validation.For("fwZone")>
+                                @foreach (var f in dataZone)
+                                {
+                                    <option value="@f.Id_Forwarding_Zone" @if (pMasterPage == f.Forwarding_Zone) { <text> selected="selected" </text>           }>@rcFunctions.CleanRCNames(f.Forwarding_Zone)</option>
+                                }
+                            </select>  @Html.ValidationMessage("pMasterPage")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pComment">Comments:</label></div>
+                    <div class="grid9"><input type="text" name="pComment" id="pComment" value="@pComment" maxlength="100" @Validation.For("pComment") /> @Html.ValidationMessage("pComment")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit" />
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
