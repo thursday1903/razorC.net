@@ -2,7 +2,7 @@
     Page.Title = "Site Settings";
     var db = Database.Open("razorC");
 
-    var siteName = Request["siteName"];    
+    var siteName = Request["siteName"];
     var siteAnalytics = "";
 
     var smtpServer = Request["smtpServer"];
@@ -14,152 +14,205 @@
     var smtpTo = Request["smtpTo"];
 
 
-     Validation.RequireField("siteName","Please Enter Site Name");
-     Validation.RequireField("smtpServer","Please Enter SMTP Server");
-     Validation.RequireField("smtpPort","Please Enter SMTP Port");
-     Validation.Add("smtpPort",Validator.Integer("SMTP Port must be an integer") );
+    Validation.RequireField("siteName", "Please Enter Site Name");
+    Validation.RequireField("smtpServer", "Please Enter SMTP Server");
+    Validation.RequireField("smtpPort", "Please Enter SMTP Port");
+    Validation.Add("smtpPort", Validator.Integer("SMTP Port must be an integer"));
 
-     Validation.RequireField("smtpUser","Please Enter SMTP User");
-     Validation.RequireField("smtpPwd","Please Enter SMTP Password");
-     Validation.RequireField("smtpFrom","Please Enter FROM Email");
-     Validation.RequireField("smtpTo","Please Enter TO Email");
-     Validation.Add("SmtpFrom",Validator.Regex(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*", "Please enter a correct email address"));
-     Validation.Add("SmtpTo",Validator.Regex(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*", "Please enter a correct email address"));
+    Validation.RequireField("smtpUser", "Please Enter SMTP User");
+    Validation.RequireField("smtpPwd", "Please Enter SMTP Password");
+    Validation.RequireField("smtpFrom", "Please Enter FROM Email");
+    Validation.RequireField("smtpTo", "Please Enter TO Email");
+    Validation.Add("SmtpFrom", Validator.Regex(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*", "Please enter a correct email address"));
+    Validation.Add("SmtpTo", Validator.Regex(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*", "Please enter a correct email address"));
 
-       
+
     var errMSG = "";
 
-   
-        if (IsPost )
+
+    if (IsPost)
+    {
+
+        if (Validation.IsValid())
         {
-              
-              if(Validation.IsValid()){        
             //update db if valid
 
-                var updateQ = "Update rc_Settings set smtpServer=@0, smtpPort=@1, smtpSSL=@2, smtpUser=@3, smtpPwd=@4, smtpFrom=@5, "
-                    + "smtpTo=@6, siteName=@7, siteAnalytics=@8";
+            var updateQ = "Update rc_Settings set smtpServer=@0, smtpPort=@1, smtpSSL=@2, smtpUser=@3, smtpPwd=@4, smtpFrom=@5, "
+                + "smtpTo=@6, siteName=@7, siteAnalytics=@8";
 
-                try
-                {
-                    db.Execute(updateQ, smtpServer, smtpPort, smtpSSL, smtpUser, smtpPwd, smtpFrom, smtpTo, siteName,siteAnalytics );
-                    errMSG="Data saved !";
+            try
+            {
+                db.Execute(updateQ, smtpServer, smtpPort, smtpSSL, smtpUser, smtpPwd, smtpFrom, smtpTo, siteName, siteAnalytics);
+                errMSG = "Data saved !";
 
 
-                    //refresh al settting for the site
-                    App.SmtpServer = smtpServer;
-                    App.SmtpPort = smtpPort.AsInt(); 
-                    App.EnableSsl = smtpSSL;
-                    App.UserName = smtpUser;
-                    App.Password = smtpPwd;
-                    App.From = smtpFrom;
+                //refresh al settting for the site
+                App.SmtpServer = smtpServer;
+                App.SmtpPort = smtpPort.AsInt();
+                App.EnableSsl = smtpSSL;
+                App.UserName = smtpUser;
+                App.Password = smtpPwd;
+                App.From = smtpFrom;
 
-                    App.siteName = siteName;
-                    App.siteAnalytics =  siteAnalytics;
-                    App.smtpTo = smtpTo;
+                App.siteName = siteName;
+                App.siteAnalytics = siteAnalytics;
+                App.smtpTo = smtpTo;
 
-                    
-                }
-                catch (Exception ex)
-                {
-                   errMSG= ex.Message.ToString();
-                }      
-                        
-   
-                }
-            
-        }else
-        {
-            //load from db
-            var selectQ = "Select top 1 * from rc_Settings";
-            var d = db.QuerySingle(selectQ);
 
-            siteName=d.siteName;
-            siteAnalytics=d.siteAnalytics;
-            smtpServer = d.smtpServer;
-            smtpPort = d.smtpPort.ToString();
-            smtpSSL = d.smtpSSL;
-            smtpUser = d.smtpUser;
-            smtpPwd = d.smtpPwd;
-            smtpFrom = d.smtpFrom;
-            smtpTo = d.smtpTo;
-                                
-        
+            }
+            catch (Exception ex)
+            {
+                errMSG = ex.Message.ToString();
+            }
+
+
         }
+
+    }
+    else
+    {
+        //load from db
+        var selectQ = "Select top 1 * from rc_Settings";
+        var d = db.QuerySingle(selectQ);
+
+        siteName = d.siteName;
+        siteAnalytics = d.siteAnalytics;
+        smtpServer = d.smtpServer;
+        smtpPort = d.smtpPort.ToString();
+        smtpSSL = d.smtpSSL;
+        smtpUser = d.smtpUser;
+        smtpPwd = d.smtpPwd;
+        smtpFrom = d.smtpFrom;
+        smtpTo = d.smtpTo;
+
+
+    }
 }
 
 @section head {
-    
+
 }
 @section menu{
-@RenderPage("_Menu.cshtml")
+    @RenderPage("_Menu.cshtml")
 }
 
 
-<div> 
-@Html.Raw(errMSG)
+<div>
+    @Html.Raw(errMSG)
 </div>
-<form method="post" action="">
-    <fieldset>
-    <legend>Site Setup</legend>
-        <ol>
-        <li >
-                <label for="siteName">Site Name:</label>
-                <input type="text" name="siteName" id="siteName" value="@siteName" maxlength="500" @Validation.For("siteName")  /> <img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Name of the site" /> @Html.ValidationMessage("siteName")
-                </li>
-
-            <li >
-                <label for="siteAnalytics">Site Analytics:</label>
-                <textarea name="siteAnalytics" rows="5" cols="80" id="siteAnalytics">@siteAnalytics</textarea>   <img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Site Analytics ex.: Google Anaytics Code" />
-                </li>
-
-        </ol>
-    </fieldset>
- <fieldset>
-        <legend>Email Setup</legend>
-        <ol>
-            <li >
-                <label for="smtpServer">Smtp Server:</label>
-                <input type="text" name="smtpServer" id="smtpServer" value="@smtpServer" maxlength="100" @Validation.For("smtpServer")  /> <img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter smtp server ex. mail.yourdomain.com or smtp.gmail.com" /> @Html.ValidationMessage("smtpServer")
-                </li>
-
-                 <li >
-                <label for="smtpPort">Smtp Port:</label>
-                <input type="text" name="smtpPort" id="smtpPort" value="@smtpPort" maxlength="5" @Validation.For("smtpPort") /> <img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter smtp port # ex. 25 or 465 for gmail - please check with your host" /> @Html.ValidationMessage("smtpPort")
-                </li>
-
-                <li >
-                <label for="smtpSSL">Enable SSL:</label>
-                    <select name="smtpSSL" id="smtpSSL">
-                        <option value="true" @if(smtpSSL==true){<text>selected="selected"</text>}>Yes</option>
-                        <option value="false" @if(smtpSSL==false){<text>selected="selected"</text>}>No</option>
-                    </select> <img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Select Yes for Gmail" />
-                </li>
-
-                <li >
-                <label for="smtpUser">Smtp User:</label>
-                <input type="text" name="smtpUser" id="smtpUser" value="@smtpUser" maxlength="100" @Validation.For("smtpUser") /> <img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter user ex. you@yourdomain.com" /> @Html.ValidationMessage("smtpUser")
-                </li>
-
-                <li >
-                <label for="smtpPwd">Smtp Password:</label>
-                <input type="text" name="smtpPwd" id="smtpPwd" value="@smtpPwd" maxlength="100" @Validation.For("smtpPwd") /> <img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter password" /> @Html.ValidationMessage("smtpPwd")
-                </li>
-
-                <li >
-                <label for="smtpFrom">E-mail From:</label>
-                <input type="text" name="smtpFrom" id="smtpPwd" value="@smtpFrom" maxlength="100" @Validation.For("smtpFrom") /> <img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter e-mail address" /> @Html.ValidationMessage("smtpFrom")
-                </li>
-
-                <li >
-                <label for="smtpTo">E-mail To:</label>
-                <input type="text" name="smtpTo" id="smtpTo" value="@smtpTo" maxlength="100" @Validation.For("smtpTo") /> <img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter e-mail address" /> @Html.ValidationMessage("smtpTo")
-                </li>
-               
-
-        </ol>
-          <p class="form-actions">
-            <input type="submit" value="Update" title="Update" />
-        </p>
-</fieldset>
-</form>
-
+<div class="fluid">
+    <form method="post" action="">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>Site Setup</h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="siteName">Site Name:</label>
+                    </div>
+                    <div class="grid9">
+                        <input type="text" name="siteName" id="siteName" value="@siteName" maxlength="500" @Validation.For("siteName")  />
+                        @*<img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Name of the site" />*@
+                        @Html.ValidationMessage("siteName")
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="siteAnalytics">Site Analytics:</label></div>
+                    <div class="grid9">
+                        <textarea name="siteAnalytics" rows="5" cols="80" id="siteAnalytics">@siteAnalytics</textarea></div>
+                    @*<img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Site Analytics ex.: Google Anaytics Code" />*@
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>Email Setup</h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="smtpServer">Smtp Server:</label></div>
+                    <div class="grid9">
+                        <input type="text" name="smtpServer" id="smtpServer" value="@smtpServer" maxlength="100" @Validation.For("smtpServer")  />
+                        @*<img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter smtp server ex. mail.yourdomain.com or smtp.gmail.com" />*@
+                        @Html.ValidationMessage("smtpServer")
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="smtpPort">Smtp Port:</label></div>
+                    <div class="grid9">
+                        <input type="text" name="smtpPort" id="smtpPort" value="@smtpPort" maxlength="5" @Validation.For("smtpPort") />
+                        @*<img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter smtp port # ex. 25 or 465 for gmail - please check with your host" />*@
+                        @Html.ValidationMessage("smtpPort")
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="smtpSSL">Enable SSL:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select name="smtpSSL" class="selectReq" id="smtpSSL">
+                                <option value="true" @if (smtpSSL == true)
+                                                     {<text>selected="selected"</text>}>Yes</option>
+                                <option value="false" @if (smtpSSL == false)
+                                                      {<text>selected="selected"</text>}>No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                    @*<img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Select Yes for Gmail" />*@
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="smtpUser">Smtp User:</label></div>
+                    <div class="grid9">
+                        <input type="text" name="smtpUser" id="smtpUser" value="@smtpUser" maxlength="100" @Validation.For("smtpUser") />
+                        @*<img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter user ex. you@yourdomain.com" />*@
+                        @Html.ValidationMessage("smtpUser")
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="smtpPwd">Smtp Password:</label></div>
+                    <div class="grid9"><input type="text" name="smtpPwd" id="smtpPwd" value="@smtpPwd" maxlength="100" @Validation.For("smtpPwd") />
+                        @*<img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter password" />*@
+                        @Html.ValidationMessage("smtpPwd")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="smtpFrom">E-mail From:</label></div>
+                    <div class="grid9">
+                        <input type="text" name="smtpFrom" id="smtpPwd" value="@smtpFrom" maxlength="100" @Validation.For("smtpFrom") />
+                        @*<img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter e-mail address" />*@
+                        @Html.ValidationMessage("smtpFrom")
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="smtpTo">E-mail To:</label></div>
+                    <div class="grid9">
+                        <input type="text" name="smtpTo" id="smtpTo" value="@smtpTo" maxlength="100" @Validation.For("smtpTo") />
+                        @*<img src="@Href("~/rcadmin/images/help.gif")" alt="help" title="Enter e-mail address" />*@
+                        @Html.ValidationMessage("smtpTo")
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" value="Update" title="Update" class="buttonM bBlue formSubmit" />
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

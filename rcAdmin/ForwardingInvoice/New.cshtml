@@ -135,6 +135,14 @@
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Sending Date:</label></div>
+                    <div class="grid9"><input type="text" name="Sending_Date" id="Sending_Date" value="@Sending_Date" maxlength="50" @Validation.For("Sending_Date") /></div>
+                    <script>
+                        $("#Sending_Date").datepicker();
+                    </script>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
                     <div class="grid3"><label for="pName">Invoice Number:</label></div>
                     <div class="grid9"><input type="text" name="Original_Invoice_Number" id="Original_Invoice_Number" value="@Original_Invoice_Number" maxlength="50" @Validation.For("pName") /> @Html.ValidationMessage("Original_Invoice_Number")</div>
                     <div class="clear"></div>
@@ -154,6 +162,36 @@
                 <div class="formRow">
                     <div class="grid3"><label for="pBodyFile">Weight:</label></div>
                     <div class="grid9"><input type="text" name="Weight" id="Weight" value="@Weight" maxlength="50" @Validation.For("Weight") /> @Html.ValidationMessage("Weight")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">L weight:</label></div>
+                    <div class="grid9"><input type="text" name="L_Weight" id="L_Weight" value="@L_Weight" maxlength="50" @Validation.For("L_Weight") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">H Weight:</label></div>
+                    <div class="grid9"><input type="text" name="H_Weight" id="H_Weight" value="@H_Weight" maxlength="50" @Validation.For("H_Weight") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">W Weight:</label></div>
+                    <div class="grid9"><input type="text" name="W_Weight" id="W_Weight" value="@W_Weight" maxlength="50" @Validation.For("W_Weight") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Forwarding Service:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Id_Forwarding_Service" class="selectReq" name="Id_Forwarding_Service" @Validation.For("Id_Forwarding_Service")>
+                                @foreach (var f in forwardingSv)
+                                {
+                                    <option value="@f.Id_Forwarding_Service" @if (Id_Forwarding_Service == f.Forwarding_Service_Name)
+                                                                     { <text> selected="selected" </text>              }>@f.Forwarding_Service_Name</option>
+                                }
+                            </select>  @Html.ValidationMessage("pMasterPage")
+                        </div>
+                    </div>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
@@ -204,21 +242,6 @@
                 <div class="formRow">
                     <div class="grid3"><label for="pName">Consignee Telephone:</label></div>
                     <div class="grid9"><input type="text" name="Consignee_Telephone" id="Consignee_Telephone" value="@Consignee_Telephone" maxlength="50" @Validation.For("Consignee_Telephone") /></div>
-                    <div class="clear"></div>
-                </div>
-                <div class="formRow">
-                    <div class="grid3"><label for="pMasterPage">Forwarding Service:</label></div>
-                    <div class="grid9">
-                        <div class="selector">
-                            <select id="Id_Forwarding_Service" class="selectReq" name="Id_Forwarding_Service" @Validation.For("Id_Forwarding_Service")>
-                                @foreach (var f in forwardingSv)
-                                {
-                                    <option value="@f.Id_Forwarding_Service" @if (Id_Forwarding_Service == f.Forwarding_Service_Name)
-                                                                     { <text> selected="selected" </text>              }>@f.Forwarding_Service_Name</option>
-                                }
-                            </select>  @Html.ValidationMessage("pMasterPage")
-                        </div>
-                    </div>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
@@ -287,21 +310,6 @@
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
-                    <div class="grid3"><label for="pMasterPage">L weight:</label></div>
-                    <div class="grid9"><input type="text" name="L_Weight" id="L_Weight" value="@L_Weight" maxlength="50" @Validation.For("L_Weight") /></div>
-                    <div class="clear"></div>
-                </div>
-                <div class="formRow">
-                    <div class="grid3"><label for="pMasterPage">H Weight:</label></div>
-                    <div class="grid9"><input type="text" name="H_Weight" id="H_Weight" value="@H_Weight" maxlength="50" @Validation.For("H_Weight") /></div>
-                    <div class="clear"></div>
-                </div>
-                <div class="formRow">
-                    <div class="grid3"><label for="pMasterPage">W Weight:</label></div>
-                    <div class="grid9"><input type="text" name="W_Weight" id="W_Weight" value="@W_Weight" maxlength="50" @Validation.For("W_Weight") /></div>
-                    <div class="clear"></div>
-                </div>
-                <div class="formRow">
                     <div class="grid3"><label for="pMasterPage">Volumetric Weight:</label></div>
                     <div class="grid9"><input type="text" name="Volumetric_Weight" id="Volumetric_Weight" value="@Volumetric_Weight" maxlength="50" @Validation.For("Volumetric_Weight") /></div>
                     <div class="clear"></div>
@@ -309,14 +317,6 @@
                 <div class="formRow">
                     <div class="grid3"><label for="pMasterPage">Comments:</label></div>
                     <div class="grid9"><input type="text" name="Comments" id="Comments" value="@Comments" maxlength="50" @Validation.For("Comments") /></div>
-                    <div class="clear"></div>
-                </div>
-                <div class="formRow">
-                    <div class="grid3"><label for="pMasterPage">Sending Date:</label></div>
-                    <div class="grid9"><input type="text" name="Sending_Date" id="Sending_Date" value="@Sending_Date" maxlength="50" @Validation.For("Sending_Date") /></div>
-                    <script>
-                        $("#Sending_Date").datepicker();
-                    </script>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">

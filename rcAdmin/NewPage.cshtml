@@ -101,46 +101,68 @@
 @Html.Raw(errMSG)
 </div>
 }
+<div class="fluid">
 <form method="post" action="">
- <fieldset>
-        <legend>New Page | <a href="~/rcAdmin/AllPages">All Pages</a> </legend>
-        <ol>
-            <li >
-                <label for="pName">Name:</label>
-                <input type="text" name="pName" id="pName" value="@pName" maxlength="100" @Validation.For("pName") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("pName")  
-                </li>
-                <li>
-                <label for="pMasterPage">Select Layout:</label>
-                <select id="pMasterPage" name="pMasterPage" @Validation.For("pMasterPage")>
-               @foreach (var f in fileInfo )
-               {
-                <option value="@f.Name" @if(pMasterPage==f.Name){<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(f.Name)</option>
-                }
-                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
-            </li>
-             <li>
-                <label for="pBodyFile">Body template:</label>
-                <select id="pBodyFile" name="pBodyFile">
-               @foreach (var fName in pBodies)
-               {
-                <option value="@fName" @if (pBodyFile == fName)
-                                        {<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(fName)</option>
-               }
-                </select>  <img src="images/help.gif" alt="help" title="Template that will be used to render a body part of your page. All body templates are in rcTempaltes/Body folder - you can add/change/modify them to fit your needs" />
-            </li>
-            <li>
-            <label for="fromPage">or create based on existing page:</label>
-                <select id="fromPage" name="fromPage">
-                    <option value="">Select one</option>
-                    @foreach (var p in pages)
-                    {
-                        <option value="@p.pName" @if(fromPage==p.pName){<text>selected="selected"</text>}>@p.pName</option>
-                    }
-                </select>  <img src="images/help.gif" alt="help" title="You can create new page based on existing one. All content, meta tags, widgets will be copied to new page." />
-            </li>
-        </ol>
-          <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" />
-        </p>
-</fieldset>
+    <fieldset>
+        <div class="widget">
+            <div class="whead">
+                <h6>New Page | <a href="~/rcAdmin/AllPages">All Pages</a> </h6>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <div class="grid3"><label for="pName">Name:</label></div>
+                <div class="grid9"><input type="text" name="pName" id="pName" value="@pName" maxlength="100" @Validation.For("pName") />@* <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" />*@ @Html.ValidationMessage("pName")  </div>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <div class="grid3"><label for="pMasterPage">Select Layout:</label></div>
+                <div class="grid9">
+                    <div class="selector">
+                        <select id="pMasterPage" class="selectReq" name="pMasterPage" @Validation.For("pMasterPage")>
+                            @foreach (var f in fileInfo )
+                            {
+                                <option value="@f.Name" @if(pMasterPage==f.Name){<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(f.Name)</option>
+                            }
+                        </select> @*<img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" />*@ @Html.ValidationMessage("pMasterPage")
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <div class="grid3"><label for="pBodyFile">Body template:</label></div>
+                <div class="grid9">
+                    <div class="selector">
+                        <select id="pBodyFile" class="selectReq" name="pBodyFile">
+                            @foreach (var fName in pBodies)
+                            {
+                                <option value="@fName" @if (pBodyFile == fName)
+                                                       {<text>selected="selected"</text>}>@rcFunctions.CleanRCNames(fName)</option>
+                            }
+                        </select>  @*<img src="images/help.gif" alt="help" title="Template that will be used to render a body part of your page. All body templates are in rcTempaltes/Body folder - you can add/change/modify them to fit your needs" />*@
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <div class="grid3"><label for="fromPage">or create based on existing page:</label></div>
+                <div class="grid9">
+                    <div class="selector">
+                        <select id="fromPage" class="selectReq" name="fromPage">
+                            <option value="">Select one</option>
+                            @foreach (var p in pages)
+                            {
+                                <option value="@p.pName" @if(fromPage==p.pName){<text>selected="selected"</text>}>@p.pName</option>
+                            }
+                        </select>  @*<img src="images/help.gif" alt="help" title="You can create new page based on existing one. All content, meta tags, widgets will be copied to new page." />*@
+                    </div>
+                </div>
+                <div class="clear"></div>
+             </div>
+            <div class="formRow">
+                <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit" />
+                <div class="clear"></div>
+            </div>
+        </div>
+    </fieldset>
 </form>
+</div>
