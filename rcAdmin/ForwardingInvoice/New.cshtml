@@ -121,169 +121,229 @@
         @Html.Raw(errMSG)
     </div>
 }
-<head>
-    <link rel="stylesheet" href="~/rcAdmin/css/datepicker/jquery-ui.css" />
-    <script src="~/rcAdmin/css/datepicker/jquery.min.js"></script>
-</head>
+@*<head>*@
+<link rel="stylesheet" href="~/rcAdmin/css/datepicker/jquery-ui.css" />
+<script src="~/rcAdmin/css/datepicker/jquery.min.js"></script>
+@*</head>*@
 <script src="~/rcAdmin/css/datepicker/jquery-ui.min.js"></script>
-<form method="post" action="">
-    <fieldset>
-        <legend>Create new Forwarding Invoice | <a href="~/rcAdmin/ForwardingInvoice">All Forwarding Invoice</a> </legend>
-        <ol>
-            <li>
-                <label for="pName">Invoice Number:</label>
-                <input type="text" name="Original_Invoice_Number" id="Original_Invoice_Number" value="@Original_Invoice_Number" maxlength="50" @Validation.For("pName") /> @Html.ValidationMessage("Original_Invoice_Number")
-
-                <label for="pMasterPage">Type:</label>
-                <select id="Type" name="Type" @Validation.For("Type")>
-                    <option value="0" selected="selected">DOX</option>
-                    <option value="1">WPX</option>
-                </select>  @Html.ValidationMessage("Type")
-            </li>
-            <li>
-                
-            </li>
-            <li>
-                <label for="pBodyFile">Weight:</label>
-                <input type="text" name="Weight" id="Weight" value="@Weight" maxlength="50" @Validation.For("Weight") /> @Html.ValidationMessage("Weight")
-            </li>
-            <li>
-                <label for="pMasterPage">Countries:</label>
-                <select id="Id_Country" name="Id_Country" @Validation.For("Id_Country")>
-                    @foreach (var f in countries)
-                    {
-                        <option value="@f.Id_Country" @if (pMasterPage == f.Country_Name)
-                                                                 { <text> selected="selected" </text>              }>@f.Country_Name</option>
-                    }
-                </select>  @Html.ValidationMessage("Id_Country")
-            </li>
-            <li>
-                <label for="pName">Price:</label>
-                <input type="text" name="Pricing" id="Pricing" value="@Pricing" maxlength="50" @Validation.For("Pricing") />  @Html.ValidationMessage("Pricing")
-            </li>
-            <li>
-                <label for="pName">FSC:</label>
-                <input type="text" name="FSC" id="FSC" value="@FSC" maxlength="50" @Validation.For("FSC") />  @Html.ValidationMessage("FSC")
-            </li>
-            <li>
-                <label for="pName">VAT:</label>
-                <input type="text" name="VAT" id="VAT" value="@VAT" maxlength="50" @Validation.For("VAT") />  @Html.ValidationMessage("VAT")
-            </li>
-            <li>
-                <label for="pName">Consignor Name:</label>
-                <input type="text" name="Consignor_Name" id="Consignor_Name" value="@Consignor_Name" maxlength="50" @Validation.For("Consignor_Name") />  @Html.ValidationMessage("Consignor_Name")
-            </li>
-            <li>
-                <label for="pName">Consignor Telephone:</label>
-                <input type="text" name="Consignor_Telephone" id="Consignor_Telephone" value="@Consignor_Telephone" maxlength="50" @Validation.For("Consignor_Telephone") /> @Html.ValidationMessage("Consignor_Telephone")
-            </li>
-            <li>
-                <label for="pName">Consignee Name:</label>
-                <input type="text" name="Consignee_Name" id="Consignee_Name" value="@Consignee_Name" maxlength="50" @Validation.For("Consignee_Name") /> @Html.ValidationMessage("Consignee_Name")
-            </li>
-            <li>
-                <label for="pName">Consignee Telephone:</label>
-                <input type="text" name="Consignee_Telephone" id="Consignee_Telephone" value="@Consignee_Telephone" maxlength="50" @Validation.For("Consignee_Telephone") />
-            </li>
-            <li>
-                <label for="pMasterPage">Forwarding Service:</label>
-                <select id="Id_Forwarding_Service" name="Id_Forwarding_Service" @Validation.For("Id_Forwarding_Service")>
-                    @foreach (var f in forwardingSv)
-                    {
-                        <option value="@f.Id_Forwarding_Service" @if (Id_Forwarding_Service == f.Forwarding_Service_Name)
-                                                                 { <text> selected="selected" </text>            }>@f.Forwarding_Service_Name</option>
-                    }
-                </select>  @Html.ValidationMessage("pMasterPage")
-            </li>
-            <li>
-                <label for="pName">Content:</label>
-                <input type="text" name="Contents" id="Contents" value="@Contents" maxlength="50" @Validation.For("Contents") />
-            </li>
-            <li>
-                <label for="pMasterPage">Accounting:</label>
-                <select id="Id_Accounting" name="Id_Accounting" @Validation.For("Id_Accounting")>
-                    @foreach (var f in accounting)
-                    {
-                        <option value="@f.Id_Accounting" @if (pMasterPage == f.Account_Name)
-                                                                 { <text> selected="selected" </text>             }>@f.Account_Name</option>
-                    }
-                </select>  @Html.ValidationMessage("Id_Accounting")
-            </li>
-            <li>
-                <label for="pMasterPage">Sub Accounting:</label>
-                <select id="Id_Sub_Accounting" name="Id_Sub_Accounting" @Validation.For("Id_Sub_Accounting")>
-                    @foreach (var f in subAccounting)
-                    {
-                        <option value="@f.Id_Sub_Accounting" @if (pMasterPage == f.Sub_Accounting_Name)
-                                                                 { <text> selected="selected" </text>                }> @f.Sub_Accounting_Name</option>
-                    }
-                </select>  @Html.ValidationMessage("Id_Sub_Accounting")
-            </li>
-            <li>
-                <label for="pMasterPage">Forwarding MAWB:</label>
-                <select id="Id_Forwarding_MABW" name="Id_Forwarding_MABW" @Validation.For("Id_Forwarding_MABW")>
-                    @foreach (var f in forwardingMABW)
-                    {
-                        <option value="@f.Id_Forwarding_MAWB" @if (Id_Forwarding_MABW == f.Forwarding_MAWB_Number)
-                                                                 { <text> selected="selected" </text>                   }>@f.Forwarding_MAWB_Number</option>
-                        }
-                    </select> @Html.ValidationMessage("pMasterPage")
-                </li>
-                <li>
-                    <label for="pMasterPage">Handing Fee:</label>
-                    <select id="Handling_Fee" name="Handling_Fee" @Validation.For("Handling_Fee")>
-                        @foreach (var f in handlingFee)
-                    {
-                            <option value="@f.Id_Handing_Fee" @if (Handling_Fee == f.Handling_Fee)
-                                                                     { <text> selected="selected" </text>                      }>@f.Handling_Fee</option>
-                            }
-                        </select> @Html.ValidationMessage("Handling_Fee")
-                    </li>
-                    <li>
-                        <label for="pMasterPage">L weight:</label>
-                        <input type="text" name="L_Weight" id="L_Weight" value="@L_Weight" maxlength="50" @Validation.For("L_Weight") />
-                    </li>
-                    <li>
-                        <label for="pMasterPage">H Weight:</label>
-                        <input type="text" name="H_Weight" id="H_Weight" value="@H_Weight" maxlength="50" @Validation.For("H_Weight") />
-                    </li>
-            <li>
-                <label for="pMasterPage">W Weight:</label>
-                <input type="text" name="W_Weight" id="W_Weight" value="@W_Weight" maxlength="50" @Validation.For("W_Weight") />
-            </li>
-            <li>
-                <label for="pMasterPage">Volumetric Weight:</label>
-                <input type="text" name="Volumetric_Weight" id="Volumetric_Weight" value="@Volumetric_Weight" maxlength="50" @Validation.For("Volumetric_Weight") />
-            </li>
-            <li>
-                <label for="pMasterPage">Comments:</label>
-                <input type="text" name="Comments" id="Comments" value="@Comments" maxlength="50" @Validation.For("Comments") />
-            </li>
-            <li>
-                <label for="pMasterPage">Sending Date:</label>
-                <input type="text" name="Sending_Date" id="Sending_Date" value="@Sending_Date" maxlength="50" @Validation.For("Sending_Date") />
-                <script>
-                    $("#Sending_Date").datepicker();
-                </script>
-
-            </li>
-            <li>
-                <label for="pMasterPage">Forwarding Status:</label>
-                <select id="Id_Forwarding_Status" name="Id_Forwarding_Status" @Validation.For("Id_Forwarding_Status")>
-                    @foreach (var f in forwardingStt)
-                    {
-                        <option value="@f.Forwarding_Status" @if (pMasterPage == f.Forwarding_Status_Desc)
-                                                          { <text> selected="selected" </text>                         }>@f.Forwarding_Status_Desc</option>
-                    }
-                </select> @Html.ValidationMessage("Id_Forwarding_Status")
-            </li>
-            <li>
-                <label for="pMasterPage">Ref Invoice Number:</label>
-                <input type="text" name="Ref_Invoice_Number" id="Ref_Invoice_Number" value="@Ref_Invoice_Number" maxlength="50" @Validation.For("Ref_Invoice_Number") />
-            </li>
-                </ol>
-                <p class="form-actions">
-                    <input type="submit" value="Insert" title="Insert" />
-                </p>
-            </fieldset>
-        </form>
+<div class="fluid">
+    <form method="post" action="">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>Create new Forwarding Invoice | <a href="~/rcAdmin/ForwardingInvoice">All Forwarding Invoice</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Invoice Number:</label></div>
+                    <div class="grid9"><input type="text" name="Original_Invoice_Number" id="Original_Invoice_Number" value="@Original_Invoice_Number" maxlength="50" @Validation.For("pName") /> @Html.ValidationMessage("Original_Invoice_Number")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Type:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Type" class="selectReq" name="Type" @Validation.For("Type")>
+                                <option value="0" selected="selected">DOX</option>
+                                <option value="1">WPX</option>
+                            </select>  @Html.ValidationMessage("Type")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pBodyFile">Weight:</label></div>
+                    <div class="grid9"><input type="text" name="Weight" id="Weight" value="@Weight" maxlength="50" @Validation.For("Weight") /> @Html.ValidationMessage("Weight")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Countries:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Id_Country" class="selectReq" name="Id_Country" @Validation.For("Id_Country")>
+                                @foreach (var f in countries)
+                                {
+                                    <option value="@f.Id_Country" @if (pMasterPage == f.Country_Name)
+                                                                     { <text> selected="selected" </text>                }>@f.Country_Name</option>
+                                }
+                            </select>  @Html.ValidationMessage("Id_Country")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Price:</label></div>
+                    <div class="grid9"><input type="text" name="Pricing" id="Pricing" value="@Pricing" maxlength="50" @Validation.For("Pricing") />  @Html.ValidationMessage("Pricing")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">FSC:</label></div>
+                    <div class="grid9"><input type="text" name="FSC" id="FSC" value="@FSC" maxlength="50" @Validation.For("FSC") />  @Html.ValidationMessage("FSC")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">VAT:</label></div>
+                    <div class="grid9"><input type="text" name="VAT" id="VAT" value="@VAT" maxlength="50" @Validation.For("VAT") />  @Html.ValidationMessage("VAT")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Consignor Name:</label></div>
+                    <div class="grid9"><input type="text" name="Consignor_Name" id="Consignor_Name" value="@Consignor_Name" maxlength="50" @Validation.For("Consignor_Name") />  @Html.ValidationMessage("Consignor_Name")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Consignor Telephone:</label></div>
+                    <div class="grid9"><input type="text" name="Consignor_Telephone" id="Consignor_Telephone" value="@Consignor_Telephone" maxlength="50" @Validation.For("Consignor_Telephone") /> @Html.ValidationMessage("Consignor_Telephone")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Consignee Name:</label></div>
+                    <div class="grid9"><input type="text" name="Consignee_Name" id="Consignee_Name" value="@Consignee_Name" maxlength="50" @Validation.For("Consignee_Name") /> @Html.ValidationMessage("Consignee_Name")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Consignee Telephone:</label></div>
+                    <div class="grid9"><input type="text" name="Consignee_Telephone" id="Consignee_Telephone" value="@Consignee_Telephone" maxlength="50" @Validation.For("Consignee_Telephone") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Forwarding Service:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Id_Forwarding_Service" class="selectReq" name="Id_Forwarding_Service" @Validation.For("Id_Forwarding_Service")>
+                                @foreach (var f in forwardingSv)
+                                {
+                                    <option value="@f.Id_Forwarding_Service" @if (Id_Forwarding_Service == f.Forwarding_Service_Name)
+                                                                     { <text> selected="selected" </text>              }>@f.Forwarding_Service_Name</option>
+                                }
+                            </select>  @Html.ValidationMessage("pMasterPage")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Content:</label></div>
+                    <div class="grid9"><input type="text" name="Contents" id="Contents" value="@Contents" maxlength="50" @Validation.For("Contents") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Accounting:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Id_Accounting" class="selectReq" name="Id_Accounting" @Validation.For("Id_Accounting")>
+                                @foreach (var f in accounting)
+                                {
+                                    <option value="@f.Id_Accounting" @if (pMasterPage == f.Account_Name)
+                                                                     { <text> selected="selected" </text>               }>@f.Account_Name</option>
+                                }
+                            </select>  @Html.ValidationMessage("Id_Accounting")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Sub Accounting:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Id_Sub_Accounting" class="selectReq" name="Id_Sub_Accounting" @Validation.For("Id_Sub_Accounting")>
+                                @foreach (var f in subAccounting)
+                                {
+                                    <option value="@f.Id_Sub_Accounting" @if (pMasterPage == f.Sub_Accounting_Name)
+                                                                     { <text> selected="selected" </text>                  }> @f.Sub_Accounting_Name</option>
+                                }
+                            </select>  @Html.ValidationMessage("Id_Sub_Accounting")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Forwarding MAWB:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Id_Forwarding_MABW" class="selectReq" name="Id_Forwarding_MABW" @Validation.For("Id_Forwarding_MABW")>
+                                @foreach (var f in forwardingMABW)
+                                {
+                                    <option value="@f.Id_Forwarding_MAWB" @if (Id_Forwarding_MABW == f.Forwarding_MAWB_Number)
+                                                                     { <text> selected="selected" </text>                     }>@f.Forwarding_MAWB_Number</option>
+                                }
+                            </select> @Html.ValidationMessage("pMasterPage")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Handing Fee:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Handling_Fee" class="selectReq" name="Handling_Fee" @Validation.For("Handling_Fee")>
+                                @foreach (var f in handlingFee)
+                                {
+                                    <option value="@f.Id_Handing_Fee" @if (Handling_Fee == f.Handling_Fee)
+                                                                         { <text> selected="selected" </text>                        }>@f.Handling_Fee</option>
+                                }
+                            </select> @Html.ValidationMessage("Handling_Fee")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">L weight:</label></div>
+                    <div class="grid9"><input type="text" name="L_Weight" id="L_Weight" value="@L_Weight" maxlength="50" @Validation.For("L_Weight") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">H Weight:</label></div>
+                    <div class="grid9"><input type="text" name="H_Weight" id="H_Weight" value="@H_Weight" maxlength="50" @Validation.For("H_Weight") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">W Weight:</label></div>
+                    <div class="grid9"><input type="text" name="W_Weight" id="W_Weight" value="@W_Weight" maxlength="50" @Validation.For("W_Weight") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Volumetric Weight:</label></div>
+                    <div class="grid9"><input type="text" name="Volumetric_Weight" id="Volumetric_Weight" value="@Volumetric_Weight" maxlength="50" @Validation.For("Volumetric_Weight") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Comments:</label></div>
+                    <div class="grid9"><input type="text" name="Comments" id="Comments" value="@Comments" maxlength="50" @Validation.For("Comments") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Sending Date:</label></div>
+                    <div class="grid9"><input type="text" name="Sending_Date" id="Sending_Date" value="@Sending_Date" maxlength="50" @Validation.For("Sending_Date") /></div>
+                    <script>
+                        $("#Sending_Date").datepicker();
+                    </script>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Forwarding Status:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Id_Forwarding_Status" class="selectReq" name="Id_Forwarding_Status" @Validation.For("Id_Forwarding_Status")>
+                                @foreach (var f in forwardingStt)
+                                {
+                                    <option value="@f.Forwarding_Status" @if (pMasterPage == f.Forwarding_Status_Desc)
+                                                              { <text> selected="selected" </text>                           }>@f.Forwarding_Status_Desc</option>
+                                }
+                            </select> @Html.ValidationMessage("Id_Forwarding_Status")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Ref Invoice Number:</label></div>
+                    <div class="grid9"><input type="text" name="Ref_Invoice_Number" id="Ref_Invoice_Number" value="@Ref_Invoice_Number" maxlength="50" @Validation.For("Ref_Invoice_Number") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit" />
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

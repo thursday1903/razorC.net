@@ -80,32 +80,46 @@
         @Html.Raw(errMSG)
     </div>
 }
-<form method="post" action="">
-    <fieldset>
-        <legend>New Handing Fee | <a href="~/rcAdmin/HandlingFee">All Handling Fee</a> </legend>
-        <ol>
-            <li>
-                <label for="pMasterPage">Handling Fee Type:</label>
-                <select id="hdlFeeType" name="hdlFeeType" @Validation.For("hdlFeeType")>
-                <option value="0" selected="selected">Fixed</option>
-                    <option value="1" selected="selected">Transhipments</option>
-                </select>  @Html.ValidationMessage("hdlFeeType")
-            </li>
-            <li>
-                <label for="pComment">Weight From:</label>
-                <input type="text" name="weightFrom" id="weightFrom" value="@weightFrom" maxlength="100" @Validation.For("weightFrom") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("weightFrom")
-            </li>
-            <li>
-                <label for="pComment">Weight To:</label>
-                <input type="text" name="weightTo" id="weightTo" value="@weightTo" maxlength="100" @Validation.For("weightTo") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("weightTo")
-            </li>
-            <li>
-                <label for="pComment">Handling Fee:</label>
-                <input type="text" name="fee" id="fee" value="@fee" maxlength="100" @Validation.For("fee") />  @Html.ValidationMessage("fee")
-            </li>
-        </ol>
-        <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" />
-        </p>
-    </fieldset>
-</form>
+<div class="fluid">
+    <form method="post" action="">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>New Handing Fee | <a href="~/rcAdmin/HandlingFee">All Handling Fee</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Handling Fee Type:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="hdlFeeType" class="selectReq" name="hdlFeeType" @Validation.For("hdlFeeType")>
+                                <option value="0" selected="selected">Fixed</option>
+                                <option value="1" selected="selected">Transhipments</option>
+                            </select>  @Html.ValidationMessage("hdlFeeType")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pComment">Weight From:</label></div>
+                    <div class="grid9"><input type="text" name="weightFrom" id="weightFrom" value="@weightFrom" maxlength="100" @Validation.For("weightFrom") />  @Html.ValidationMessage("weightFrom")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pComment">Weight To:</label></div>
+                    <div class="grid9"><input type="text" name="weightTo" id="weightTo" value="@weightTo" maxlength="100" @Validation.For("weightTo") /> @Html.ValidationMessage("weightTo")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pComment">Handling Fee:</label></div>
+                    <div class="grid9"><input type="text" name="fee" id="fee" value="@fee" maxlength="100" @Validation.For("fee") />  @Html.ValidationMessage("fee")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit" />
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

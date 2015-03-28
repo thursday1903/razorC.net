@@ -10,7 +10,7 @@
     forwardingStatusDesc = Request["forwardingStatusDesc"];
     comments = Request["comments"];
     keyWords = Request["keyWords"];
-    
+
     //Connect DB
     var db = Database.Open("Checking_Master");
 
@@ -44,30 +44,39 @@
         @Html.Raw(errMsg)
     </div>
 }
-
-<form method="post" action="">
- <fieldset>
-        <legend>New Forwarding Status | <a href="~/rcAdmin/ForwardingStatus/">All Forwarding Status</a> </legend>
-        <ol>
-            <li >
-                <label for="forwardingStatus">Forwarding Status:</label>
-                <input type="text" name="forwardingStatus" id="subAccountingName" value="@forwardingStatus" maxlength="50" @Validation.For("forwardingStatus")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("forwardingStatus")
-            </li>  
-            <li>
-                <label for="forwardingStatusDesc">Forwarding Status Desc: </label>
-                <input type="text" name="forwardingStatusDesc" id="forwardingStatusDesc" value="@forwardingStatusDesc" maxlength="50" @Validation.For("forwardingStatusDesc")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("forwardingStatusDesc")
-            </li>
-            <li>
-                <label for="comments">Comments: </label>
-                <input type="text" name="comments" id="comments" value="@comments" maxlength="50" @Validation.For("comments")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("comments")
-            </li> 
-            <li>
-                <label for="keyWords">Keywords: </label>
-                <input type="text" name="keyWords" id="keyWords" value="@keyWords" maxlength="50" @Validation.For("keyWords")/> <img src="~/rcAdmin/Countries/images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("keyWords")
-            </li>             
-        </ol>
-          <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" />
-        </p>
-</fieldset>
-</form>
+<div class="fluid">
+    <form method="post" action="">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>New Forwarding Status | <a href="~/rcAdmin/ForwardingStatus/">All Forwarding Status</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="forwardingStatus">Forwarding Status:</label></div>
+                    <div class="grid9"><input type="text" name="forwardingStatus" id="subAccountingName" value="@forwardingStatus" maxlength="50" @Validation.For("forwardingStatus") /> @Html.ValidationMessage("forwardingStatus")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="forwardingStatusDesc">Forwarding Status Desc: </label></div>
+                    <div class="grid9"><input type="text" name="forwardingStatusDesc" id="forwardingStatusDesc" value="@forwardingStatusDesc" maxlength="50" @Validation.For("forwardingStatusDesc") /> @Html.ValidationMessage("forwardingStatusDesc")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="comments">Comments: </label></div>
+                    <div class="grid9"><input type="text" name="comments" id="comments" value="@comments" maxlength="50" @Validation.For("comments") /> @Html.ValidationMessage("comments")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="keyWords">Keywords: </label></div>
+                    <div class="grid9"><input type="text" name="keyWords" id="keyWords" value="@keyWords" maxlength="50" @Validation.For("keyWords") /> @Html.ValidationMessage("keyWords")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit"/>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
