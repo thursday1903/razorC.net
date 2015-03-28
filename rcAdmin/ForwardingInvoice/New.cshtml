@@ -94,9 +94,15 @@
            ",[Comments],[Id_Forwarding_Status],[Ref_Invoice_Number],[Consignee_Name],[Sending_Date])"+
             "VALUES" +
            "(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,getdate())";
-
-        dbcore.Execute(insertSql, Original_Invoice_Number, Type, Weight, Id_Country, Pricing, FSC, VAT, Consignor_Name, Consignor_Telephone, Consignee_Telephone, Id_Forwarding_Service, Contents,
-            Id_Accounting,Id_Sub_Accounting,Id_Forwarding_MABW,Handling_Fee,L_Weight,H_Weight,W_Weight,Volumetric_Weight,Comments,Id_Forwarding_Status,Ref_Invoice_Number,Consignee_Name);
+        try
+        {
+            dbcore.Execute(insertSql, Original_Invoice_Number, Type, Weight, Id_Country, Pricing, FSC, VAT, Consignor_Name, Consignor_Telephone, Consignee_Telephone, Id_Forwarding_Service, Contents,
+                Id_Accounting, Id_Sub_Accounting, Id_Forwarding_MABW, Handling_Fee, L_Weight, H_Weight, W_Weight, Volumetric_Weight, Comments, Id_Forwarding_Status, Ref_Invoice_Number, Consignee_Name);
+            errMSG = Constants_.UPDATE_SUCCESS;
+        }
+        catch(Exception e) {
+            errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
+        }
         //, W_Weight, Volumetric_Weight,
           //  Comments, Id_Forwarding_Status, Ref_Invoice_Number, Consignee_Name);
     }

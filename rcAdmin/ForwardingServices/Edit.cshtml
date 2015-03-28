@@ -1,0 +1,106 @@
+﻿@{
+    //fileManager
+    Response.Cookies[Session.SessionID].Value = "True";
+    Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
+    var fbURL = System.Web.VirtualPathUtility.ToAbsolute("~/tinymce/plugins/FileManager/Default.aspx?sessionid=") + Session.SessionID.ToString();
+
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+
+    // list all the body pages
+    List<string> pBodies = rcFunctions.pageBodies();
+
+    var pId = Request["id"];
+    var errMSG = "";
+    var pEditDate = DateTime.Now;
+    var db = Database.Open("Checking_Master");
+    
+    var sqlSelect = "select * from Forwarding_Service where Id_Forwarding_Service = @0";
+    var editDataRow = db.QuerySingle(sqlSelect, pId);
+    var forwardingSvName = editDataRow.Forwarding_Service_Name;
+
+    Validation.RequireField("forwardingSvName", "Forwarding Service Name can't be empty");
+    
+    if (IsPost)
+    {
+        if (!Request["btnUpdate"].IsEmpty())
+        {
+            forwardingSvName = Request["forwardingSvName"];
+            String sqlUpdate = "Update Forwarding_Service set Forwarding_Service_Name = @0 where Id_Forwarding_Service = @1";
+
+            try { db.Execute(sqlUpdate, forwardingSvName, pId);
+            errMSG = Constants_.UPDATE_SUCCESS;
+            }
+            catch(Exception e)
+            {
+                errMSG = Constants_.UPDATE_TRANSACTION_FAIL;    
+            }
+        }
+    }
+    Commons.releaseDBConnecttion(db);
+}
+@section head {
+    <!-- You can use any editor you want. We decided to use TinyMCE visit http://www.tinymce.com// for licence and help -->
+    <!-- TinyMCE -->
+    <script src="@Href("~/tinymce/tinymce.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        var language = navigator.userLanguage;
+
+        tinymce.init({
+            relative_urls: false,
+            // General options
+            selector: "textarea",
+            theme: "modern",
+            height: "400",
+            plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor"],
+
+            file_browser_callback: function (field_name, url, type, win) {
+                tinymce.activeEditor.windowManager.open({
+                    title: "My file browser",
+                    url: "@fbURL",
+                    width: 950,
+                    height: 650
+                }, {
+                    window: win,
+                    input: field_name,
+                    sessionid: '@Session.SessionID.ToString()'
+
+                });
+            }
+
+
+        });
+
+
+
+    </script>
+    <!-- /TinyMCE -->
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#rcBackup").change(function () {
+                $("#editPage").submit();
+            });
+
+        });
+    </script>
+}
+@section menu{
+    @RenderPage("../_Menu.cshtml")
+}
+<form action="" method="post" id="editPage">
+    <fieldset>
+        <legend>New Forwarding service | <a href="~/rcAdmin/ForwardingServices">All Forwarding service</a> </legend>
+        <ol>
+            <li>
+                <label for="pName">Forwarding Service Name:</label>
+                <input type="text" name="forwardingSvName" id="forwardingSvName" value="@forwardingSvName" maxlength="100" @Validation.For("forwardingSvName") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("forwardingSvName")
+            </li>
+        </ol>
+        <p class="form-actions">
+            <input type="submit" name="btnUpdate" value="Update" title="Update" />
+        </p>
+    </fieldset>
+</form>

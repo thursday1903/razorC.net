@@ -34,8 +34,11 @@ public class Commons
 
     public static String convertIntoSystemFormat(DateTime input)
     {
-        //String dateTime = input.ToShortDateString();
-        return input.ToString("MM/dd/yyyy");
+        if (input != null)
+            //String dateTime = input.ToShortDateString();
+            return input.ToString("MM/dd/yyyy");
+        else
+            return String.Empty;
     }
 
     public static Boolean dateCompare(DateTime fromDate, DateTime toDate)

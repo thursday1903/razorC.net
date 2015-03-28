@@ -13,7 +13,7 @@
     String sqlInnit = "select * from [Forwarding_Invoice] where Id_Forwarding_Invoice=@0";
 
     var data = dbcore.QuerySingle(sqlInnit, pId);
-    
+
     ///Khai bao bien
     var Original_Invoice_Number = data.Original_Invoice_Number;
     var Type = data.Type;
@@ -36,11 +36,11 @@
     var W_Weight = data.W_Weight;
     var Volumetric_Weight = data.Volumetric_Weight;
     var Comments = data.Comments;
-    var Sending_Date = data.Sending_Date;
+    var Sending_Date_ = data.Sending_Date == null ? DateTime.Now : data.Sending_Date;
     var Id_Forwarding_Status = data.Id_Forwarding_Status;
     var Ref_Invoice_Number = data.Ref_Invoice_Number;
     var Consignee_Name = data.Consignee_Name;
-
+    var Sending_Date = Commons.convertIntoSystemFormat(Sending_Date_);
 
     String sql = "select * from Forwarding_Service";
     String sqlForwardingMabw = "select * from Forwarding_MAWB";
@@ -60,17 +60,55 @@
     {
         if (!Request["btnUpdate"].IsEmpty())
         {
+            Type = Request["Type"];
+            Weight = int.Parse(Request["Weight"]);
+            Id_Country = int.Parse(Request["Id_Country"]);
+            Pricing = Request["Pricing"];
+            FSC = Request["FSC"];
+            VAT = Request["VAT"];
+            Consignor_Name = Request["Consignor_Name"];
+            Consignor_Telephone = Request["Consignor_Telephone"];
+            Consignee_Telephone = Request["Consignee_Telephone"];
+            Id_Forwarding_Service = int.Parse( Request["Id_Forwarding_Service"]);
+            Contents = Request["Contents"];
+            Id_Accounting = int.Parse(Request["Id_Accounting"]);
+            Id_Sub_Accounting = int.Parse( Request["Id_Sub_Accounting"]);
+            Id_Forwarding_MABW = int.Parse( Request["Id_Forwarding_MABW"]);
+            Handling_Fee = int.Parse(Request["Handling_Fee"]);
+            L_Weight = Request["L_Weight"];
+            H_Weight = Request["H_Weight"];
+            W_Weight = Request["W_Weight"];
+            Volumetric_Weight = int.Parse(Request["Volumetric_Weight"]);
+            Comments = Request["Comments"];
+            Sending_Date = Request["Sending_Date"];
+            Id_Forwarding_Status = int.Parse( Request["Id_Forwarding_Status"]);
+            Ref_Invoice_Number = Request["Ref_Invoice_Number"];
+            Consignee_Name = Request["Consignee_Name"];
 
+            Validation.RequireField("Sending_Date", "Sending date must be input");
             
-        }
-        else
-        {
-           
-        }
+            String sqlUpdate = "UPDATE Forwarding_Invoice SET Type=@0,Weight=@1,Id_Country=@2,Pricing=@3,FSC=@4,"
+            + "VAT=@5,Consignor_Name=@6,Consignor_Telephone=@7,Consignee_Telephone=@8,Id_Forwarding_Service=@9,"
+            + "Contents=@10,Id_Accounting=@11,Id_Sub_Accounting=@12,Id_Forwarding_MABW=@13,Handling_Fee=@14,"
+            + "L_Weight=@15,H_Weight=@16,W_Weight=@17,Volumetric_Weight=@18,Comments=@19,Sending_Date=convert(datetime,@20,101),Id_Forwarding_Status=@21,"
+            + "Ref_Invoice_Number=@22,Consignee_Name=@23 WHERE Id_Forwarding_Invoice=@24";
+
+            try
+            {
+                dbcore.Execute(sqlUpdate, Type, Weight, Id_Country, Pricing, FSC, VAT, Consignor_Name, Consignor_Telephone, Consignee_Telephone
+                    , Id_Forwarding_Service, Contents, Id_Accounting, Id_Sub_Accounting, Id_Forwarding_MABW, Handling_Fee, L_Weight, H_Weight, W_Weight, Volumetric_Weight,
+                    Comments, Sending_Date, Id_Forwarding_Status, Ref_Invoice_Number, Consignee_Name, pId);
+                errMSG = Constants_.UPDATE_SUCCESS;
+            }
+            catch (Exception e)
+            {
+                errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
+            }
+        }        
     }
 
     Commons.releaseDBConnecttion(dbcore);
- }
+}
 
 @section head {
     <!-- You can use any editor you want. We decided to use TinyMCE visit http://www.tinymce.com// for licence and help -->
@@ -150,8 +188,7 @@
                 <select id="Id_Country" name="Id_Country" @Validation.For("Id_Country")>
                     @foreach (var f in countries)
                     {
-                        <option value="@f.Id_Country" @if (Id_Country == f.Id_Country)
-                                                      { <text> selected="selected" </text>               }>@f.Country_Name</option>
+                        <option value="@f.Id_Country" @if (Id_Country == f.Id_Country) { <text> selected="selected" </text>                 }>@f.Country_Name</option>
                     }
                 </select>  @Html.ValidationMessage("Id_Country")
             </li>
@@ -188,7 +225,8 @@
                 <select id="Id_Forwarding_Service" name="Id_Forwarding_Service" @Validation.For("Id_Forwarding_Service")>
                     @foreach (var f in forwardingSv)
                     {
-                        <option value="@f.Id_Forwarding_Service" @if (Id_Forwarding_Service == f.Forwarding_Service_Name) { <text> selected="selected" </text>             }>@f.Forwarding_Service_Name</option>
+                        <option value="@f.Id_Forwarding_Service" @if (Id_Forwarding_Service == f.Id_Forwarding_Service)
+                                                                 { <text> selected="selected" </text>               }>@f.Forwarding_Service_Name</option>
                     }
                 </select>  @Html.ValidationMessage("pMasterPage")
             </li>
@@ -201,8 +239,8 @@
                 <select id="Id_Accounting" name="Id_Accounting" @Validation.For("Id_Accounting")>
                     @foreach (var f in accounting)
                     {
-                        <option value="@f.Id_Accounting" @if (Id_Accounting == f.Account_Name)
-                                                         { <text> selected="selected" </text>              }>@f.Account_Name</option>
+                        <option value="@f.Id_Accounting" @if (Id_Accounting == f.Id_Accounting)
+                                                         { <text> selected="selected" </text>                }>@f.Account_Name</option>
                     }
                 </select>  @Html.ValidationMessage("Id_Accounting")
             </li>
@@ -211,8 +249,7 @@
                 <select id="Id_Sub_Accounting" name="Id_Sub_Accounting" @Validation.For("Id_Sub_Accounting")>
                     @foreach (var f in subAccounting)
                     {
-                        <option value="@f.Id_Sub_Accounting" @if (Id_Sub_Accounting == f.Id_Sub_Accounting)
-                                                             { <text> selected="selected" </text>                 }> @f.Sub_Accounting_Name</option>
+                        <option value="@f.Id_Sub_Accounting" @if (Id_Sub_Accounting == f.Id_Sub_Accounting) { <text> selected="selected" </text>                   }> @f.Sub_Accounting_Name</option>
                     }
                 </select>  @Html.ValidationMessage("Id_Sub_Accounting")
             </li>
@@ -221,7 +258,8 @@
                 <select id="Id_Forwarding_MABW" name="Id_Forwarding_MABW" @Validation.For("Id_Forwarding_MABW")>
                     @foreach (var f in forwardingMABW)
                     {
-                        <option value="@f.Id_Forwarding_MAWB" @if (Id_Forwarding_MABW == f.Forwarding_MAWB_Number) { <text> selected="selected" </text>                    }>@f.Forwarding_MAWB_Number</option>
+                        <option value="@f.Id_Forwarding_MAWB" @if (Id_Forwarding_MABW == f.Id_Forwarding_MAWB)
+                                                              { <text> selected="selected" </text>                      }>@f.Forwarding_MAWB_Number</option>
                     }
                 </select> @Html.ValidationMessage("pMasterPage")
             </li>
@@ -230,7 +268,7 @@
                 <select id="Handling_Fee" name="Handling_Fee" @Validation.For("Handling_Fee")>
                     @foreach (var f in handlingFee)
                     {
-                        <option value="@f.Id_Handing_Fee" @if (Handling_Fee == f.Handling_Fee) { <text> selected="selected" </text>                       }>@f.Handling_Fee</option>
+                        <option value="@f.Id_Handing_Fee" @if (Handling_Fee == f.Handling_Fee) { <text> selected="selected" </text>                         }>@f.Handling_Fee</option>
                     }
                 </select> @Html.ValidationMessage("Handling_Fee")
             </li>
@@ -267,8 +305,7 @@
                 <select id="Id_Forwarding_Status" name="Id_Forwarding_Status" @Validation.For("Id_Forwarding_Status")>
                     @foreach (var f in forwardingStt)
                     {
-                        <option value="@f.Forwarding_Status" @if (Id_Forwarding_Status == f.Id_Forwarding_Status)
-                                                             { <text> selected="selected" </text>                          }>@f.Forwarding_Status_Desc</option>
+                        <option value="@f.Forwarding_Status" @if (Id_Forwarding_Status == f.Id_Forwarding_Status) { <text> selected="selected" </text>                            }>@f.Forwarding_Status_Desc</option>
                     }
                 </select> @Html.ValidationMessage("Id_Forwarding_Status")
             </li>
@@ -278,7 +315,7 @@
             </li>
         </ol>
         <p class="form-actions">
-            <input type="submit" value="Insert" title="Insert" />
+            <input type="submit" name="btnUpdate" value="Update" title="Update" />
         </p>
     </fieldset>
 </form>
