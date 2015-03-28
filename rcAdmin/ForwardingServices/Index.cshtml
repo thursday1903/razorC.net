@@ -25,24 +25,31 @@
 @section menu{
     @RenderPage("../_Menu.cshtml")
 }
-<fieldset>
-    <legend>All Pages | <a href="~/rcAdmin/ForwardingServices/New">Create Forwarding Service</a> </legend>
-    <div id="grid">
-        @grid.GetHtml(
-                tableStyle: "rcGrid",
-                headerStyle: "head",
-                alternatingRowStyle: "alt",
-                footerStyle: "pgr",
-                columns: grid.Columns(
-                    grid.Column(format: @<a href="~/rcAdmin/ForwardingServices/Edit?id=@item.Id_Forwarding_Service" title="Edit Page">
-    <img src="../images/edit_page.gif" alt="Edit" class="rcGC" />
-</a>),                    
-                                         grid.Column("Forwarding_Service_Name", "Forwarding service name", style: "rcGB"),
-                                         grid.Column("Created_Date", format: @<i>@item.Created_Date</i>),
-                    grid.Column(format: @<a href="ForwardingServices.cshtml?id=@item.Id_Forwarding_Service" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
-    <img src="../images/delete.gif" alt="Delete" class="rcGC" />
-</a>)
-                 )
-             )
-    </div>
-</fieldset>
+<div class="fluid">
+    <fieldset>
+        <div class="widget">
+            <div class="whead">
+                <h6>All Pages | <a href="~/rcAdmin/ForwardingServices/New">Create Forwarding Service</a> </h6>
+                <div class="clear"></div>
+            </div>
+            <div id="grid" class="widget">
+                @grid.GetHtml(
+                        tableStyle: "tDark",
+                        headerStyle: "",
+                        alternatingRowStyle: "alt",
+                        footerStyle: "pgr",
+                        columns: grid.Columns(                  
+                                                 grid.Column("Forwarding_Service_Name", "Forwarding service name", style: "rcGB"),
+                                                 grid.Column("Created_Date", format: @<i>@item.Created_Date</i>),
+                            grid.Column(format: @<a href="~/rcAdmin/ForwardingServices/Edit?id=@item.Id_Forwarding_Service" title="Edit Page">
+            <img src="~/rcAdmin/images/edit_page.gif" alt="Edit" class="rcGC" />
+        </a>),  
+                            grid.Column(format: @<a href="ForwardingServices.cshtml?id=@item.Id_Forwarding_Service" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
+            <img src="~/rcAdmin/images/delete.gif" alt="Delete" class="rcGC" />
+        </a>)
+                         )
+                     )
+            </div>
+        </div>
+    </fieldset>
+</div>

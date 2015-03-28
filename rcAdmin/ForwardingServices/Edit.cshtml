@@ -1,4 +1,5 @@
 ﻿@{
+    Page.Title = "Edit Forwarding Service";
     //fileManager
     Response.Cookies[Session.SessionID].Value = "True";
     Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
@@ -90,17 +91,24 @@
 @section menu{
     @RenderPage("../_Menu.cshtml")
 }
-<form action="" method="post" id="editPage">
-    <fieldset>
-        <legend>New Forwarding service | <a href="~/rcAdmin/ForwardingServices">All Forwarding service</a> </legend>
-        <ol>
-            <li>
-                <label for="pName">Forwarding Service Name:</label>
-                <input type="text" name="forwardingSvName" id="forwardingSvName" value="@forwardingSvName" maxlength="100" @Validation.For("forwardingSvName") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("forwardingSvName")
-            </li>
-        </ol>
-        <p class="form-actions">
-            <input type="submit" name="btnUpdate" value="Update" title="Update" />
-        </p>
-    </fieldset>
-</form>
+<div class="fluid">
+    <form action="" method="post" id="editPage">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>New Forwarding service | <a href="~/rcAdmin/ForwardingServices">All Forwarding service</a> </h6>
+                    <div class="clear"></div>
+                </div>
+            <div class="formRow">
+                <div class="grid3"><label for="pName">Forwarding Service Name:</label></div>
+                <div class="grid9"><input type="text" name="forwardingSvName" id="forwardingSvName" value="@forwardingSvName" maxlength="100" @Validation.For("forwardingSvName") /> @Html.ValidationMessage("forwardingSvName")</div>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <input type="submit" name="btnUpdate" value="Update" title="Update" class="buttonM bBlue formSubmit" />
+                <div class="clear"></div>
+            </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
