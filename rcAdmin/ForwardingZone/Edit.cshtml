@@ -1,4 +1,5 @@
 ﻿@{
+    Page.Title = "Edit Forwarding Zone";
     //fileManager
     Response.Cookies[Session.SessionID].Value = "True";
     Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
@@ -40,6 +41,7 @@
             try
             {
                 db.Execute(sqlUpdate, fwService, fwZone, pComment, pId);
+                Response.Redirect("Index");
                 errMSG = Constants_.UPDATE_SUCCESS;
             }
             catch(Exception e)
@@ -100,43 +102,45 @@
 @section menu{
     @RenderPage("../_Menu.cshtml")
 }
-<form action="" method="post" id="editPage">
-    <fieldset>
-                @errMSG
-        Edited: @pEditDate
-        <div class="widget">
-            <div class="whead">
-                <h6>New Forwarding Zone | <a href="~/rcAdmin/ForwardingZone">All Forwarding Zone</a> </h6>
-                <div class="clear"></div>
-            </div>
-            <div class="formRow">
-                <div class="grid3"><label for="pMasterPage">Forwarding Service:</label></div>
-                <div class="grid9">
-                    <div class="selector" id="uniform-selectReq">
-                        <select id="fwService" class="selectReq" name="fwService" @Validation.For("fwService")>
-                            @foreach (var f in dataForwardingSv)
-                            {
-                                <option value="@f.Id_Forwarding_Service" @if (fwService == f.Id_Forwarding_Service) { <text> selected="selected" </text>   }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
-                            }
-                        </select> @*<img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" />*@ @Html.ValidationMessage("pMasterPage")
-                    </div>
+<div class="fluid">
+    <form action="" method="post" id="editPage">
+        <fieldset>
+                    @*@errMSG
+            Edited: @pEditDate*@
+            <div class="widget">
+                <div class="whead">
+                    <h6>New Forwarding Zone | <a href="~/rcAdmin/ForwardingZone">All Forwarding Zone</a> </h6>
+                    <div class="clear"></div>
                 </div>
-                <div class="clear"></div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Forwarding Service:</label></div>
+                    <div class="grid9">
+                        <div class="selector" id="uniform-selectReq">
+                            <select id="fwService" class="selectReq" name="fwService" @Validation.For("fwService")>
+                                @foreach (var f in dataForwardingSv)
+                                {
+                                    <option value="@f.Id_Forwarding_Service" @if (fwService == f.Id_Forwarding_Service) { <text> selected="selected" </text>   }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                                }
+                            </select> @*<img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" />*@ @Html.ValidationMessage("pMasterPage")
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pComment">Forwarding Zone:</label></div>
+                    <div class="grid9"><input type="text" name="fwZone" id="fwZone" value="@fwZone" maxlength="100" @Validation.For("fwZone") /> @*<img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" />*@ @Html.ValidationMessage("fwZone")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pComment">Comments:</label></div>
+                    <div class="grid9"><input type="text" name="pComment" id="pComment" value="@pComment" maxlength="100" @Validation.For("pComment") /> @*<img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" />*@ @Html.ValidationMessage("pComment")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" name="btnUpdate" value="Update" title="Update" class="buttonM bBlue formSubmit" />
+                    <div class="clear"></div>
+                </div>
             </div>
-            <div class="formRow">
-                <div class="grid3"><label for="pComment">Forwarding Zone:</label></div>
-                <div class="grid9"><input type="text" name="fwZone" id="fwZone" value="@fwZone" maxlength="100" @Validation.For("fwZone") /> @*<img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" />*@ @Html.ValidationMessage("fwZone")</div>
-                <div class="clear"></div>
-            </div>
-            <div class="formRow">
-                <div class="grid3"><label for="pComment">Comments:</label></div>
-                <div class="grid9"><input type="text" name="pComment" id="pComment" value="@pComment" maxlength="100" @Validation.For("pComment") /> @*<img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" />*@ @Html.ValidationMessage("pComment")</div>
-                <div class="clear"></div>
-            </div>
-            <div class="formRow">
-                <input type="submit" value="btnUpdate" title="Update" class="buttonM bBlue formSubmit" />
-                <div class="clear"></div>
-            </div>
-        </div>
-    </fieldset>   
-</form>
+        </fieldset>   
+    </form>
+</div>
