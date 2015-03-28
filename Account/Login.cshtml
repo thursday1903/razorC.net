@@ -2,9 +2,10 @@
     //super simple login page
     //just to provide basic protection for control panel
     Validation.RequireField("uName", "Required field");
-    Validation.RequireField("uPwd","Required field");
+    Validation.RequireField("uPwd", "Required field");
     var message = "";
-    if (IsPost && Validation.IsValid()){
+    if (IsPost && Validation.IsValid())
+    {
 
         var un = Request["uName"].Trim();
         var up = Request["uPwd"].Trim();
@@ -12,58 +13,110 @@
 
         var db = Database.Open("razorC");
         var sqlSelect = "Select * from rc_Login where rcUser=@0 and rcPwd=@1";
-        var data = db.QuerySingle (sqlSelect, un, up);
+        var data = db.QuerySingle(sqlSelect, un, up);
 
-        if (data!=null)
+        if (data != null)
         {
             FormsAuthentication.RedirectFromLoginPage(un, false);
 
-        }else{                       
-         message = "No user found";
-        }        
+        }
+        else
+        {
+            message = "No user found";
+        }
     }    
 }
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>razorC.net - login page</title>
-        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.js"></script>
-        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/jquery-ui.js"></script>
-        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
-        <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/mvc/4.0/jquery.validate.unobtrusive.js"></script>
-        <link type="text/css" rel="Stylesheet" href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/themes/black-tie/jquery-ui.css" />
-        <link href="~/rcAdmin/css/rcCP.css" rel="stylesheet" />
+<head>
+    <title>razorC.net - login page</title>
+    <script type="text/javascript" src="~/rcAdmin/js/jquery-2.0.3.js"></script>
+    <script type="text/javascript" src="~/rcAdmin/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="~/rcAdmin/js/jquery.validate.js"></script>
+    <script type="text/javascript" src="~/rcAdmin/js/jquery.validate.unobtrusive.js"></script>
+    <link type="text/css" rel="Stylesheet" href="~/rcAdmin/css/jquery-ui.css" />
+    <link href="~/rcAdmin/css/rcCP.css" rel="stylesheet" />
+    <link href="~/rcAdmin/css/styles.css" rel="stylesheet" />
+</head>
+<body>
 
-    </head>
-    <body>
-
-        <div id="page">
-            <div id="menu">
+    <div id="page">
+        @*<div id="menu">
                 <a href="~/Default" class="top">Your Site</a>
-            </div>
-            <div id="content">
-                <form method="post" action="">
-                    <fieldset>
-                        <legend>Login</legend>
-                        <ol>
-                            <li>
-                                <label for="uName">User:</label>
-                                <input type="text" name="uName" @Validation.For("uName") id="uName" value="" maxlength="50" /> @Html.ValidationMessage("uName")
-                            </li>
-                            <li>
-                                <label for="uPwd">Password:</label>
-                                <input type="password" name="uPwd" @Validation.For("uPwd") id="uPwd" value="" /> @Html.ValidationMessage("uPwd")
-                            </li>
-                            <li>
-                              <p>@message</p>
-                            </li>
-                        </ol>
-                        <p class="form-actions">
-                            <input type="submit" value="Login" title="Login" />
-                        </p>
-                    </fieldset>
-                </form>
+            </div>*@
+        @*<div id="content">*@
+        <div id="top">
+            <div class="wrapper">
+                <a href="#" title="" class="logo">
+                    <img src="~/rcAdmin/images/logo.png" alt="" /></a>
+
+                <!-- Right top nav -->
+                <div class="topNav">
+                    <a href="~/Default" class="top">Back To Your Site</a>
+                    @*<ul class="userNav">
+                        <li><a href="#" title="" class="screen"></a></li>
+                        <li><a href="#" title="" class="settings"></a></li>
+                        <li><a href="#" title="" class="logout"></a></li>
+                    </ul>*@
+                </div>
+                <div class="clear"></div>
             </div>
         </div>
-    </body>
+
+        <div class="loginWrapper">
+            <form method="post" action="">
+                <div class="loginPic">
+                    <a href="#" title="">
+                        <img src="../rcAdmin/images/administrator_icon.png" alt="" /></a>
+                    <span>Administrator</span>
+                    <div class="loginActions">
+                        <div><a href="#" title="Change user" class="logleft flip"></a></div>
+                        <div><a href="#" title="Forgot password?" class="logright"></a></div>
+                    </div>
+                </div>
+
+                <input type="text" name="uName" @Validation.For("uName") placeholder="Username ..." id="uName" class="loginEmail" value="" maxlength="50" />
+                @Html.ValidationMessage("uName")
+
+
+                <input type="password" name="uPwd" @Validation.For("uPwd") placeholder="Password ..." class="loginPassword" id="uPwd" value="" />
+                @Html.ValidationMessage("uPwd")
+
+                <p>@message</p>
+
+                <div class="logControl">
+                    <input type="submit" value="Login" title="Login" class="buttonM bBlue" />
+                    <div class="clear"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    @*</div>*@
+</body>
 </html>
+<style>
+    /* Company Logo */
+    .logo img {
+        width: 85px;
+        margin-top: -10px;
+    }
+
+    /* Back to Front End*/
+    .topNav .top {
+        background-position: left center;
+        background: url('../rcAdmin/images/arr_up.png');
+        background-repeat: no-repeat;
+        height: 30px;
+        display: block;
+        padding-left: 45px;
+        padding-top: 10px;
+        font-size: 1.25em;
+        font-weight: bold;
+        color: white;
+    }
+
+    /* Back to Front End Image Position */
+    .topNav a {
+        margin-top: 5px;
+    }
+</style>

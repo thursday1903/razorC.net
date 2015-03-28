@@ -176,13 +176,13 @@ fieldset {
         display: inline;
     }
     
-    fieldset input[type="text"], input[type="password"] {
+    /*fieldset input[type="text"], input[type="password"] {
         border: 1px solid #ccc;
         padding: 5px;
         font-size: 1.2em;
         color: #444;
         width: 91%;
-    }
+    }*/
 
 fieldset select
 {
