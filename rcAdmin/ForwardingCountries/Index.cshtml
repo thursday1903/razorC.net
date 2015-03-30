@@ -21,6 +21,7 @@
     var grid = new WebGrid(source: data,
                             rowsPerPage: 20);
 
+    Commons.releaseDBConnecttion(db);
     
 }
 @section head {}
@@ -33,6 +34,12 @@
             <div class="whead">
                 <h6>All Forwarding Countries | <a href="~/rcAdmin/ForwardingCountries/New">Create Forwarding Country</a> </h6>
                 <div class="clear"></div>
+            </div>
+            <div class="searchLine">
+                <form action="" method="POST">
+                    <input type="text" id="search" name="searchAcc" value="" placeholder="Enter Account Name ..." class="ac ui-autocomplete-input" />
+                    <button type="submit" value="Search" title="Search"><span class="icos-search"></span></button>
+                </form>
             </div>
         <div id="grid" class="widget">
             @grid.GetHtml(

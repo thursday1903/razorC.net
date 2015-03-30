@@ -1,0 +1,126 @@
+﻿@{
+
+    Page.Title = "Create new Forwarding FSC";
+
+    var pEditDate = DateTime.Now;
+    var fwService = "";
+    var fsc = "";
+    var vat = "";
+    var from_date = "";
+    var to_date = "";
+    var errMSG = "";
+
+
+
+    //List all Layout files
+    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));
+    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
+
+    // list all the body pages
+    List<string> pBodies = rcFunctions.pageBodies();
+
+    Validation.RequireField("vat", "Please enter vat as numeric");
+    Validation.RequireField("from_date", "Select from date");
+    Validation.RequireField("to_date", "Select to date");
+
+    fwService = Request["fwService"];
+    fsc = Request["fsc"];
+    vat = Request["vat"];
+    from_date = Request["from_date"];
+    to_date = Request["to_date"];
+    errMSG = "Create new FCS Success";
+
+    var db = Database.Open("Checking_Master");
+
+    var sqlFwdSv = "SELECT [Id_Forwarding_Service] ,[Forwarding_Service_Name] FROM [dbo].[Forwarding_Service]";
+    var dataForwardingSv = db.Query(sqlFwdSv);
+
+    if (Commons.dateCompare(from_date, to_date))
+    {
+        if (IsPost && Validation.IsValid())
+        {
+            String sqlInsert = "INSERT INTO [Forwarding_FSC] ([Id_Forwarding_Service] ,[FSC],[VAT],[From_Date],[To_Date]) " +
+                "VALUES (@0,@1,@2,convert(datetime,@3,101),convert(datetime,@4,101))";
+            try
+            {
+                db.Execute(sqlInsert, fwService, fsc, vat, from_date, to_date);
+            }
+            catch (Exception ex)
+            {
+                errMSG = "Create new FSC fail[" + ex.ToString() + "]";
+            }
+        }
+    }
+    else
+    {
+        errMSG = Constants_.DATECOMPARE_INVALID;
+    }
+    Commons.releaseDBConnecttion(db);
+}
+
+@section head {
+
+}
+@section menu{
+    @RenderPage("../_Menu.cshtml")
+}
+
+@if (!errMSG.IsEmpty())
+{
+    <div>
+        @Html.Raw(errMSG)
+    </div>
+}
+<head>
+    <link rel="stylesheet" href="~/rcAdmin/css/datepicker/jquery-ui.css" />
+    <script src="~/rcAdmin/css/datepicker/jquery.min.js"></script>
+</head>
+<script src="~/rcAdmin/css/datepicker/jquery-ui.min.js"></script>
+<form method="post" action="">
+
+    <fieldset>
+        <legend>New Forwarding FSC | <a href="~/rcAdmin/ForwardingFSC">All Forwarding FSC</a> </legend>
+        <ol>
+            <li>
+                <label for="pMasterPage">Forwarding Service:</label>
+                <select id="fwService" name="fwService" @Validation.For("fwService")>
+                    @foreach (var f in dataForwardingSv)
+                    {
+                        <option value="@f.Id_Forwarding_Service" @if (fwService == f.Forwarding_Service_Name) { <text> selected="selected" </text>            }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                    }
+                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
+            </li>
+            <li>
+                <label for="pMasterPage">FSC:</label>
+                <select id="fsc" name="fsc" @Validation.For("fsc")>
+                    <option value="0" selected="selected">DOX</option>
+                    <option value="1">WPX</option>
+                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
+            </li>
+            <li>
+                <label for="pMasterPage">VAT:</label>
+                <input type="text" name="vat" id="vat" value="@vat" maxlength="100" @Validation.For("vat") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("vat")
+            </li>
+            <li>
+                <label for="pMasterPage">From Date:</label>
+                <input type="text" name="from_date" id="from_date" readonly="readonly" value="@from_date" maxlength="100" @Validation.For("from_date") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("from_date")
+                <script>
+                    $("#from_date").datepicker();
+                </script>
+
+            </li>
+
+            <li>
+                <label for="pMasterPage">To Date:</label>
+                <input type="text" name="to_date" id="to_date" readonly="readonly" value="@to_date" maxlength="100" @Validation.For("to_date") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("to_date")
+                <script>
+                    $("#to_date").datepicker();
+                </script>
+
+            </li>
+        </ol>
+        <p class="form-actions">
+            <input type="submit" value="Insert" title="Insert" />
+        </p>
+    </fieldset>
+</form>

@@ -1,0 +1,87 @@
+﻿@{
+    Page.Title = "Forwarding Country";
+    var db = Database.Open("Checking_Master");
+    //Database.OpenConnectionString("Checking_Master")
+
+    //delete record
+    var deleteID = Request["id"];
+    if (!deleteID.IsEmpty())
+    {
+        var sqlDelete = "delete dbo.Forwarding_FSC where Id_Forwarding_FSC=@0";
+        db.Execute(sqlDelete, deleteID);
+        Response.Redirect("Index");
+    }
+    var searchAcc = Request["searchAcc"];
+
+    var grid = new WebGrid(source: null,
+                            rowsPerPage: 20);
+    
+    if(String.IsNullOrEmpty(searchAcc))
+    {
+        var qStr = "SELECT [Id_Forwarding_MAWB] " +
+      ",[Forwarding_MAWB_Number] " +
+      ",[Sending_Date] " +
+      ",[Number_Of_Shipments] " +
+      ",[Number_Of_Bags] " +
+      ",[Total_Weight] " +
+      ",[Clearance_Fee] " +
+  "FROM [Forwarding_MAWB] where Forwarding_MAWB_Number order by Id_Forwarding_MAWB desc";
+        var data = db.Query(qStr);
+
+        grid = new WebGrid(source: data,
+                                rowsPerPage: 20);
+    }
+    else
+    {
+        var qStr = "SELECT [Id_Forwarding_MAWB] " +
+      ",[Forwarding_MAWB_Number] " +
+      ",[Sending_Date] " +
+      ",[Number_Of_Shipments] " +
+      ",[Number_Of_Bags] " +
+      ",[Total_Weight] " +
+      ",[Clearance_Fee] " +
+  "FROM [Forwarding_MAWB] where Forwarding_MAWB_Number like @0 order by Id_Forwarding_MAWB desc";
+        var data = db.Query(qStr);
+
+        grid = new WebGrid(source: data,
+                                rowsPerPage: 20);
+    }
+                            
+    
+
+    Commons.releaseDBConnecttion(db);
+
+}
+@section head {}
+@section menu{
+    @RenderPage("../_Menu.cshtml")
+}
+<fieldset>
+    <legend>All Forwarding FSC | <a href="~/rcAdmin/ForwardingFSC/New">Create Forwarding FSC</a> </legend>
+    <form action="" method="POST">
+        <input type="text" id="search" name="searchAcc" value="" /> <input type="submit" value="Search" title="Search" />
+    </form>
+
+    <div id="grid">
+        @grid.GetHtml(
+                tableStyle: "rcGrid",
+                headerStyle: "head",
+                alternatingRowStyle: "alt",
+                footerStyle: "pgr",
+                columns: grid.Columns(
+                    grid.Column(format: @<a href="~/rcAdmin/ForwardingFSC/Edit?id=@item.Id_Forwarding_FSC" title="Edit Page">
+                    <img src="images/edit_page.gif" alt="Edit" class="rcGC" />
+                </a>),
+                                        grid.Column("Forwarding_MAWB_Number", "Forwarding MAWB Number", style: "rcGB"),
+                                        grid.Column("Sending_Date", "Sending date", style: "rcGB"),
+                                        grid.Column("Number_Of_Shipments", "Number Of Shipments", style: "rcGB"),
+                                        grid.Column("Number_Of_Bags", "Number Of Bags", style: "rcGB"),
+                                                             grid.Column("Total_Weight", "Total_Weight", style: "rcGB"),
+                                        @*grid.Column("Created_Date", format: @<i>@item.Created_Date</i>),*@
+ grid.Column(format: @<a href="~/rcAdmin/ForwardingFSC/Index?id=@item.Id_Forwarding_FSC" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
+            <img src="images/delete.gif" alt="Delete" class="rcGC" />
+        </a>)
+                    )
+                )
+    </div>
+</fieldset>

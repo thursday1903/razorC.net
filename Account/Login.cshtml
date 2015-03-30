@@ -12,8 +12,10 @@
 
 
         var db = Database.Open("razorC");
+
+        String password = helper.md5(up);       
         var sqlSelect = "Select * from rc_Login where rcUser=@0 and rcPwd=@1";
-        var data = db.QuerySingle(sqlSelect, un, up);
+        var data = db.QuerySingle(sqlSelect, un, password);
 
         if (data != null)
         {
@@ -23,7 +25,7 @@
         else
         {
             message = "No user found";
-        }
+        }      
     }    
 }
 <!DOCTYPE html>
