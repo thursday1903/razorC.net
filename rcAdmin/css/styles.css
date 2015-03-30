@@ -1444,7 +1444,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', end
 /* ===== Search widget  ===== */
 
 .searchLine { position: relative; box-shadow: 0 1px 1px #fcfcfc; -webkit-box-shadow: 0 1px 1px #fcfcfc; -moz-box-shadow: 0 1px 1px #fcfcfc; /*margin-top: 35px;*/width: 30%;margin-left: 70%;margin-bottom: 2px;margin-top: 2px }
-.searchLine input[type=text] { border: 1px solid #cdcdcd; padding: 9px; /*width: 100%;*/ -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; border-radius: 2px; -webkit-border-radius: 2px; -moz-border-radius: 2px; }
+.searchLine input[type=text] { border: 1px solid #cdcdcd; padding: 9px; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; border-radius: 2px; -webkit-border-radius: 2px; -moz-border-radius: 2px; }
 .searchLine button { position: absolute; top: 0; right: 0; width: 32px; height: 100%; max-height: 100%; z-index: 99; -webkit-border-top-right-radius: 2px; -moz-border-radius-topright: 2px; -webkit-border-bottom-right-radius: 2px; -moz-border-radius-bottomright: 2px; }
 .searchLine .icos-search { width: 14px; margin: 8px; padding: 0; }
 .searchLine button:active { box-shadow: none!important; }

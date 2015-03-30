@@ -13,13 +13,36 @@
     }
 
 
-    var qStr = "Select *, case when Handling_Fee_Type=0 then 'Fixed' else 'Transhipments' end as Handling_Fee_Name from dbo.Handling_Fee order by Id_Handing_Fee desc";
+    var qStr = "Select *, case when Handling_Fee_Type=0 then 'Fixed' else 'Transhipments' end as Handling_Fee_Name" +
+               " from dbo.Handling_Fee" +
+               " order by Id_Handing_Fee desc";
     var data = db.Query(qStr);    
     
     var grid = new WebGrid(source: data,
                             rowsPerPage: 20);
 
-    
+    //Search
+    //var searchHandling = Request["searchHandling"];
+    //if (searchHandling == "")
+    //{
+    //    qStr = "Select *, case when Handling_Fee_Type=0 then 'Fixed' else 'Transhipments' end as Handling_Fee_Name" +
+    //           " from dbo.Handling_Fee" +
+    //           " order by Id_Handing_Fee desc";
+    //    data = db.Query(qStr);
+
+    //    grid = new WebGrid(source: data,
+    //                            rowsPerPage: 20);
+    //}
+    //else
+    //{
+    //    qStr = "Select *, case when Handling_Fee_Type=0 then 'Fixed' else 'Transhipments' end as Handling_Fee_Name" +
+    //           " from dbo.Handling_Fee" +
+    //           " where  order by Id_Handing_Fee desc";
+    //    data = db.Query(qStr);
+
+    //    grid = new WebGrid(source: data,
+    //                            rowsPerPage: 20);
+    //}
 }
 @section head {}
 @section menu{
@@ -32,6 +55,12 @@
             <h6>All Forwarding Quotation | <a href="~/rcAdmin/HandlingFee/New">Create Handling Fee</a> </h6>
             <div class="clear"></div>
         </div>
+        <div class="searchLine">
+            <form action="" method="POST">
+                <input type="text" id="search" name="searchHandling" value="" placeholder="Enter Handling Fee ..." class="ac ui-autocomplete-input"/> 
+                <button type="submit" value="Search" title="Search"><span class="icos-search"></span></button>
+            </form>
+        </div>
     <div id="grid" class="widget">
         @grid.GetHtml(
                 tableStyle: "tDark",
@@ -40,7 +69,7 @@
                 footerStyle: "pgr",
                 columns: grid.Columns(
                                     //grid.Column("Handling_Fee_Type", "Handling_Fee_Type", style: "rcGB"),
-                                    grid.Column("Handling_Fee_Name", "Handling Fee", style: "rcGB"),
+                                    grid.Column("Handling_Fee_Name", "Handling Fee Name", style: "rcGB"),
                                     grid.Column("Weight_From", "Weight From", style: "rcGB"),
                                     grid.Column("Weight_To", "Weight To", style: "rcGB"),
                                     grid.Column("Handling_Fee", "Handling Fee", style: "rcGB"),
