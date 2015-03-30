@@ -13,13 +13,30 @@
     }
 
 
-    var qStr = "Select * from Forwarding_Service order by Forwarding_Service_Name asc";
+    var qStr = "Select * from Forwarding_Service order by Forwarding_Service_Name desc";
     var data = db.Query(qStr);
 
     var grid = new WebGrid(source: data,
                             rowsPerPage: 20);
 
-    
+    //Search
+    var searchFS = Request["searchFS"];
+    if (searchFS == "")
+    {
+        qStr = "Select * from Forwarding_Service order by Forwarding_Service_Name desc";
+        data = db.Query(qStr);
+
+        grid = new WebGrid(source: data,
+                                rowsPerPage: 20);
+    }
+    else
+    {
+        qStr = "Select * from Forwarding_Service where Forwarding_Service_Name like '%" + searchFS + "%' order by Forwarding_Service_Name desc";
+        data = db.Query(qStr);
+
+        grid = new WebGrid(source: data,
+                                rowsPerPage: 20);
+    }
 }
 @section head {}
 @section menu{
@@ -32,21 +49,27 @@
                 <h6>All Pages | <a href="~/rcAdmin/ForwardingServices/New">Create Forwarding Service</a> </h6>
                 <div class="clear"></div>
             </div>
+            <div class="searchLine">
+                <form action="" method="POST">
+                    <input type="text" id="search" name="searchFS" value="" placeholder="Enter Forwarding Service ..." class="ac ui-autocomplete-input" />
+                    <button type="submit" value="Search" title="Search"><span class="icos-search"></span></button>
+                </form>
+            </div>
             <div id="grid" class="widget">
                 @grid.GetHtml(
                         tableStyle: "tDark",
                         headerStyle: "",
                         alternatingRowStyle: "alt",
                         footerStyle: "pgr",
-                        columns: grid.Columns(                  
+                        columns: grid.Columns(
                                                  grid.Column("Forwarding_Service_Name", "Forwarding service name", style: "rcGB"),
                                                  grid.Column("Created_Date", format: @<i>@item.Created_Date</i>),
                             grid.Column(format: @<a href="~/rcAdmin/ForwardingServices/Edit?id=@item.Id_Forwarding_Service" title="Edit Page">
-            <img src="~/rcAdmin/images/edit_page.gif" alt="Edit" class="rcGC" />
-        </a>),  
+                                <img src="~/rcAdmin/images/edit_page.gif" alt="Edit" class="rcGC" />
+                            </a>),
                             grid.Column(format: @<a href="ForwardingServices.cshtml?id=@item.Id_Forwarding_Service" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
-            <img src="~/rcAdmin/images/delete.gif" alt="Delete" class="rcGC" />
-        </a>)
+                                <img src="~/rcAdmin/images/delete.gif" alt="Delete" class="rcGC" />
+                            </a>)
                          )
                      )
             </div>

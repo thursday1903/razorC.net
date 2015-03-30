@@ -46,6 +46,8 @@
             db.Execute(sqlUpdate, Handling_Fee_Type, Weight_From, Weight_To, Handling_Fee, pId);
             errMSG = Constants_.UPDATE_SUCCESS;
         }
+        
+        Response.Redirect("Index");
     }
 }
 
@@ -55,7 +57,7 @@
     <script src="@Href("~/tinymce/tinymce.min.js")" type="text/javascript"></script>
     <script type="text/javascript">
         var language = navigator.userLanguage;
-        
+
         tinymce.init({
             relative_urls: false,
             // General options
@@ -63,7 +65,7 @@
             theme: "modern",
             height: "400",
             plugins: ["advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking save table contextmenu directionality emoticons template paste textcolor"],
-        
+
             file_browser_callback: function (field_name, url, type, win) {
                 tinymce.activeEditor.windowManager.open({
                     title: "My file browser",
@@ -74,7 +76,7 @@
                     window: win,
                     input: field_name,
                     sessionid: '@Session.SessionID.ToString()'
-        
+
                 });
             }
         });
@@ -82,11 +84,11 @@
     <!-- /TinyMCE -->
     <script type="text/javascript">
         $(document).ready(function () {
-        
+
             $("#rcBackup").change(function () {
                 $("#editPage").submit();
             });
-        
+
         });
     </script>
 }

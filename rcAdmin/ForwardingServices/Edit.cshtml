@@ -37,6 +37,8 @@
             {
                 errMSG = Constants_.UPDATE_TRANSACTION_FAIL;    
             }
+            
+            Response.Redirect("Index");
         }
     }
     Commons.releaseDBConnecttion(db);

@@ -61,7 +61,7 @@
             errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
         }        
     }
-
+    Response.Redirect("Index");
     
 
     Commons.releaseDBConnecttion(db);
@@ -93,8 +93,8 @@
                     <div class="grid9">
                         <div class="selector">
                             <select id="hdlFeeType" class="selectReq" name="hdlFeeType" @Validation.For("hdlFeeType")>
-                                <option value="0" selected="selected">Fixed</option>
-                                <option value="1" selected="selected">Transhipments</option>
+                                <option value="0">Fixed</option>
+                                <option value="1">Transhipments</option>
                             </select>  @Html.ValidationMessage("hdlFeeType")
                         </div>
                     </div>
