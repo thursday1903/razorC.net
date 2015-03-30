@@ -7,7 +7,7 @@
     var deleteID = Request["id"];    
     if (!deleteID.IsEmpty())
     {
-        var sqlDelete = "delete dbo.dbo.Handling_Fee where Id_Handing_Fee=@0";
+        var sqlDelete = "delete Handling_Fee where Id_Handing_Fee=@0";
         db.Execute(sqlDelete, deleteID);
         Response.Redirect("Index");
     }
@@ -73,9 +73,9 @@
                                     grid.Column("Weight_From", "Weight From", style: "rcGB"),
                                     grid.Column("Weight_To", "Weight To", style: "rcGB"),
                                     grid.Column("Handling_Fee", "Handling Fee", style: "rcGB"),
-                    grid.Column(format: @<a href="~/rcAdmin/HandlingFee/Edit?id=@item.Id_Handing_Fee" title="Edit Page"><img src="images/edit_page.gif" alt="Edit?id=@item.Id_Handing_Fee" class="rcGC" /></a>),
-                    grid.Column(format: @<a href="Index?id=@item.Id_Handing_Fee" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
-    <img src="images/delete.gif" alt="Delete" class="rcGC" />
+                    grid.Column(format: @<a href="~/rcAdmin/HandlingFee/Edit?id=@item.Id_Handing_Fee" title="Edit Page"><img src="~/rcAdmin/images/edit_page.gif" alt="Edit?id=@item.Id_Handing_Fee" class="rcGC" /></a>),
+                    grid.Column(format: @<a href="~/rcAdmin/HandlingFee/Index?id=@item.Id_Handing_Fee" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
+    <img src="~/rcAdmin/images/delete.gif" alt="Delete" class="rcGC" />
 </a>)
                    )
                )

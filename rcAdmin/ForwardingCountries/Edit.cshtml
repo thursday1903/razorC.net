@@ -55,6 +55,7 @@
             "WHERE Id_Forwarding_Country = @4";
 
             db.Execute(sql, fwService, fwZone, country, pComment, pId);
+            Response.Redirect("Index");
         }
     }
 

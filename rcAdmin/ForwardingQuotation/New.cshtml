@@ -55,6 +55,8 @@
            ",@3, @4, @5 )";
 
         db.Execute(createFwQuotation, fwZone, fwService, pType, weightFrom, weightTo, price);
+        
+        Response.Redirect("Index");
     }
 
 

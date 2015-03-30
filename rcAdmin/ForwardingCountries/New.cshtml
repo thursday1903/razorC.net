@@ -50,6 +50,7 @@
            ",@3)";
 
         db.Execute(createFwCountrySql, fwService, fwZone, country, pComment);
+        Response.Redirect("Index");
     }
     try { db.Close(); }
     catch { }
