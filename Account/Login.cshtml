@@ -15,7 +15,7 @@
 
         String password = helper.md5(up);       
         var sqlSelect = "Select * from rc_Login where rcUser=@0 and rcPwd=@1";
-        var data = db.QuerySingle(sqlSelect, un, password);
+        var data = db.QuerySingle(sqlSelect, un, up);
 
         if (data != null)
         {

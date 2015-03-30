@@ -55,7 +55,7 @@
     <fieldset>
         <div class="widget">
             <div class="whead">
-                <h6>All Sub Accounting | <a href="~/rcAdmin/SubAccounting/New.cshtml">Create Sub Accounting</a> </h6>
+                <h6>All Sub Accounting | <a href="~/rcAdmin/SubAccounting/New">Create Sub Accounting</a> </h6>
                 <div class="clear"></div>
             </div>
             <div class="searchLine">
@@ -76,10 +76,10 @@
                             grid.Column("Sub_Accounting_Name", "Sub Accounting Name", style: "rcGB"),
                             grid.Column("Country_Name", "Country Name", style: "rcGB"),
                             grid.Column("Contact_Person", "Contact Person", style: "rcGB"),
-                        grid.Column(format: @<a href="~/rcAdmin/SubAccounting/Edit.cshtml?said=@item.Id_Sub_Accounting" title="Edit Page">
+                        grid.Column(format: @<a href="~/rcAdmin/SubAccounting/Edit?said=@item.Id_Sub_Accounting" title="Edit Page">
                                                  <img src="../images/edit_page.gif" alt="Edit" class="rcGC" />
                                              </a>),
-                            grid.Column(format: @<a href="~/rcAdmin/SubAccounting/Index.cshtml?said=@item.Id_Sub_Accounting" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
+                            grid.Column(format: @<a href="~/rcAdmin/SubAccounting/Index?said=@item.Id_Sub_Accounting" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
             <img src="../images/delete.gif" alt="Delete" class="rcGC" />
         </a>)
                           )

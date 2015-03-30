@@ -4,66 +4,61 @@
     Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
     var fbURL = System.Web.VirtualPathUtility.ToAbsolute("~/tinymce/plugins/FileManager/Default.aspx?sessionid=") + Session.SessionID.ToString();
 
-    //List all Layout files
-    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));
-    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
 
-    // list all the body pages
-    List<string> pBodies = rcFunctions.pageBodies();
     var editId = Request["id"];
-    var fwService = 0;
-    var fsc = 0;
-    var from_date = "";
-    var to_date = "";
-
-    var errMSG = "";
+    var errMSG = "Create MAWB success";
+    var pEditDate = DateTime.Now;
+    var mawbNumber = "";
+    var sendingDate = "";
+    var numOfShipments = 0;
+    var numOfBags = 0;
+    var totalWeight = new decimal(0);
+    var clearanceFee = new decimal(0);
 
     var db = Database.Open("Checking_Master");
     var sqlSelect = "SELECT * " +
-    "FROM [Forwarding_FSC]  where Id_Forwarding_FSC=@0";
+    "FROM [Forwarding_MAWB]  where Id_Forwarding_MAWB=@0";
     var data = db.QuerySingle(sqlSelect, editId);
-    var pEditDate = DateTime.Now;
 
-    fwService = data.Id_Forwarding_Service;
-    fsc = data.FSC;
-    var vat = data.vat;
-    var from_date_ = data.from_date;
-    var to_date_ = data.to_date;
+    mawbNumber = data.Forwarding_MAWB_Number;
+    var sendingDate_ = data.Sending_Date;
 
-    from_date = Commons.convertIntoSystemFormat(from_date_);
-    to_date = Commons.convertIntoSystemFormat(to_date_);
+    sendingDate = Commons.convertIntoSystemFormat(sendingDate_);
+    numOfShipments = data.Number_Of_Shipments;
+    numOfBags = data.Number_Of_Bags;
+    totalWeight = data.Total_Weight;
+    clearanceFee = data.Clearance_Fee;
 
-    var sqlFwdSv = "SELECT [Id_Forwarding_Service] ,[Forwarding_Service_Name] FROM [dbo].[Forwarding_Service]";
-    var dataForwardingSv = db.Query(sqlFwdSv);
-
-
+    Validation.RequireField("numOfShipments", "Please enter vat as numeric");
+    Validation.RequireField("sendingDate", "Select from date");
+    Validation.RequireField("numOfBags", "Please enter vat as numeric");
+    Validation.RequireField("totalWeight", "Please enter vat as numeric");
+    Validation.RequireField("clearanceFee", "Please enter vat as numeric");
 
     if (IsPost)
     {
         if (!Request["btnUpdate"].IsEmpty())
         {
-            fwService = Int32.Parse(Request["fwService"]);
-            fsc = Int32.Parse(Request["fsc"]);
-            vat = Request["vat"];
-            from_date = Request["from_date"];
-            to_date = Request["to_date"];
-            errMSG = "Edit new FCS Success";
-            if (Commons.dateCompare(from_date, to_date))
-            {
-                String sql = "UPDATE Forwarding_FSC " +
-                "SET [Id_Forwarding_Service] = @0 " +
-                ",[FSC] = @1 " +
-                ",[vat] = @2 " +
-                ",[from_date] = @3 " +
-                ",[to_date] = @4 " +
-                "WHERE Id_Forwarding_FSC = @5";
+            mawbNumber = Request["mawbNumber"];
+            sendingDate = Request["sendingDate"];
+            numOfShipments = int.Parse(Request["numOfShipments"]);
+            numOfBags = int.Parse(Request["numOfBags"]);
+            totalWeight = decimal.Parse(Request["totalWeight"]);
+            clearanceFee = decimal.Parse(Request["clearanceFee"]);
 
-                db.Execute(sql, fwService, fsc, vat, from_date, to_date, editId);
-            }
-            else
-            {
-                errMSG = Constants_.DATECOMPARE_INVALID;
-            }
+
+            String sql = "UPDATE [CheckingDB].[dbo].[Forwarding_MAWB] " +
+                "SET [Forwarding_MAWB_Number] = @0 " +
+      ",[Sending_Date] = @1 " +
+      ",[Number_Of_Shipments] = @2 " +
+      ",[Number_Of_Bags] = @3 " +
+      ",[Total_Weight] = @4 " +
+      ",[Clearance_Fee] = @5 " +
+      ",[Edited_Date] = getdate() " +
+ "WHERE Id_Forwarding_MAWB = @6";
+
+            db.Execute(sql, mawbNumber, sendingDate, numOfShipments, numOfBags, totalWeight, clearanceFee, editId);
+
         }
     }
 }
@@ -121,55 +116,85 @@
 <head>
     <link rel="stylesheet" href="~/rcAdmin/css/datepicker/jquery-ui.css" />
     <script src="~/rcAdmin/css/datepicker/jquery.min.js"></script>
+    <script type="text/javascript">
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode != 46 && charCode > 31
+          && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+    </script>
 </head>
 <script src="~/rcAdmin/css/datepicker/jquery-ui.min.js"></script>
 <form action="" method="post" id="editPage">
     <fieldset>
-        <legend>Edit Page | <a href="~/rcAdmin/ForwardingFSC">All Forwarding FSC</a> | <a href="~/rcAdmin/ForwardingFSC/New">Create Forwarding FSC</a> </legend>
-        @errMSG             
-        <ol>
-            <li>
-                <label for="pMasterPage">Forwarding Service:</label>
-                <select id="fwService" name="fwService" @Validation.For("fwService")>
-                    @foreach (var f in dataForwardingSv)
-                    {
-                        <option value="@f.Id_Forwarding_Service" @if (fwService == f.Id_Forwarding_Service) { <text> selected="selected" </text>             }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
-                    }
-                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("fwService")
-            </li>
-            <li>
-                <label for="pMasterPage">FSC:</label>
-                <select id="fsc" name="fsc" @Validation.For("fsc")>
-                    <option value="0" @if (fsc == 0) { <text> selected="selected" </text>  }>DOX</option>
-                    <option value="1" @if (fsc == 1) { <text> selected="selected" </text>   }>WPX</option>
-                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
-            </li>
-            <li>
-                <label for="pMasterPage">VAT:</label>
-                <input type="text" name="vat" id="vat" value="@vat" maxlength="100" @Validation.For("vat") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("vat")
-            </li>
-            <li>
-                <label for="pMasterPage">From Date:</label>
-                <input type="text" name="from_date" id="from_date" readonly="readonly" value="@from_date" maxlength="100" @Validation.For("from_date") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("from_date")
-                <script>
-                    $("#from_date").datepicker();
-                </script>
+        <div class="widget">
+            <div class="whead">
+                <h6> Edit Forwarding MAWB | <a href="~/rcAdmin/ForwardingMAWB/Index">All Forwarding MAWB</a> </h6>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <div class="grid3"><label for="pMasterPage">Forwarding MAWB Number:</label>  </div>
+                <div class="grid9"><input type="text" name="mawbNumber" id="mawbNumber" value="@mawbNumber" maxlength="100" @Validation.For("mawbNumber") /></div>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <div class="grid3">
+                    <label for="pMasterPage">Sending Date:</label>
+                </div>
+                <div class="grid9">
+                    <input type="text" name="sendingDate" id="sendingDate" readonly="readonly" value="@sendingDate" maxlength="100" @Validation.For("sendingDate") />
+                    <script>
+                        $("#sendingDate").datepicker();
+                    </script>
+                </div>
+                <div class="clear"></div>
+            </div>
 
-            </li>
+            <div class="formRow">
+                <div class="grid3">
+                    <label for="pMasterPage">Number of shipment:</label>
+                </div>
+                <div class="grid9">
+                    <input type="text" name="numOfShipments" id="numOfShipments" onkeypress="return isNumberKey(event)" value="@numOfShipments" maxlength="100" @Validation.For("numOfShipments") />
+                </div>
+                <div class="clear"></div>
+            </div>
 
-            <li>
-                <label for="pMasterPage">To Date:</label>
-                <input type="text" name="to_date" id="to_date" readonly="readonly" value="@to_date" maxlength="100" @Validation.For("to_date") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("to_date")
-                <script>
-                    $("#to_date").datepicker();
-                </script>
+            <div class="formRow">
+                <div class="grid3">
+                    <label for="pMasterPage">Number of bags:</label>
+                </div>
+                <div class="grid9">
+                    <input type="text" name="numOfBags" id="numOfBags" onkeypress="return isNumberKey(event)" value="@numOfBags" maxlength="100" @Validation.For("numOfBags") />
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="formRow">
+                <div class="grid3">
+                    <label for="pMasterPage">Total weight:</label>
+                </div>
+                <div class="grid9">
+                    <input type="text" name="totalWeight" id="totalWeight" value="@totalWeight" maxlength="100" @Validation.For("totalWeight") />
+                </div>
+            </div>
+            <div class="clear"></div>
+            <div class="formRow">
+                <div class="grid3">
+                    <label for="pMasterPage">Clearance_Fee:</label>
+                </div>
+                <div class="grid9">
+                    <input type="text" name="clearanceFee" id="clearanceFee" value="@clearanceFee" maxlength="100" @Validation.For("clearanceFee") />
+                </div>
+                <div class="clear"></div>
+            </div>
 
-            </li>
-
-        </ol>
-
-        <input type="submit" name="btnUpdate" value="Update" />
-        <img src="images/help.gif" alt="help" title="Load content from backup. Every time you update widget/page razorC will create backup of that widget/page. By default last 5 version of widget/page are stored in rc_Backups table." />
+            <p class="form-actions">
+                <input type="submit" value="Update" name="btnUpdate" title="Update" />
+            </p>
+        </div>
 
     </fieldset>
 
