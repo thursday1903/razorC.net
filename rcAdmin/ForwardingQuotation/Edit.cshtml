@@ -2,14 +2,15 @@
     Page.Title = "Edit Forwarding Quotation";
 
     //Get Forwarding Quotation ID
-    var zoneId = Request["id"];
-    var serviceId = Request["sv"];
+    var editId = Request["id"];
     var errMSG = "";
 
     //Lấy thông tin chi tiết forwarding quotation
     var db = Database.Open("Checking_Master");
-    var sqlSelect = "Select * from dbo.Forwarding_Quotation where Id_Forwarding_Zone=@0 and Id_Forwarding_Service=@1";
-    var data = db.QuerySingle(sqlSelect, zoneId, serviceId);
+    var sqlSelect = "Select * from dbo.Forwarding_Quotation where Id_Forwarding_Quotation=@0";
+    var data = db.QuerySingle(sqlSelect, editId);
+    var zoneId = data.Id_Forwarding_Zone;
+    var serviceId = data.Id_Forwarding_Service;
     var type = data.Type;
     var weightFrom = data.Weight_From;
     var weightTo = data.Weight_To;
@@ -31,18 +32,27 @@
             serviceId = Request["fwService"];
             zoneId = Request["fwZone"];
             type = Request["pType"];
-            weightFrom = Request["weightFrom"];
-            weightTo = Request["weightTo"];
-            price = Request["price"];
+            weightFrom = float.Parse(Request["weightFrom"]);
+            weightTo = float.Parse( Request["weightTo"]);
+            price = decimal.Parse( Request["price"]);
 
             string sql = "update Forwarding_Quotation" +
-                         " set Id_Forwarding_Zone=@0" +
-                         ", Id_Forwarding_Service=@1" +
-                         ", Type=@2" +
-                         ", Weight_From=@3" +
-                         ", Weight_To=@4" +
-                         ", Pricing=@5";
-            db.Execute(sql, zoneId, serviceId, type, weightFrom, weightTo, price);
+                         " set " +                         
+                         " Type=@0" +
+                         ", Weight_From=@1" +
+                         ", Weight_To=@2" +
+                         ", Pricing=@3 "+
+                         ", Id_Forwarding_Service=@4 " +
+                         ", Id_Forwarding_Zone=@5 " +
+                        "where Id_Forwarding_Quotation = @6";
+            try
+            {
+
+                db.Execute(sql, type, weightFrom, weightTo, price, serviceId,zoneId, editId);
+            }
+            catch(Exception e) {
+                errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
+            }
             
             Response.Redirect("Index");
         }
@@ -70,7 +80,8 @@
                             <select id="fwService" class="selectReq" name="fwService" @Validation.For("fwService")>
                                 @foreach (var f in dataForwardingSv)
                                 {
-                                    <option value="@f.Id_Forwarding_Service" @if (serviceId == f.Forwarding_Service_Name) { <text> selected="selected" </text>         }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                                    <option value="@f.Id_Forwarding_Service" @if (serviceId == f.Id_Forwarding_Service)
+                                                                             { <text> selected="selected" </text>         }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
                                 }
                             </select> @Html.ValidationMessage("pMasterPage")
                         </div>
@@ -84,7 +95,8 @@
                             <select id="fwZone" class="selectReq" name="fwZone" @Validation.For("fwZone")>
                                 @foreach (var f in dataZone)
                                 {
-                                    <option value="@f.Id_Forwarding_Zone" @if (zoneId == f.Forwarding_Zone) { <text> selected="selected" </text>            }>@rcFunctions.CleanRCNames(f.Forwarding_Zone)</option>
+                                    <option value="@f.Id_Forwarding_Zone" @if (zoneId == f.Id_Forwarding_Zone)
+                                                                          { <text> selected="selected" </text>            }>@rcFunctions.CleanRCNames(f.Forwarding_Zone)</option>
                                 }
                             </select> @Html.ValidationMessage("pMasterPage")
                         </div>

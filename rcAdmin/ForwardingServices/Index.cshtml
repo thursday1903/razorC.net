@@ -2,14 +2,23 @@
     Page.Title = "Forwarding Service Manager";
     var db = Database.Open("Checking_Master");
     //Database.OpenConnectionString("Checking_Master")
-
+    var errMSG = "";
     //delete record 
     var deleteID = Request["id"];
     if (!deleteID.IsEmpty())
     {
         var sqlDelete = "delete Forwarding_Service where Id_Forwarding_Service=@0";
-        db.Execute(sqlDelete, deleteID);
-        Response.Redirect("ForwardingServices");
+        try
+        {
+            db.Execute(sqlDelete, deleteID);
+            Response.Redirect("Index");
+            errMSG = Constants_.UPDATE_SUCCESS;
+        }
+        catch(Exception e)
+        {
+            errMSG = Constants_.DELETE_CONSTRAINT_VALUE;
+        }
+        
     }
 
 
@@ -67,11 +76,11 @@
                             grid.Column(format: @<a href="~/rcAdmin/ForwardingServices/Edit?id=@item.Id_Forwarding_Service" title="Edit Page">
                                 <img src="~/rcAdmin/images/edit_page.gif" alt="Edit" class="rcGC" />
                             </a>),
-                            grid.Column(format: @<a href="ForwardingServices.cshtml?id=@item.Id_Forwarding_Service" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
-                                <img src="~/rcAdmin/images/delete.gif" alt="Delete" class="rcGC" />
-                            </a>)
-                         )
-                     )
+                            grid.Column(format: @<a href="~/rcAdmin/ForwardingServices/Index?id=@item.Id_Forwarding_Service" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
+    <img src="~/rcAdmin/images/delete.gif" alt="Delete" class="rcGC" />
+</a>)
+                  )
+              )
             </div>
         </div>
     </fieldset>

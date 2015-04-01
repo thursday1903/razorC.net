@@ -2,13 +2,19 @@
     Page.Title = "Country";
     var db = Database.Open("Checking_Master");
     //Database.OpenConnectionString("Checking_Master")
-
+    var errMSG = "";
     //delete record
     var deleteID = Request["cid"];
     if (!deleteID.IsEmpty())
     {
         var sqlDelete = "delete Countries where Id_Country=@0";
-        db.Execute(sqlDelete, deleteID);
+        try
+        {
+            db.Execute(sqlDelete, deleteID);    
+        }
+        catch(Exception ex) {
+            errMSG = Constants_.DELETE_CONSTRAINT_VALUE;
+        }
         Response.Redirect("Index");
     }
 
@@ -69,11 +75,11 @@ grid.Column("Country_Name", "Country name", style: "rcGB"),
                         grid.Column(format: @<a href="~/rcAdmin/Countries/Edit?cid=@item.Id_Country" title="Edit Page">
                     <img src="images/edit_page.gif" alt="Edit" class="rcGC" />
                 </a>),
-                        grid.Column(format: @<a href="Index?cid=@item.Id_Country" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
-                    <img src="images/delete.gif" alt="Delete" class="rcGC" />
-                </a>)
-                   )
-               )
+                        grid.Column(format: @<a href="~/rcAdmin/Countries/Index?cid=@item.Id_Country" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
+    <img src="images/delete.gif" alt="Delete" class="rcGC" />
+</a>)
+            )
+        )
             </div>
         </div>
     </fieldset>

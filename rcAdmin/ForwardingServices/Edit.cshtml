@@ -16,28 +16,41 @@
     var errMSG = "";
     var pEditDate = DateTime.Now;
     var db = Database.Open("Checking_Master");
-    
+
     var sqlSelect = "select * from Forwarding_Service where Id_Forwarding_Service = @0";
     var editDataRow = db.QuerySingle(sqlSelect, pId);
     var forwardingSvName = editDataRow.Forwarding_Service_Name;
 
     Validation.RequireField("forwardingSvName", "Forwarding Service Name can't be empty");
-    
+
     if (IsPost)
     {
         if (!Request["btnUpdate"].IsEmpty())
         {
             forwardingSvName = Request["forwardingSvName"];
-            String sqlUpdate = "Update Forwarding_Service set Forwarding_Service_Name = @0 where Id_Forwarding_Service = @1";
 
-            try { db.Execute(sqlUpdate, forwardingSvName, pId);
-            errMSG = Constants_.UPDATE_SUCCESS;
-            }
-            catch(Exception e)
+            String sqlCheckExisted = "select * from Forwarding_Service where Forwarding_Service_Name = @0";
+            var data = db.QuerySingle(sqlCheckExisted, forwardingSvName);
+            if (data != null)
             {
-                errMSG = Constants_.UPDATE_TRANSACTION_FAIL;    
+
+
+                String sqlUpdate = "Update Forwarding_Service set Forwarding_Service_Name = @0 where Id_Forwarding_Service = @1";
+
+                try
+                {
+                    db.Execute(sqlUpdate, forwardingSvName, pId);
+                    errMSG = Constants_.UPDATE_SUCCESS;
+                }
+                catch (Exception e)
+                {
+                    errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
+                }
             }
-            
+            else
+            {
+                errMSG = Constants_.UPDATE_VALUE_EXISTED;
+            }
             Response.Redirect("Index");
         }
     }
@@ -101,15 +114,15 @@
                     <h6>New Forwarding service | <a href="~/rcAdmin/ForwardingServices">All Forwarding service</a> </h6>
                     <div class="clear"></div>
                 </div>
-            <div class="formRow">
-                <div class="grid3"><label for="pName">Forwarding Service Name:</label></div>
-                <div class="grid9"><input type="text" name="forwardingSvName" id="forwardingSvName" value="@forwardingSvName" maxlength="100" @Validation.For("forwardingSvName") /> @Html.ValidationMessage("forwardingSvName")</div>
-                <div class="clear"></div>
-            </div>
-            <div class="formRow">
-                <input type="submit" name="btnUpdate" value="Update" title="Update" class="buttonM bBlue formSubmit" />
-                <div class="clear"></div>
-            </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pName">Forwarding Service Name:</label></div>
+                    <div class="grid9"><input type="text" name="forwardingSvName" id="forwardingSvName" value="@forwardingSvName" maxlength="100" @Validation.For("forwardingSvName") /> @Html.ValidationMessage("forwardingSvName")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <input type="submit" name="btnUpdate" value="Update" title="Update" class="buttonM bBlue formSubmit" />
+                    <div class="clear"></div>
+                </div>
             </div>
         </fieldset>
     </form>

@@ -8,9 +8,9 @@
     var fwService = "";    
     var fwZone = "";
     var pType = "";
-    var weightFrom = "";
-    var weightTo = "";
-    var price = "";
+    var weightFrom = new float();
+    var weightTo = new float();
+    var price = decimal.Parse("0");
     var errMSG = "";
 
 
@@ -23,16 +23,6 @@
     List<string> pBodies = rcFunctions.pageBodies();
 
 
-
-    fwZone = Request["fwZone"];
-    fwService = Request["fwService"];
-    weightFrom = Request["weightFrom"];
-    weightTo = Request["weightTo"];
-    pType = Request["pType"];
-    price = Request["price"];
-    errMSG = fwService  + fwZone + pComment;
-
-
     var db = Database.Open("Checking_Master");
 
     var sqlFwdSv = "SELECT [Id_Forwarding_Service] ,[Forwarding_Service_Name] FROM [dbo].[Forwarding_Service]";
@@ -43,6 +33,15 @@
 
     if (IsPost && Validation.IsValid())
     {
+
+        fwZone = Request["fwZone"];
+        fwService = Request["fwService"];
+        weightFrom = float.Parse(Request["weightFrom"]);
+        weightTo = float.Parse(Request["weightTo"]);
+        pType = Request["pType"];
+        price = decimal.Parse(Request["price"]);
+        errMSG = fwService + fwZone + pComment;
+        
         String createFwQuotation = "INSERT INTO dbo.Forwarding_Quotation ([Id_Forwarding_Zone]" +
            ",[Id_Forwarding_Service]"+
            ",[Type]"+
@@ -76,6 +75,16 @@
         @Html.Raw(errMSG)
     </div>
 }
+<script type="text/javascript">
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode != 46 && charCode > 31
+          && (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+</script>
 <div class="fluid">
     <form method="post" action="">
         <fieldset>
@@ -126,17 +135,17 @@
                 </div>
                 <div class="formRow">
                     <div class="grid3"><label for="pComment">Weight From:</label></div>
-                    <div class="grid9"><input type="text" name="weightFrom" id="weightFrom" value="@weightFrom" maxlength="100" @Validation.For("weightFrom") />  @Html.ValidationMessage("weightFrom")</div>
+                    <div class="grid9"><input type="text" name="weightFrom" id="weightFrom" onkeypress="return isNumberKey(event)" value="@weightFrom" maxlength="100" @Validation.For("weightFrom") />  @Html.ValidationMessage("weightFrom")</div>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
                     <div class="grid3"><label for="pComment">Weight To:</label></div>
-                    <div class="grid9"><input type="text" name="weightTo" id="weightTo" value="@weightTo" maxlength="100" @Validation.For("weightTo") />  @Html.ValidationMessage("weightTo")</div>
+                    <div class="grid9"><input type="text" name="weightTo" id="weightTo" onkeypress="return isNumberKey(event)" value="@weightTo" maxlength="100" @Validation.For("weightTo") />  @Html.ValidationMessage("weightTo")</div>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
                     <div class="grid3"><label for="pComment">Price:</label></div>
-                    <div class="grid9"><input type="text" name="price" id="price" value="@price" maxlength="100" @Validation.For("price") />  @Html.ValidationMessage("price")</div>
+                    <div class="grid9"><input type="text" name="price" id="price" onkeypress="return isNumberKey(event)" value="@price" maxlength="100" @Validation.For("price") />  @Html.ValidationMessage("price")</div>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
