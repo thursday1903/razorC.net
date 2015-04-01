@@ -187,7 +187,7 @@
                                 @foreach (var f in forwardingSv)
                                 {
                                     <option value="@f.Id_Forwarding_Service" @if (Id_Forwarding_Service == f.Forwarding_Service_Name)
-                                                                     { <text> selected="selected" </text>              }>@f.Forwarding_Service_Name</option>
+                                                                     { <text> selected="selected" </text>               }>@f.Forwarding_Service_Name</option>
                                 }
                             </select>  @Html.ValidationMessage("pMasterPage")
                         </div>
@@ -202,7 +202,7 @@
                                 @foreach (var f in countries)
                                 {
                                     <option value="@f.Id_Country" @if (pMasterPage == f.Country_Name)
-                                                                     { <text> selected="selected" </text>                }>@f.Country_Name</option>
+                                                                     { <text> selected="selected" </text>                 }>@f.Country_Name</option>
                                 }
                             </select>  @Html.ValidationMessage("Id_Country")
                         </div>
@@ -227,6 +227,14 @@
                 <div class="formRow">
                     <div class="grid3"><label for="pName">Consignor Name:</label></div>
                     <div class="grid9"><input type="text" name="Consignor_Name" id="Consignor_Name" value="@Consignor_Name" maxlength="50" @Validation.For("Consignor_Name") />  @Html.ValidationMessage("Consignor_Name")</div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6>Create new Forwarding Invoice | <a href="~/rcAdmin/ForwardingInvoice">All Forwarding Invoice</a> </h6>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
@@ -257,7 +265,7 @@
                                 @foreach (var f in accounting)
                                 {
                                     <option value="@f.Id_Accounting" @if (pMasterPage == f.Account_Name)
-                                                                     { <text> selected="selected" </text>               }>@f.Account_Name</option>
+                                                                     { <text> selected="selected" </text>                }>@f.Account_Name</option>
                                 }
                             </select>  @Html.ValidationMessage("Id_Accounting")
                         </div>
@@ -272,7 +280,7 @@
                                 @foreach (var f in subAccounting)
                                 {
                                     <option value="@f.Id_Sub_Accounting" @if (pMasterPage == f.Sub_Accounting_Name)
-                                                                     { <text> selected="selected" </text>                  }> @f.Sub_Accounting_Name</option>
+                                                                     { <text> selected="selected" </text>                   }> @f.Sub_Accounting_Name</option>
                                 }
                             </select>  @Html.ValidationMessage("Id_Sub_Accounting")
                         </div>
@@ -287,7 +295,7 @@
                                 @foreach (var f in forwardingMABW)
                                 {
                                     <option value="@f.Id_Forwarding_MAWB" @if (Id_Forwarding_MABW == f.Forwarding_MAWB_Number)
-                                                                     { <text> selected="selected" </text>                     }>@f.Forwarding_MAWB_Number</option>
+                                                                     { <text> selected="selected" </text>                      }>@f.Forwarding_MAWB_Number</option>
                                 }
                             </select> @Html.ValidationMessage("pMasterPage")
                         </div>
@@ -302,7 +310,7 @@
                                 @foreach (var f in handlingFee)
                                 {
                                     <option value="@f.Id_Handing_Fee" @if (Handling_Fee == f.Handling_Fee)
-                                                                         { <text> selected="selected" </text>                        }>@f.Handling_Fee</option>
+                                                                         { <text> selected="selected" </text>                         }>@f.Handling_Fee</option>
                                 }
                             </select> @Html.ValidationMessage("Handling_Fee")
                         </div>
@@ -327,7 +335,7 @@
                                 @foreach (var f in forwardingStt)
                                 {
                                     <option value="@f.Forwarding_Status" @if (pMasterPage == f.Forwarding_Status_Desc)
-                                                              { <text> selected="selected" </text>                           }>@f.Forwarding_Status_Desc</option>
+                                                              { <text> selected="selected" </text>                            }>@f.Forwarding_Status_Desc</option>
                                 }
                             </select> @Html.ValidationMessage("Id_Forwarding_Status")
                         </div>
@@ -347,3 +355,10 @@
         </fieldset>
     </form>
 </div>
+<style>
+    fieldset {
+      width: 49%;
+      float: left;
+      margin-left: 10px;
+    }
+</style>
