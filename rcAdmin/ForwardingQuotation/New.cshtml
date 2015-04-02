@@ -5,7 +5,7 @@
     var pComment = "";
     var pMasterPage = "";
     var pEditDate = DateTime.Now;
-    var fwService = "";    
+    var fwService = "";
     var fwZone = "";
     var pType = "";
     var weightFrom = new float();
@@ -41,21 +41,28 @@
         pType = Request["pType"];
         price = decimal.Parse(Request["price"]);
         errMSG = fwService + fwZone + pComment;
-        
-        String createFwQuotation = "INSERT INTO dbo.Forwarding_Quotation ([Id_Forwarding_Zone]" +
-           ",[Id_Forwarding_Service]"+
-           ",[Type]"+
-           ",[Weight_From]"+
-           ",[Weight_To]"+
-           ",[Pricing]) VALUES " +
-           "(@0 " +
-           ",@1 " +
-           ",@2 " +
-           ",@3, @4, @5 )";
 
-        db.Execute(createFwQuotation, fwZone, fwService, pType, weightFrom, weightTo, price);
-        
-        Response.Redirect("Index");
+        if (weightFrom.CompareTo(weightTo) > 0)
+        {
+            errMSG = Constants_.COMPARE_FLOAT_VALUE;
+        }
+        else
+        {
+            String createFwQuotation = "INSERT INTO dbo.Forwarding_Quotation ([Id_Forwarding_Zone]" +
+               ",[Id_Forwarding_Service]" +
+               ",[Type]" +
+               ",[Weight_From]" +
+               ",[Weight_To]" +
+               ",[Pricing]) VALUES " +
+               "(@0 " +
+               ",@1 " +
+               ",@2 " +
+               ",@3, @4, @5 )";
+
+            db.Execute(createFwQuotation, fwZone, fwService, pType, weightFrom, weightTo, price);
+
+            Response.Redirect("Index");
+        }
     }
 
 
@@ -100,11 +107,11 @@
                             <select id="fwService" class="selectReq" name="fwService" @Validation.For("fwService")>
                                 @foreach (var f in dataForwardingSv)
                                 {
-                                    <option value="@f.Id_Forwarding_Service" @if (pMasterPage == f.Forwarding_Service_Name) { <text> selected="selected" </text>         }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                                    <option value="@f.Id_Forwarding_Service" @if (pMasterPage == f.Forwarding_Service_Name) { <text> selected="selected" </text>           }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
                                 }
                             </select> @Html.ValidationMessage("pMasterPage")
                         </div>
-                    </div>    
+                    </div>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
@@ -114,7 +121,7 @@
                             <select id="fwZone" class="selectReq" name="fwZone" @Validation.For("fwZone")>
                                 @foreach (var f in dataZone)
                                 {
-                                    <option value="@f.Id_Forwarding_Zone" @if (pMasterPage == f.Forwarding_Zone) { <text> selected="selected" </text>            }>@rcFunctions.CleanRCNames(f.Forwarding_Zone)</option>
+                                    <option value="@f.Id_Forwarding_Zone" @if (pMasterPage == f.Forwarding_Zone) { <text> selected="selected" </text>              }>@rcFunctions.CleanRCNames(f.Forwarding_Zone)</option>
                                 }
                             </select> @Html.ValidationMessage("pMasterPage")
                         </div>
