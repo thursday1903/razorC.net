@@ -15,7 +15,7 @@
     var weightFrom = data.Weight_From;
     var weightTo = data.Weight_To;
     var price = data.Pricing;
-
+    
     // Lấy dữ liệu Forwarding Service
     var sqlFwdSv = "SELECT [Id_Forwarding_Service] ,[Forwarding_Service_Name] FROM [dbo].[Forwarding_Service]";
     var dataForwardingSv = db.Query(sqlFwdSv);
@@ -23,53 +23,44 @@
     // Lấy dữ liệu Forwarding Zone
     var sqlFwZone = "SELECT [Id_Forwarding_Zone],[Id_Forwarding_Service],[Forwarding_Zone],[Comments]  FROM [dbo].[Forwarding_Zone]";
     var dataZone = db.Query(sqlFwZone);
-
+    
     // Update Forwarding Quotation
-    if (IsPost)
+    if(IsPost)
     {
-        if (!Request["btnUpdate"].IsEmpty())
+        if(!Request["btnUpdate"].IsEmpty())
         {
             serviceId = Request["fwService"];
             zoneId = Request["fwZone"];
             type = Request["pType"];
             weightFrom = float.Parse(Request["weightFrom"]);
-            weightTo = float.Parse(Request["weightTo"]);
-            price = decimal.Parse(Request["price"]);
+            weightTo = float.Parse( Request["weightTo"]);
+            price = decimal.Parse( Request["price"]);
 
-            if (weightFrom.CompareTo(weightTo) > 0)
+            string sql = "update Forwarding_Quotation" +
+                         " set " +                         
+                         " Type=@0" +
+                         ", Weight_From=@1" +
+                         ", Weight_To=@2" +
+                         ", Pricing=@3 "+
+                         ", Id_Forwarding_Service=@4 " +
+                         ", Id_Forwarding_Zone=@5 " +
+                        "where Id_Forwarding_Quotation = @6";
+            try
             {
-                errMSG = Constants_.COMPARE_FLOAT_VALUE;
-            }
-            else
-            {
-                string sql = "update Forwarding_Quotation" +
-                             " set " +
-                             " Type=@0" +
-                             ", Weight_From=@1" +
-                             ", Weight_To=@2" +
-                             ", Pricing=@3 " +
-                             ", Id_Forwarding_Service=@4 " +
-                             ", Id_Forwarding_Zone=@5 " +
-                            "where Id_Forwarding_Quotation = @6";
-                try
-                {
 
-                    db.Execute(sql, type, weightFrom, weightTo, price, serviceId, zoneId, editId);
-                    errMSG = Constants_.UPDATE_SUCCESS;
-                }
-                catch (Exception e)
-                {
-                    errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
-                }
-
-                //Response.Redirect("Index");
+                db.Execute(sql, type, weightFrom, weightTo, price, serviceId,zoneId, editId);
             }
+            catch(Exception e) {
+                errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
+            }
+            
+            Response.Redirect("Index");
         }
     }
 }
 
 @section head {
-
+    
 }
 @section menu{
     @RenderPage("../_Menu.cshtml")
@@ -89,11 +80,12 @@
                             <select id="fwService" class="selectReq" name="fwService" @Validation.For("fwService")>
                                 @foreach (var f in dataForwardingSv)
                                 {
-                                    <option value="@f.Id_Forwarding_Service" @if (serviceId == f.Id_Forwarding_Service) { <text> selected="selected" </text>          }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
+                                    <option value="@f.Id_Forwarding_Service" @if (serviceId == f.Id_Forwarding_Service)
+                                                                             { <text> selected="selected" </text>         }>@rcFunctions.CleanRCNames(f.Forwarding_Service_Name)</option>
                                 }
                             </select> @Html.ValidationMessage("pMasterPage")
                         </div>
-                    </div>
+                    </div>    
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
@@ -103,7 +95,8 @@
                             <select id="fwZone" class="selectReq" name="fwZone" @Validation.For("fwZone")>
                                 @foreach (var f in dataZone)
                                 {
-                                    <option value="@f.Id_Forwarding_Zone" @if (zoneId == f.Id_Forwarding_Zone) { <text> selected="selected" </text>             }>@rcFunctions.CleanRCNames(f.Forwarding_Zone)</option>
+                                    <option value="@f.Id_Forwarding_Zone" @if (zoneId == f.Id_Forwarding_Zone)
+                                                                          { <text> selected="selected" </text>            }>@rcFunctions.CleanRCNames(f.Forwarding_Zone)</option>
                                 }
                             </select> @Html.ValidationMessage("pMasterPage")
                         </div>
@@ -115,8 +108,8 @@
                     <div class="grid9">
                         <div class="selector">
                             <select id="pType" class="selectReq" name="pType" @Validation.For("pType")>
-                                <option value="0" @if (type == 0) { <text> selected="selected" </text> }>DOX</option>
-                                <option value="1" @if (type == 1) { <text> selected="selected" </text> }>WPX</option>
+                                <option value="0" @if(type == 0){<text>selected="selected"</text>}>DOX</option>
+                                <option value="1" @if(type == 1){<text>selected="selected"</text>}>WPX</option>
                             </select>  @Html.ValidationMessage("pMasterPage")
                         </div>
                     </div>
@@ -138,7 +131,7 @@
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
-                    <input type="submit" name="btnUpdate" value="Update" title="Insert" class="buttonM bBlue formSubmit" />
+                    <input type="submit" name = "btnUpdate" value="Update" title="Insert" class="buttonM bBlue formSubmit" />
                     <div class="clear"></div>
                 </div>
             </div>

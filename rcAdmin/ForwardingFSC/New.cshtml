@@ -76,16 +76,6 @@
     <script src="~/rcAdmin/css/datepicker/jquery.min.js"></script>
 </head>
 <script src="~/rcAdmin/css/datepicker/jquery-ui.min.js"></script>
-<script type="text/javascript">
-    function isNumberKey(evt) {
-        var charCode = (evt.which) ? evt.which : event.keyCode;
-        if (charCode != 46 && charCode > 31
-          && (charCode < 48 || charCode > 57))
-            return false;
-
-        return true;
-    }
-</script>
 <form method="post" action="">
 
     <fieldset>
@@ -102,11 +92,14 @@
             </li>
             <li>
                 <label for="pMasterPage">FSC:</label>
-                <input type="text" name="fsc" id="fsc" onkeypress="return isNumberKey(event)" value="@fsc" maxlength="100" @Validation.For("fsc") /> 
+                <select id="fsc" name="fsc" @Validation.For("fsc")>
+                    <option value="0" selected="selected">DOX</option>
+                    <option value="1">WPX</option>
+                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
             </li>
             <li>
                 <label for="pMasterPage">VAT:</label>
-                <input type="text" name="vat" id="vat" value="@vat" onkeypress="return isNumberKey(event)" maxlength="100" @Validation.For("vat") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("vat")
+                <input type="text" name="vat" id="vat" value="@vat" maxlength="100" @Validation.For("vat") /> <img src="images/help.gif" alt="help" title="Name of the new page. Ex.: about-us or contact-us" /> @Html.ValidationMessage("vat")
             </li>
             <li>
                 <label for="pMasterPage">From Date:</label>

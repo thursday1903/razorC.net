@@ -15,7 +15,6 @@ public class Constants_
     public const String UPDATE_TRANSACTION_FAIL = "System corrupted. Check your system log";
     public const String UPDATE_VALUE_EXISTED = "Update value existed, your update be Rejected";
     public const String DELETE_CONSTRAINT_VALUE = "Delete constraint value, your request rejected";
-    public const String COMPARE_FLOAT_VALUE = "Weight from must be smaller than Weight to";
 
     public Constants_()
     {
