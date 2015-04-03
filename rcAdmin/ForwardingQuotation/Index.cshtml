@@ -26,7 +26,10 @@
 
 
     //Search
+    var option = Request["fwSearch"];
+    
     var searchQuo = Request["searchQuo"];
+
     if(searchQuo == "")
     {
         qStr = "select fz.Forwarding_Zone, fs.Forwarding_Service_Name, fq.*, case when Type=0 then 'DOX' else 'WPX' end as Type_Name " +
@@ -41,11 +44,37 @@
     }
     else
     {
-        qStr = "select fz.Forwarding_Zone, fs.Forwarding_Service_Name, fq.*, case when Type=0 then 'DOX' else 'WPX' end as Type_Name " +
-               " from Forwarding_Quotation AS fq" +
-                " INNER JOIN Forwarding_Zone as fz on fq.Id_Forwarding_Zone = fz.Id_Forwarding_Zone" + 
-                " INNER JOIN Forwarding_Service as fs on fq.Id_Forwarding_Service = fs.Id_Forwarding_Service" + 
-                " where fz.Forwarding_Zone LIKE '%" + searchQuo + "%' order by fq.Id_Forwarding_Zone desc";
+        if(option == "0"){
+            qStr = "select fz.Forwarding_Zone, fs.Forwarding_Service_Name, fq.*, case when Type=0 then 'DOX' else 'WPX' end as Type_Name " +
+                   " from Forwarding_Quotation AS fq" +
+                    " INNER JOIN Forwarding_Zone as fz on fq.Id_Forwarding_Zone = fz.Id_Forwarding_Zone" + 
+                    " INNER JOIN Forwarding_Service as fs on fq.Id_Forwarding_Service = fs.Id_Forwarding_Service" + 
+                    " where fs.Forwarding_Service_Name LIKE '%" + searchQuo + "%' order by fq.Id_Forwarding_Zone desc";
+        }
+        else if(option == "1"){
+            qStr = "select fz.Forwarding_Zone, fs.Forwarding_Service_Name, fq.*, case when Type=0 then 'DOX' else 'WPX' end as Type_Name " +
+                   " from Forwarding_Quotation AS fq" +
+                    " INNER JOIN Forwarding_Zone as fz on fq.Id_Forwarding_Zone = fz.Id_Forwarding_Zone" + 
+                    " INNER JOIN Forwarding_Service as fs on fq.Id_Forwarding_Service = fs.Id_Forwarding_Service" + 
+                    " where fz.Forwarding_Zone LIKE '%" + searchQuo + "%' order by fq.Id_Forwarding_Zone desc";
+        }
+        else if(option == "2"){
+            var searchType = 0;
+            if(searchQuo == "DOX")
+            {
+                searchType = 0;
+            }
+            if(searchQuo == "WPX"){
+                searchType = 1;
+            }
+                
+            qStr = "select fz.Forwarding_Zone, fs.Forwarding_Service_Name, fq.*, case when Type=0 then 'DOX' else 'WPX' end as Type_Name " +
+                   " from Forwarding_Quotation AS fq" +
+                    " INNER JOIN Forwarding_Zone as fz on fq.Id_Forwarding_Zone = fz.Id_Forwarding_Zone" + 
+                    " INNER JOIN Forwarding_Service as fs on fq.Id_Forwarding_Service = fs.Id_Forwarding_Service" + 
+                    " where fq.Type = " + searchType + " order by fq.Id_Forwarding_Zone desc";
+        }
+        
         data = db.Query(qStr);
 
         grid = new WebGrid(source: data,
@@ -65,6 +94,13 @@
             </div>
             <div class="searchLine">
                 <form action="" method="POST">
+                    <div class="selector" style="margin-left: -44%">
+                        <select id="fwSearch" class="selectReq" name="fwSearch" @Validation.For("fwService")>
+                            <option value="0">Forwarding Service</option>
+                            <option value="1">Forwarding Zone</option>
+                            <option value="2">Type</option>
+                        </select>
+                    </div>
                     <input type="text" id="search" name="searchQuo" value="" placeholder="Enter Forwarding Quotation ..." class="ac ui-autocomplete-input"/> 
                     <button type="submit" value="Search" title="Search"><span class="icos-search"></span></button>
                 </form>
