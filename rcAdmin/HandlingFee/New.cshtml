@@ -5,7 +5,7 @@
     var pComment = "";
     
     var pEditDate = DateTime.Now;
-    var fwService = "";    
+    var Id_Forwarding_Service = 0;    
     var fwZone = "";
     var pType = "";
     var weightFrom = "";
@@ -26,7 +26,7 @@
 
     
     fwZone = Request["fwZone"];
-    fwService = Request["fwService"];
+    Id_Forwarding_Service = Request["Id_Forwarding_Service"]==null?0:int.Parse(Request["Id_Forwarding_Service"]);
     weightFrom = Request["weightFrom"];
     weightTo = Request["weightTo"];
     pType = Request["pType"];
@@ -41,20 +41,23 @@
 
     var db = Database.Open("Checking_Master");
 
+    String sql = "select * from Forwarding_Service";
+
+    var fwServiceData = db.Query(sql);
     
     if (IsPost && Validation.IsValid())
     {
         String createFwQuotation = "INSERT INTO dbo.[Handling_Fee] ([Handling_Fee_Type] "+
            ",[Weight_From]"+
            ",[Weight_To] "+
-           ",[Handling_Fee]) VALUES " +
+           ",[Handling_Fee],Id_Forwarding_Service) VALUES " +
            "(@0 " +
            ",@1 " +
            ",@2 " +
-           ",@3 )";
+           ",@3 ,@4)";
 
         try {
-            db.Execute(createFwQuotation, hdlFeeType, weightFrom, weightTo, fee);
+            db.Execute(createFwQuotation, hdlFeeType, weightFrom, weightTo, fee,Id_Forwarding_Service);
             errMSG = Constants_.UPDATE_SUCCESS;
         }
         catch(Exception ex) {
@@ -89,6 +92,22 @@
                     <h6>New Handing Fee | <a href="~/rcAdmin/HandlingFee">All Handling Fee</a> </h6>
                     <div class="clear"></div>
                 </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Forwarding Service:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Id_Forwarding_Service" class="selectReq" onchange="requireWeight(this.form);" name="Id_Forwarding_Service" @Validation.For("Id_Forwarding_Service")>
+                                @foreach (var f in fwServiceData)
+                                {
+                                    <option value="@f.Id_Forwarding_Service" @if (Id_Forwarding_Service == f.Id_Forwarding_Service) { <text> selected="selected" </text>                         }>@f.Forwarding_Service_Name</option>
+                                }
+                            </select>  @Html.ValidationMessage("pMasterPage")
+                        </div>
+
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
                 <div class="formRow">
                     <div class="grid3"><label for="pMasterPage">Handling Fee Type:</label></div>
                     <div class="grid9">

@@ -139,10 +139,7 @@
             </li>
             <li>
                 <label for="pMasterPage">FSC:</label>
-                <select id="fsc" name="fsc" @Validation.For("fsc")>
-                    <option value="0" @if (fsc == 0) { <text> selected="selected" </text>  }>DOX</option>
-                    <option value="1" @if (fsc == 1) { <text> selected="selected" </text>   }>WPX</option>
-                </select> <img src="images/help.gif" alt="help" title="Select layout/theme for new page. All layouts are in rcLayouts folder - you can add/change/modify them to fit your needs" /> @Html.ValidationMessage("pMasterPage")
+                <input type="text" name="fsc" id="fsc" onkeypress="return isNumberKey(event)" value="@fsc" maxlength="100" @Validation.For("fsc") /> 
             </li>
             <li>
                 <label for="pMasterPage">VAT:</label>

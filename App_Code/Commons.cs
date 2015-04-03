@@ -15,6 +15,18 @@ public class Commons
         //
     }
 
+    public static float volumetricCalculate(float h_weight, float l_weight, float w_weight)
+    {
+        try
+        {
+            return (h_weight * l_weight * w_weight) / 5000;
+        }
+        catch
+        {
+            return new float();
+        }
+    }
+
     public static void releaseDBConnecttion(WebMatrix.Data.Database db)
     {
         try { db.Close(); }
@@ -27,7 +39,7 @@ public class Commons
     /// <returns></returns>
     public static String generateInvoiceNumber()
     {
-        Random ran = new Random(1000);
+        Random ran = new Random(int.Parse(DateTime.Now.ToString("HHmmss")));
         int value = ran.Next(0, 100000);
         return value.ToString().PadRight(10, '0');
     }
@@ -64,9 +76,9 @@ public class Commons
             return false;
         }
     }
-  
-    
-   
+
+
+
 
     public static Boolean isInteger(object value)
     {
