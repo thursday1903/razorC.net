@@ -3,13 +3,7 @@
     Response.Cookies[Session.SessionID].Value = "True";
     Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
     var fbURL = System.Web.VirtualPathUtility.ToAbsolute("~/tinymce/plugins/FileManager/Default.aspx?sessionid=") + Session.SessionID.ToString();
-
-    //List all Layout files
-    DirectoryInfo dirInfo = new DirectoryInfo(Server.MapPath("~/rcLayouts"));
-    FileInfo[] fileInfo = dirInfo.GetFiles("_*.cshtml", SearchOption.TopDirectoryOnly);
-
-    // list all the body pages
-    List<string> pBodies = rcFunctions.pageBodies();
+   
 
     
     var pId = Request["cid"];

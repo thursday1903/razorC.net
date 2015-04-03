@@ -59,9 +59,10 @@
         }
         catch(Exception ex) {
             errMSG = Constants_.UPDATE_TRANSACTION_FAIL;
-        }        
+        }
+        Response.Redirect("Index");        
     }
-    Response.Redirect("Index");
+   
     
 
     Commons.releaseDBConnecttion(db);

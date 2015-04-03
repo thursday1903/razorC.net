@@ -19,4 +19,10 @@ public class FSCEnum
         Fixed = 0,
         Transhipments = 1
     }
+
+    public enum AdminType
+    {
+        Account = 0,
+        SubAccount = 1
+    }
 }

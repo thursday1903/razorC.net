@@ -11,22 +11,37 @@
         var up = Request["uPwd"].Trim();
 
 
-        var db = Database.Open("razorC");
+        var db = Database.Open("Checking_Master");
 
-        String password = helper.md5(up);       
-        var sqlSelect = "Select * from rc_Login where rcUser=@0 and rcPwd=@1";
-        var data = db.QuerySingle(sqlSelect, un, up);
+        String password = helper.md5(up);
+        var sqlSelect = "Select [Admin_Id] " +
+        ",[Password]" +
+        ",[Active]" +
+        ",[Account_Id]" +
+        ",[Account_Type]" +
+        ",[Username]" +
+        ",Id_Country from Tbl_Admins_ t1 inner join Accounting t2 on t1.Account_Id = t2.Id_Accounting where Username=@0 and Password=@1";
+        var data = db.QuerySingle(sqlSelect, un, password);
 
         if (data != null)
         {
-            FormsAuthentication.RedirectFromLoginPage(un, false);
+            UserLogin login = new UserLogin();
+            login.UserId = data.Admin_Id;
+            login.Username = un;
+            login.Active = data.Active;
+            login.AccountId = data.Account_Id;
+            login.FromCountry = data.Id_Country;
+            login.Accounttype = data.Account_Type;
 
+            Session.Add("loginData", login);
+            FormsAuthentication.RedirectFromLoginPage(un, false);
         }
         else
         {
             message = "No user found";
-        }      
-    }    
+        }
+        
+    }
 }
 <!DOCTYPE html>
 <html>
@@ -50,16 +65,17 @@
         <div id="top">
             <div class="wrapper">
                 <a href="#" title="" class="logo">
-                    <img src="~/rcAdmin/images/logo.png" alt="" /></a>
+                    <img src="~/rcAdmin/images/logo.png" alt="" />
+                </a>
 
                 <!-- Right top nav -->
                 <div class="topNav">
                     <a href="~/Default" class="top">Back To Your Site</a>
                     @*<ul class="userNav">
-                        <li><a href="#" title="" class="screen"></a></li>
-                        <li><a href="#" title="" class="settings"></a></li>
-                        <li><a href="#" title="" class="logout"></a></li>
-                    </ul>*@
+                            <li><a href="#" title="" class="screen"></a></li>
+                            <li><a href="#" title="" class="settings"></a></li>
+                            <li><a href="#" title="" class="logout"></a></li>
+                        </ul>*@
                 </div>
                 <div class="clear"></div>
             </div>
@@ -69,7 +85,8 @@
             <form method="post" action="">
                 <div class="loginPic">
                     <a href="#" title="">
-                        <img src="../rcAdmin/images/administrator_icon.png" alt="" /></a>
+                        <img src="../rcAdmin/images/administrator_icon.png" alt="" />
+                    </a>
                     <span>Administrator</span>
                     <div class="loginActions">
                         <div><a href="#" title="Change user" class="logleft flip"></a></div>

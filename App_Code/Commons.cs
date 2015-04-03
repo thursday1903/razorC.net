@@ -29,7 +29,7 @@ public class Commons
     {
         Random ran = new Random(1000);
         int value = ran.Next(0, 100000);
-        return value.ToString().PadRight(10, 'A');
+        return value.ToString().PadRight(10, '0');
     }
 
     public static String convertIntoSystemFormat(DateTime input)
@@ -65,6 +65,7 @@ public class Commons
         }
     }
   
+    
    
 
     public static Boolean isInteger(object value)
