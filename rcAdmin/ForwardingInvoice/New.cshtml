@@ -27,13 +27,20 @@
     var Type = Request["Type"] == null ? 0 : int.Parse(Request["Type"]);
     var Pricing = new decimal();
     var Weight = Request["Weight"] == null ? new float() : float.Parse(Request["Weight"]);
+    
     var FSC = 0;
     var Handling_Fee = Request["Handling_Fee"] == null ? new decimal() : decimal.Parse(Request["Handling_Fee"]);
     var Remote_Area_fee = Request["Remote_Area_fee"] == null ? 0 : int.Parse(Request["Remote_Area_fee"]);
     var Address_Changing = Request["Address_Changing"] == null ? 0 : int.Parse(Request["Address_Changing"]);
     var Duty_taxes = Request["Duty_taxes"] == null ? 0 : int.Parse(Request["Duty_taxes"]);
     var Id_Country = Request["Id_Country"] == null ? 0 : int.Parse(Request["Id_Country"]);//nuoc nhan
-    
+
+    var L_Weight = Request["L_Weight"] == null ? new float() : float.Parse(Request["L_Weight"]);
+    var H_Weight = Request["H_Weight"] == null ? new float() : float.Parse(Request["H_Weight"]);
+    var W_Weight = Request["W_Weight"] == null ? new float() : float.Parse(Request["W_Weight"]);
+    var Volumetric_Weight = Commons.volumetricCalculate(H_Weight, L_Weight, W_Weight);
+
+    var Total_Price = new decimal();
     
     //
     if (Id_Forwarding_Service != 0)
@@ -47,6 +54,11 @@
         if(dataZone != null)
         {
             IdZone = dataZone.Id_Forwarding_Zone;
+        }
+        
+        if(Volumetric_Weight.CompareTo(W_Weight)>0)
+        {
+            W_Weight = Volumetric_Weight;
         }
         
         String sqlPrice = "SELECT [Id_Forwarding_Zone] " +
@@ -77,9 +89,11 @@
         if (fscData != null)
         {
             FSC = fscData.FSC;
-            Pricing = Pricing + (Pricing * fscData.FSC) / 100;
+            //Pricing = Pricing;
         }
-
+        Total_Price = priceData + FSC==null?0:FSC + Handling_Fee==null?0:Handling_Fee;
+        
+        
         String sqlHandlingFee = "SELECT [Id_Handing_Fee],[Handling_Fee_Type],[Weight_From],[Weight_To],[Handling_Fee],[Id_Forwarding_Service] FROM  dbo.Handling_Fee WHERE Id_Forwarding_Service = @0" +
         " AND @1 > Weight_From and @1 < Weight_To";
 
@@ -113,10 +127,6 @@
 
     var Id_Forwarding_MABW = Request["Id_Forwarding_MABW"];
 
-    var L_Weight = Request["L_Weight"] == null ? new float() : float.Parse(Request["L_Weight"]);
-    var H_Weight = Request["H_Weight"] == null ? new float() : float.Parse(Request["H_Weight"]);
-    var W_Weight = Request["W_Weight"] == null ? new float() : float.Parse(Request["W_Weight"]);
-    var Volumetric_Weight = Commons.volumetricCalculate(H_Weight, L_Weight, W_Weight);
     var Comments = Request["Comments"];
 
     //Request["Sending_Date"];
@@ -134,9 +144,9 @@
     var forwardingSv = dbcore.Query(sql);
     var forwardingMABW = dbcore.Query(sqlForwardingMabw);
     var countries = dbcore.Query(sqlCountry);
-    var accounting = dbcore.Query(sqlAccounting);
-    var subAccounting = dbcore.Query(sqlSubAccounting);
-    var handlingFee = dbcore.Query(sqlHandingFee);
+    //var accounting = dbcore.Query(sqlAccounting);
+    //var subAccounting = dbcore.Query(sqlSubAccounting);
+    //var handlingFee = dbcore.Query(sqlHandingFee);
     var forwardingStt = dbcore.Query(sqlForwardingStatus);
 
 
@@ -270,17 +280,15 @@
                     </div>
                     <div class="formRow">
                         <div class="grid3"><label for="pMasterPage">Sending Date:</label></div>
-                        <div class="grid9"><input type="text" name="Sending_Date" id="Sending_Date" value="@Sending_Date" maxlength="50" @Validation.For("Sending_Date") /></div>
+                        <div class="grid9" style="width:100px"><input type="text" name="Sending_Date" id="Sending_Date" value="@Sending_Date" maxlength="50" @Validation.For("Sending_Date") /></div>
                         <script>
                             $("#Sending_Date").datepicker();
                         </script>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="formRow">
+
                         <div class="grid3"><label for="pName">Invoice Number:</label></div>
-                        <div class="grid9"><input type="text" name="Original_Invoice_Number" id="Original_Invoice_Number" value="@Original_Invoice_Number" maxlength="50" @Validation.For("pName") /> @Html.ValidationMessage("Original_Invoice_Number")</div>
+                        <div class="grid9" style="width:100px"><input type="text" name="Original_Invoice_Number" id="Original_Invoice_Number" value="@Original_Invoice_Number" maxlength="50" @Validation.For("pName") /> @Html.ValidationMessage("Original_Invoice_Number")</div>
                         <div class="clear"></div>
-                    </div>
+                    </div>                    
                     <div class="formRow">
                         <div class="grid3"><label for="pMasterPage">Countries:</label></div>
                         <div class="grid9">
@@ -355,16 +363,22 @@
                         <div class="clear"></div>
                     </div>
                     <div class="formRow">
+                        <div class="grid3"><label for="pMasterPage">Total Price:</label></div>
+                        <div class="grid9" style="width:50px"><input type="text" name="Total_Price" id="Total_Price" value="@Total_Price" maxlength="50" @Validation.For("Total_Price") /></div>                        
+                        <div class="clear"></div>
+                    </div>
+                    <div class="formRow">
                         <div class="grid3"><label for="pName">RemoteAreafee:</label></div>
                         <div class="grid9" style="width:50px"><input type="text" name="Remote_Area_fee" id="Remote_Area_fee" value="@Remote_Area_fee" maxlength="50" @Validation.For("Remote_Area_fee") /> </div>
 
                         <div class="grid3"><label for="pName">Address Changing:</label></div>
                         <div class="grid9" style="width:50px"><input type="text" name="Address_Changing" id="Address_Changing" value="@Address_Changing" maxlength="50" @Validation.For("Address_Changing") /> </div>
-
+                        <div class="clear"></div>
                     </div>
                     <div class="formRow">
                         <div class="grid3"><label for="pName">Duty taxes:</label></div>
                         <div class="grid9" style="width:50px"><input type="text" name="Duty_taxes" id="Duty_taxes" value="@Duty_taxes" maxlength="50" @Validation.For("Duty_taxes") /> </div>
+                        <div class="clear"></div>
                     </div>
                     <div class="formRow">
 

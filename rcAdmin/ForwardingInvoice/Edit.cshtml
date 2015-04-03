@@ -19,46 +19,109 @@
     var data = dbcore.QuerySingle(sqlInnit, pId);
 
     ///Khai bao bien
-    var Original_Invoice_Number = data.Original_Invoice_Number;
-    var Type = data.Type;
-    var Weight = data.Weight;
-    var Id_Country = data.Id_Country;
+    var Original_Invoice_Number = Request["Original_Invoice_Number"] == null ? data.Original_Invoice_Number : Request["Original_Invoice_Number"];
+    var Type = Request["Type"] == null ? data.Type : int.Parse(Request["Type"]);
+    var Weight = Request["Weight"] == null ? data.Weight : float.Parse(Request["Weight"]);
+    var Id_Country = Request["Id_Country"] == null ? data.Id_Country : int.Parse(Request["Id_Country"]);
+    var Id_Forwarding_Service = Request["Id_Forwarding_Service"] == null ? data.Id_Forwarding_Service : int.Parse(Request["Id_Forwarding_Service"]);
     var Pricing = data.Pricing;
     var FSC = data.FSC;
     var VAT = data.VAT;
-    var Consignor_Name = data.Consignor_Name;
-    var Consignor_Telephone = data.Consignor_Telephone;
-    var Consignee_Telephone = data.Consignee_Telephone;
-    var Id_Forwarding_Service = data.Id_Forwarding_Service;
-    var Contents = data.Contents;
+    var Consignor_Name = Request["Consignor_Name"] == null ? data.Consignor_Name : Request["Consignor_Name"];
+    var Consignor_Telephone = Request["Consignor_Telephone"] == null ? data.Consignor_Name : Request["Consignor_Telephone"];
+    var Consignee_Telephone = Request["Consignee_Telephone"] == null ? data.Consignor_Name : Request["Consignee_Telephone"];
+    var Consignee_Name = Request["Consignee_Name"] == null ? data.Consignee_Name : Request["Consignee_Name"];
+    var Contents = Request["Contents"] == null ? data.Contents : Request["Contents"];
+
     var Id_Accounting = data.Id_Accounting;
     var Id_Sub_Accounting = data.Id_Sub_Accounting;
     var Id_Forwarding_MABW = data.Id_Forwarding_MABW;
     var Handling_Fee = data.Handling_Fee;
-    var L_Weight = data.L_Weight;
-    var H_Weight = data.H_Weight;
-    var W_Weight = data.W_Weight;
+    var L_Weight = Request["L_Weight"] == null ? data.L_Weight : float.Parse(Request["L_Weight"]) ;
+    var H_Weight = Request["H_Weight"] == null ? data.L_Weight : float.Parse(Request["H_Weight"]); ;
+    var W_Weight = Request["W_Weight"] == null ? data.L_Weight : float.Parse(Request["W_Weight"]); ;
     var Volumetric_Weight = data.Volumetric_Weight;
-    var Comments = data.Comments;
-    var Sending_Date_ = data.Sending_Date == null ? DateTime.Now : data.Sending_Date;
-    var Id_Forwarding_Status = data.Id_Forwarding_Status;
-    var Ref_Invoice_Number = data.Ref_Invoice_Number;
-    var Consignee_Name = data.Consignee_Name;
+    var Comments = Request["Comments"] == null ? data.Comments : Request["Comments"]; ;
+    var Sending_Date_ = Request["Sending_Date"] == null ? data.Sending_Date : DateTime.Parse(Request["Sending_Date"]);
+
+    var Id_Forwarding_Status = Request["Id_Forwarding_Status"] == null ? data.Id_Forwarding_Status : float.Parse(Request["Id_Forwarding_Status"]);
+    var Ref_Invoice_Number = Request["Ref_Invoice_Number"] == null ? data.Ref_Invoice_Number : Request["Ref_Invoice_Number"]; ;
+    
     var Sending_Date = Commons.convertIntoSystemFormat(Sending_Date_);
 
+    if (Id_Forwarding_Service != 0)
+    {
+        String sqlZone = "SELECT [Id_Forwarding_Country],[Id_Forwarding_Service],[Id_Forwarding_Zone],[Id_Country],[Comment] " +
+        "FROM [Forwarding_Countries] " +
+        "WHERE Id_Country = @0 AND Id_Forwarding_Service = @1";
+
+        var dataZone = dbcore.QuerySingle(sqlZone, Id_Country, Id_Forwarding_Service);
+        var IdZone = 0;
+        if (dataZone != null)
+        {
+            IdZone = dataZone.Id_Forwarding_Zone;
+        }
+
+        //Kiem tra viec tinh trong luong theo chieu dai, rong, cao cua buu pham co lo'n hon khoi luong du tinh khong
+        if (Volumetric_Weight.CompareTo(W_Weight) > 0)
+        {
+            W_Weight = Volumetric_Weight;
+        }
+        
+        String sqlPrice = "SELECT [Id_Forwarding_Zone] " +
+        ",[Id_Forwarding_Service],[Type],[Weight_From],[Weight_To]" +
+        ",[Pricing],[Id_Forwarding_Quotation] FROM [Forwarding_Quotation] " +
+        "WHERE Id_Forwarding_Service = @0 and Type = @1 " +
+        "and @2 >= Weight_From and @2 <= Weight_To and Id_Forwarding_Zone=@3";
+
+        var priceData = dbcore.QuerySingle(sqlPrice, Id_Forwarding_Service, Type, Weight, IdZone);
+
+        if (priceData != null)
+        {
+            Pricing = priceData.Pricing;
+        }
+
+        String sqlFindFSC = "SELECT [Id_Forwarding_FSC]" +
+        ",[Id_Forwarding_Service]" +
+        ",[FSC]" +
+        ",[VAT]" +
+        ",[From_Date]" +
+        ",[To_Date]" +
+        "FROM [Forwarding_FSC]" +
+        "WHERE Id_Forwarding_Service = @0 AND " +
+        "datediff(day,From_Date,@1)>0" +
+        "and datediff(day,To_Date,@1) < 0";
+
+        var fscData = dbcore.QuerySingle(sqlFindFSC, Id_Forwarding_Service, Sending_Date);
+        if (fscData != null)
+        {
+            FSC = fscData.FSC;
+            Pricing = Pricing + (Pricing * fscData.FSC) / 100;
+        }
+
+        String sqlHandlingFee = "SELECT [Id_Handing_Fee],[Handling_Fee_Type],[Weight_From],[Weight_To],[Handling_Fee],[Id_Forwarding_Service] FROM  dbo.Handling_Fee WHERE Id_Forwarding_Service = @0" +
+        " AND @1 > Weight_From and @1 < Weight_To";
+
+        var handlingFeeData = dbcore.QuerySingle(sqlHandlingFee, Id_Forwarding_Service, Weight);
+        if (handlingFeeData != null)
+        {
+            Handling_Fee = handlingFeeData.Handling_Fee;
+        }
+    }
+    
     String sql = "select * from Forwarding_Service";
     String sqlForwardingMabw = "select * from Forwarding_MAWB";
     String sqlCountry = "select * from dbo.Countries";
-    String sqlAccounting = "select * from dbo.Accounting";
-    String sqlSubAccounting = "select * from dbo.Sub_Accounting";
+    //String sqlAccounting = "select * from dbo.Accounting";
+    //String sqlSubAccounting = "select * from dbo.Sub_Accounting";
     String sqlHandingFee = "select * from dbo.Handling_Fee";
     String sqlForwardingStatus = "select * from dbo.Forwarding_Status";
     var forwardingSv = dbcore.Query(sql);
     var forwardingMABW = dbcore.Query(sqlForwardingMabw);
     var countries = dbcore.Query(sqlCountry);
-    var accounting = dbcore.Query(sqlAccounting);
-    var subAccounting = dbcore.Query(sqlSubAccounting);
-    var handlingFee = dbcore.Query(sqlHandingFee);
+    //var accounting = dbcore.Query(sqlAccounting);
+    //var subAccounting = dbcore.Query(sqlSubAccounting);
+    //var handlingFee = dbcore.Query(sqlHandingFee);
     var forwardingStt = dbcore.Query(sqlForwardingStatus);
     if (IsPost)
     {
@@ -95,13 +158,13 @@
             + "VAT=@5,Consignor_Name=@6,Consignor_Telephone=@7,Consignee_Telephone=@8,Id_Forwarding_Service=@9,"
             + "Contents=@10,Id_Accounting=@11,Id_Sub_Accounting=@12,Id_Forwarding_MABW=@13,Handling_Fee=@14,"
             + "L_Weight=@15,H_Weight=@16,W_Weight=@17,Volumetric_Weight=@18,Comments=@19,Sending_Date=convert(datetime,@20,101),Id_Forwarding_Status=@21,"
-            + "Ref_Invoice_Number=@22,Consignee_Name=@23 WHERE Id_Forwarding_Invoice=@24";
+            + "Ref_Invoice_Number=@22,Consignee_Name=@23,Original_Invoice_Number=@24 WHERE Id_Forwarding_Invoice=@25";
 
             try
             {
                 dbcore.Execute(sqlUpdate, Type, Weight, Id_Country, Pricing, FSC, VAT, Consignor_Name, Consignor_Telephone, Consignee_Telephone
                     , Id_Forwarding_Service, Contents, Id_Accounting, Id_Sub_Accounting, Id_Forwarding_MABW, Handling_Fee, L_Weight, H_Weight, W_Weight, Volumetric_Weight,
-                    Comments, Sending_Date, Id_Forwarding_Status, Ref_Invoice_Number, Consignee_Name, pId);
+                    Comments, Sending_Date, Id_Forwarding_Status, Ref_Invoice_Number, Consignee_Name, Original_Invoice_Number,pId);
                 errMSG = Constants_.UPDATE_SUCCESS;
             }
             catch (Exception e)
@@ -188,8 +251,7 @@
                 alert('Weight must be greater than 0');
                 document.getElementById("Weight").focus();
             }
-            else {
-                alert('before submit');
+            else {                
                 form.submit();
             }
         };
@@ -208,15 +270,26 @@
                 </div>
                 <div class="formRow">
                     <div class="grid3"><label for="pMasterPage">Sending Date:</label></div>
-                    <div class="grid9"><input type="text" readonly="readonly" name="Sending_Date" id="Sending_Date" value="@Sending_Date" maxlength="50" @Validation.For("Sending_Date") /></div>
-                    <script>
-                        $("#Sending_Date").datepicker();
-                    </script>
+                    <div class="grid9"><input type="text" readonly="readonly" name="Sending_Date" id="Sending_Date" value="@Sending_Date" maxlength="50" @Validation.For("Sending_Date") /></div>                  
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
                     <div class="grid3"><label for="pName">Invoice Number:</label></div>
                     <div class="grid9"><input type="text" name="Original_Invoice_Number" id="Original_Invoice_Number" value="@Original_Invoice_Number" maxlength="50" @Validation.For("pName") /> @Html.ValidationMessage("Original_Invoice_Number")</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Countries:</label></div>
+                    <div class="grid9">
+                        <div class="selector">
+                            <select id="Id_Country" class="selectReq" onchange="requireWeight(this.form);" name="Id_Country" @Validation.For("Id_Country")>
+                                @foreach (var f in countries)
+                                {
+                                    <option value="@f.Id_Country" @if (Id_Country == f.Id_Country) { <text> selected="selected" </text>                          }>@f.Country_Name</option>
+                                }
+                            </select>  @Html.ValidationMessage("Id_Country")
+                        </div>
+                    </div>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
@@ -261,21 +334,7 @@
                     <div class="grid3"><label for="pMasterPage">Volumetric Weight:</label></div>
                     <div class="grid9" style="width:50px"><input type="text" name="Volumetric_Weight" readonly="readonly" id="Volumetric_Weight" value="@Volumetric_Weight" maxlength="50" @Validation.For("Volumetric_Weight") /></div>
                     <div class="clear"></div>
-                </div>
-                <div class="formRow">
-                    <div class="grid3"><label for="pMasterPage">Countries:</label></div>
-                    <div class="grid9">
-                        <div class="selector">
-                            <select id="Id_Country" class="selectReq" name="Id_Country" @Validation.For("Id_Country")>
-                                @foreach (var f in countries)
-                                {
-                                    <option value="@f.Id_Country" @if (Id_Country == f.Id_Country) { <text> selected="selected" </text>                        }>@f.Country_Name</option>
-                                }
-                            </select>  @Html.ValidationMessage("Id_Country")
-                        </div>
-                    </div>
-                    <div class="clear"></div>
-                </div>
+                </div>                
                 <div class="formRow">
                     <div class="grid3"><label for="pName">Price:</label></div>
                     <div class="grid9"><input type="text" name="Pricing" id="Pricing" value="@Pricing" maxlength="50" @Validation.For("Pricing") />  @Html.ValidationMessage("Pricing")</div>

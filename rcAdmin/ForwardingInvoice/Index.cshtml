@@ -13,14 +13,16 @@
     }
 
     var Original_Invoice_Number = Request["Original_Invoice_Number"];
-    var qStr = "Select * from Forwarding_Invoice order by Id_Forwarding_Invoice desc";
+    var qStr = "Select * from Forwarding_Invoice t1 inner join Forwarding_MAWB t2 on t1.Id_Forwarding_MABW=t2.Id_Forwarding_MAWB inner join dbo.Forwarding_Service t3 on t1.Id_Forwarding_Service = t3.Id_Forwarding_Service " +
+        "inner join Countries t4 on t1.Id_Country = t4.Id_Country order by Id_Forwarding_Invoice desc";
 
     var grid = new WebGrid(source: null,
                                 rowsPerPage: 20);
 
     if (Original_Invoice_Number != null)
     {
-        qStr = "Select * from Forwarding_Invoice where Original_Invoice_Number = @0 order by Id_Forwarding_Invoice desc";
+        qStr = "Select * from Forwarding_Invoice t1 inner join Forwarding_MAWB t2 on t1.Id_Forwarding_MABW=t2.Id_Forwarding_MAWB inner join dbo.Forwarding_Service t3 on t1.Id_Forwarding_Service = t3.Id_Forwarding_Service " +
+        "inner join Countries t4 on t1.Id_Country = t4.Id_Country where Original_Invoice_Number = @0 order by Id_Forwarding_Invoice desc";
 
         var data = db.Query(qStr, Original_Invoice_Number);
 
@@ -57,8 +59,13 @@
                     grid.Column(format: @<a href="~/rcAdmin/ForwardingInvoice/Edit?id=@item.Id_Forwarding_Invoice" title="Edit Page">
     <img src="images/edit_page.gif" alt="Edit" class="rcGC" />
 </a>),
-                                         grid.Column("Original_Invoice_Number", "Original Forwarding Invoice", style: "rcGB"),
-                                                              grid.Column("Sending_Date", format: @<i>@item.Sending_Date</i>),
+grid.Column("Forwarding_MAWB_Number", "MAWB Number", style: "rcGB"),
+grid.Column("Original_Invoice_Number", "Original Forwarding Invoice", style: "rcGB"),
+grid.Column("Forwarding_Service_Name", "Forwarding ServiceName", style: "rcGB"),
+grid.Column("Country_Name", "Country Name", style: "rcGB"),
+                                          grid.Column("Weight", "Weight", style: "rcGB"),
+                                          grid.Column("Pricing", "Price", style: "rcGB"),
+grid.Column("Sending_Date", format: @<i>@item.Sending_Date</i>),
                     grid.Column(format: @<a href="~/rcAdmin/ForwardingInvoice/Index?id=@item.Id_Forwarding_Invoice" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
     <img src="images/delete.gif" alt="Delete" class="rcGC" />
 </a>)

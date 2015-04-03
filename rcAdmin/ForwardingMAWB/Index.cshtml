@@ -71,12 +71,12 @@
                 alternatingRowStyle: "alt",
                 footerStyle: "pgr",
                 columns: grid.Columns(
-
-                                        grid.Column("Forwarding_MAWB_Number", "Forwarding MAWB Number", style: "rcGB"),
-                                        grid.Column("Sending_Date", "Sending date", style: "rcGB"),
-                                        grid.Column("Number_Of_Shipments", "Number Of Shipments", style: "rcGB"),
-                                        grid.Column("Number_Of_Bags", "Number Of Bags", style: "rcGB"),
-                                                             grid.Column("Total_Weight", "Total_Weight", style: "rcGB"),
+                                grid.Column("Sending_Date", "Sending date", style: "rcGB"),
+                                grid.Column("Forwarding_MAWB_Number", "Forwarding MAWB Number", style: "rcGB"),                                        
+                                grid.Column("Number_Of_Shipments", "Number Of Shipments", style: "rcGB"),
+                                grid.Column("Number_Of_Bags", "Number Of Bags", style: "rcGB"),
+                                grid.Column("Total_Weight", "Total_Weight", style: "rcGB"),
+                                grid.Column("Clearance_Fee", "Clearance Fee", style: "rcGB"),
                                                       grid.Column(format: @<a href="~/rcAdmin/ForwardingMAWB/Edit?id=@item.Id_Forwarding_MAWB" title="Edit Page">
                                                                 <img src="../images/edit_page.gif" alt="Edit" class="rcGC" />
                                                             </a>),
