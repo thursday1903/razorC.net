@@ -56,34 +56,41 @@
 @section menu{
     @RenderPage("../_Menu.cshtml")
 }
-<fieldset>
-    <legend>All Forwarding FSC | <a href="~/rcAdmin/ForwardingMAWB/New">Create Forwarding MAWB</a> </legend>    
-    <div class="searchLine">
-        <form action="" method="POST">
-            <input type="text" id="search" name="searchAcc" value="" placeholder="Enter Account Name ..." class="ac ui-autocomplete-input" />
-            <button type="submit" value="Search" title="Search"><span class="icos-search"></span></button>
-        </form>
-    </div>
-    <div id="grid">
-        @grid.GetHtml(
-                tableStyle: "rcGrid",
-                headerStyle: "head",
-                alternatingRowStyle: "alt",
-                footerStyle: "pgr",
-                columns: grid.Columns(
+<div class="fluid">
+    <fieldset>
+        <div class="widget">
+            <div class="whead">
+                <h6>All Forwarding FSC | <a href="~/rcAdmin/ForwardingMAWB/New">Create Forwarding MAWB</a> </h6>  
+                <div class="clear"></div>
+            </div>  
+            <div class="searchLine">
+                <form action="" method="POST">
+                    <input type="text" id="search" name="searchAcc" value="" placeholder="Enter Account Name ..." class="ac ui-autocomplete-input" />
+                    <button type="submit" value="Search" title="Search"><span class="icos-search"></span></button>
+                </form>
+            </div>
+            <div id="grid" class="widget">
+                @grid.GetHtml(
+                        tableStyle: "tDark",
+                        headerStyle: "",
+                        alternatingRowStyle: "alt",
+                        footerStyle: "pgr",
+                        columns: grid.Columns(
 
-                                        grid.Column("Forwarding_MAWB_Number", "Forwarding MAWB Number", style: "rcGB"),
-                                        grid.Column("Sending_Date", "Sending date", style: "rcGB"),
-                                        grid.Column("Number_Of_Shipments", "Number Of Shipments", style: "rcGB"),
-                                        grid.Column("Number_Of_Bags", "Number Of Bags", style: "rcGB"),
-                                                             grid.Column("Total_Weight", "Total_Weight", style: "rcGB"),
-                                                      grid.Column(format: @<a href="~/rcAdmin/ForwardingMAWB/Edit?id=@item.Id_Forwarding_MAWB" title="Edit Page">
-                                                                <img src="../images/edit_page.gif" alt="Edit" class="rcGC" />
-                                                            </a>),
- grid.Column(format: @<a href="~/rcAdmin/ForwardingMAWB/Index?id=@item.Id_Forwarding_MAWB" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
-    <img src="../images/delete.gif" alt="Delete" class="rcGC" />
-</a>)
-                      )
-                  )
-    </div>
-</fieldset>
+                                                grid.Column("Forwarding_MAWB_Number", "Forwarding MAWB Number", style: "rcGB"),
+                                                grid.Column("Sending_Date", "Sending date", style: "rcGB"),
+                                                grid.Column("Number_Of_Shipments", "Number Of Shipments", style: "rcGB"),
+                                                grid.Column("Number_Of_Bags", "Number Of Bags", style: "rcGB"),
+                                                                     grid.Column("Total_Weight", "Total_Weight", style: "rcGB"),
+                                                              grid.Column(format: @<a href="~/rcAdmin/ForwardingMAWB/Edit?id=@item.Id_Forwarding_MAWB" title="Edit Page">
+                                                                        <img src="../images/edit_page.gif" alt="Edit" class="rcGC" />
+                                                                    </a>),
+                                                 grid.Column(format: @<a href="~/rcAdmin/ForwardingMAWB/Index?id=@item.Id_Forwarding_MAWB" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
+                                                    <img src="../images/delete.gif" alt="Delete" class="rcGC" />
+                                                </a>)
+                              )
+                          )
+            </div>
+        </div>
+    </fieldset>
+</div>

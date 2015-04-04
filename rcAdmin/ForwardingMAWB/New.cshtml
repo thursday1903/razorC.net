@@ -63,12 +63,12 @@
     @RenderPage("../_Menu.cshtml")
 }
 
-@if (!errMSG.IsEmpty())
+@*@if (!errMSG.IsEmpty())
 {
     <div>
         @Html.Raw(errMSG)
     </div>
-}
+}*@
 <head>
     <link rel="stylesheet" href="~/rcAdmin/css/datepicker/jquery-ui.css" />
     <script src="~/rcAdmin/css/datepicker/jquery.min.js"></script>
@@ -80,68 +80,81 @@
         if (charCode != 46 && charCode > 31
           && (charCode < 48 || charCode > 57))
             return false;
-        
+    
         return true;
     }
 </script>
-
-<form method="post" action="">
-    <fieldset>
-        <div class="widget">
-            <div class="whead">
-                <h6> New Forwarding MAWB | <a href="~/rcAdmin/ForwardingMAWB/Index">All Forwarding MAWB</a> </h6>
-                <div class="clear"></div>
-            </div>
-            <div class="formRow">
-                <div class="grid3"><label for="pMasterPage">Forwarding MAWB Number:</label>  </div>
-                <div class="grid9"><input type="text" name="mawbNumber" id="mawbNumber" value="@mawbNumber" maxlength="100" @Validation.For("mawbNumber") /></div>
-                <div class="clear"></div>
-            </div>
-            <div class="formRow">
-                <div class="grid3">
-                    <label for="pMasterPage">Sending Date:</label></div>
-                <div class="grid9">
-                    <input type="text" name="sendingDate" id="sendingDate" readonly="readonly" value="@sendingDate" maxlength="100" @Validation.For("sendingDate") />
-                    <script>
-                        $("#sendingDate").datepicker();
-                    </script>
+<div class="fluid">
+    <form method="post" action="">
+        <fieldset>
+            <div class="widget">
+                <div class="whead">
+                    <h6> New Forwarding MAWB | <a href="~/rcAdmin/ForwardingMAWB/Index">All Forwarding MAWB</a> </h6>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="pMasterPage">Forwarding MAWB Number:</label>
                     </div>
-                <div class="clear"></div>
+                    <div class="grid9"><input type="text" name="mawbNumber" id="mawbNumber" value="@mawbNumber" maxlength="100" @Validation.For("mawbNumber") /></div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="pMasterPage">Sending Date:</label>
+                    </div>
+                    <div class="grid9">
+                        <input type="text" name="sendingDate" id="sendingDate" readonly="readonly" value="@sendingDate" maxlength="100" @Validation.For("sendingDate") />
+                        <script>
+                            $("#sendingDate").datepicker();
+                        </script>
+                    </div>
+                    <div class="clear"></div>
                 </div>
 
-            <div class="formRow">
-                <div class="grid3">
-                    <label for="pMasterPage">Number of shipment:</label></div>
-                <div class="grid9">
-                    <input type="text" name="numOfShipments" id="numOfShipments" onkeypress="return isNumberKey(event)" value="@numOfShipments" maxlength="100" @Validation.For("numOfShipments") /></div>
-                <div class="clear"></div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="pMasterPage">Number of shipment:</label>
+                    </div>
+                    <div class="grid9">
+                        <input type="text" name="numOfShipments" id="numOfShipments" onkeypress="return isNumberKey(event)" value="@numOfShipments" maxlength="100" @Validation.For("numOfShipments") />
+                    </div>
+                    <div class="clear"></div>
                 </div>
 
-            <div class="formRow">
-                <div class="grid3">
-                    <label for="pMasterPage">Number of bags:</label></div>
-                <div class="grid9">
-                    <input type="text" name="numOfBags" id="numOfBags" onkeypress="return isNumberKey(event)" value="@numOfBags" maxlength="100" @Validation.For("numOfBags") /></div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="pMasterPage">Number of bags:</label>
+                    </div>
+                    <div class="grid9">
+                        <input type="text" name="numOfBags" id="numOfBags" onkeypress="return isNumberKey(event)" value="@numOfBags" maxlength="100" @Validation.For("numOfBags") />
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="pMasterPage">Total weight:</label>
+                    </div>
+                    <div class="grid9">
+                        <input type="text" name="totalWeight" id="totalWeight" value="@totalWeight" maxlength="100" @Validation.For("totalWeight") />
+                    </div>
+                    <div class="clear"></div>
+                </div>
                 <div class="clear"></div>
+                <div class="formRow">
+                    <div class="grid3">
+                        <label for="pMasterPage">Clearance_Fee:</label>
+                    </div>
+                    <div class="grid9">
+                        <input type="text" name="clearanceFee" id="clearanceFee" value="@clearanceFee" maxlength="100" @Validation.For("clearanceFee") />
+                    </div>
+                    <div class="clear"></div>
                 </div>
-            <div class="formRow">
-                <div class="grid3">
-                    <label for="pMasterPage">Total weight:</label></div>
-                <div class="grid9">
-                    <input type="text" name="totalWeight" id="totalWeight" value="@totalWeight" maxlength="100" @Validation.For("totalWeight") /></div>
+
+                <div class="formRow">
+                    <input type="submit" value="Insert" title="Insert" class="buttonM bBlue formSubmit" />
+                    <div class="clear"></div>
                 </div>
-            <div class="clear"></div>
-            <div class="formRow">
-                <div class="grid3">
-                    <label for="pMasterPage">Clearance_Fee:</label></div>
-                <div class="grid9">
-                    <input type="text" name="clearanceFee" id="clearanceFee" value="@clearanceFee" maxlength="100" @Validation.For("clearanceFee") /></div>
-                <div class="clear"></div>
-                </div>
-                
-                <p class="form-actions">
-                    <input type="submit" value="Insert" title="Insert" />
-                </p>
             </div>
-    </fieldset>
-</form>
+        </fieldset>
+    </form>
+</div>
