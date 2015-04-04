@@ -93,3 +93,8 @@ window.onresize = function () {
     contentWidth = w - 300;
     $("#content").css("width", contentWidth + "px");
 };
+
+/* Odd even Row color */
+$(document).ready(function() {
+    $(".tDark tr:odd").css("background", "rgb(232, 232, 232)");
+});

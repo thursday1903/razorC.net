@@ -111,6 +111,7 @@
     var Consignor_Name = Request["Consignor_Name"];
     var Consignor_Telephone = Request["Consignor_Telephone"];
     var Consignee_Telephone = Request["Consignee_Telephone"];
+    var Forwarding_MAWB_Number = Request["Forwarding_MAWB_Number"];
 
     var Contents = Request["Contents"];
     var Id_Accounting = "";
@@ -182,17 +183,18 @@
                 Ref_Invoice_Number = Request["Ref_Invoice_Number"];
                 Consignee_Name = Request["Consignee_Name"];
                 //clean pName - it is not passed as parameter :(
+                Forwarding_MAWB_Number = Request["Forwarding_MAWB_Number"];
 
                 String insertSql = "INSERT INTO [dbo].[Forwarding_Invoice]([Original_Invoice_Number],[Type],[Weight],[Id_Country],[Pricing]" +
                             ",[FSC],[VAT],[Consignor_Name],[Consignor_Telephone],[Consignee_Telephone],[Id_Forwarding_Service],[Contents]" +
                    ",[Id_Accounting],[Id_Sub_Accounting],[Id_Forwarding_MABW] ,[Handling_Fee],[L_Weight],[H_Weight],[W_Weight],[Volumetric_Weight]" +
-                   ",[Comments],[Id_Forwarding_Status],[Ref_Invoice_Number],[Consignee_Name],[Id_Country_From],[Sending_Date])" +
+                   ",[Comments],[Id_Forwarding_Status],[Ref_Invoice_Number],[Consignee_Name],[Id_Country_From],[Sending_Date],Forwarding_MAWB_Number)" +
                     "VALUES" +
-                   "(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,@24,getdate())";
+                   "(@0,@1,@2,@3,@4,@5,@6,@7,@8,@9,@10,@11,@12,@13,@14,@15,@16,@17,@18,@19,@20,@21,@22,@23,@24,convert(datetime,@25,101),@26)";
                 try
                 {
                     dbcore.Execute(insertSql, Original_Invoice_Number, Type, Weight, Id_Country, Pricing, FSC, VAT, Consignor_Name, Consignor_Telephone, Consignee_Telephone, Id_Forwarding_Service, Contents,
-                        Id_Accounting, Id_Sub_Accounting, Id_Forwarding_MABW, Handling_Fee, L_Weight, H_Weight, W_Weight, Volumetric_Weight, Comments, Id_Forwarding_Status, Ref_Invoice_Number, Consignee_Name, Id_Country_From);
+                        Id_Accounting, Id_Sub_Accounting, Id_Forwarding_MABW, Handling_Fee, L_Weight, H_Weight, W_Weight, Volumetric_Weight, Comments, Id_Forwarding_Status, Ref_Invoice_Number, Consignee_Name, Id_Country_From,Sending_Date,Forwarding_MAWB_Number);
                     errMSG = Constants_.UPDATE_SUCCESS;
                 }
                 catch (Exception e)
@@ -254,7 +256,13 @@
                 alert('Weight must be greater than 0');
                 document.getElementById("Weight").focus();
             }
-            else {                
+            else {
+                var service = $("#Id_Forwarding_Service>option:selected").html();
+                alert(service);
+                if (service == "DHL")
+                {
+                    document.getElementById('Ref_Invoice_Number').readOnly = true;
+                }
                 form.submit();
             }
         };
@@ -447,7 +455,8 @@
                         </div>*@
                     <div class="formRow">
                         <div class="grid3"><label for="pMasterPage">Forwarding MAWB:</label></div>
-                        <div class="grid9">
+                        <div class="grid9"><input type="text" name="Forwarding_MAWB_Number" id="Forwarding_MAWB_Number" value="@Forwarding_MAWB_Number" maxlength="50" @Validation.For("Forwarding_MAWB_Number") /></div>
+                        @*<div class="grid9">
                             <div class="selector">
                                 <select id="Id_Forwarding_MABW" class="selectReq" name="Id_Forwarding_MABW" @Validation.For("Id_Forwarding_MABW")>
                                     @foreach (var f in forwardingMABW)
@@ -456,7 +465,7 @@
                                     }
                                 </select> @Html.ValidationMessage("pMasterPage")
                             </div>
-                        </div>
+                        </div>*@
                         <div class="clear"></div>
                     </div>                   
                     <div class="formRow">
