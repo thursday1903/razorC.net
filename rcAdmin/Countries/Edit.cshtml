@@ -1,4 +1,5 @@
 ﻿@{
+    Page.Title = "Edit Country";
     //fileManager
     Response.Cookies[Session.SessionID].Value = "True";
     Response.Cookies[Session.SessionID].Expires = DateTime.Now.AddHours(3);
@@ -95,11 +96,11 @@
                 </div>
                 @*@errMSG
                 Edited: @pEditDate*@
-                <div class="formRow">
+                @*<div class="formRow">
                     <div class="grid3"><label for="pName">Id Country:</label></div>
                     <div class="grid9"><input type="text" name="idCountry" id="idCountry" value="@idCountry" readonly="readonly" maxlength="100" /></div>
                     <div class="clear"></div>
-                </div>
+                </div>*@
                 <div class="formRow">
                     <div class="grid3"><label for="pName">Country name:</label></div>
                     <div class="grid9"><input type="text" name="pCountryName" id="pCountryName" value="@pCountryName" maxlength="100" /> @*<img src="images/help.gif" alt="help" title="Name of the page. You CANNOT change this." />*@</div>

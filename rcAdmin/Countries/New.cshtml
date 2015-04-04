@@ -3,6 +3,7 @@
     Page.Title = "Create new Country";
     var forwardingSvName = "";
     var pName = "";   
+    var comment = "";
     var pMasterPage = "";
     var pEditDate = DateTime.Now;
     var pBody = true;
@@ -23,7 +24,7 @@
 
 
     forwardingSvName = Request["countryName"];
-
+    comment = Request["comment"];
     var db = Database.Open("Checking_Master");
     
     if (IsPost && Validation.IsValid()){
@@ -35,8 +36,8 @@
         }
         else
         {
-            String sql = "insert into dbo.countries (Country_Name,Created_Date) values (@0, getdate())";
-            db.Execute(sql, forwardingSvName);       
+            String sql = "insert into dbo.countries (Country_Name, Comments, Created_Date) values (@0, @1 getdate())";
+            db.Execute(sql, forwardingSvName, comment);       
         }                
     }    
 }
@@ -65,6 +66,11 @@
                 <div class="formRow">
                     <div class="grid3"><label for="pName">Country Name:</label></div>
                     <div class="grid9"><input type="text" name="countryName" id="countryName" value="@pName" maxlength="100" @Validation.For("countryName") /> @Html.ValidationMessage("countryName")  </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="formRow">
+                    <div class="grid3"><label for="comment">Comments:</label></div>
+                    <div class="grid9"><input type="text" name="comment" id="comment" value="@comment" maxlength="50" @Validation.For("comment") /> @Html.ValidationMessage("countryName") </div>
                     <div class="clear"></div>
                 </div>
                 <div class="formRow">
