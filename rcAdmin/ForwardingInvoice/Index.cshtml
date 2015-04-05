@@ -43,33 +43,42 @@
 @section menu{
     @RenderPage("../_Menu.cshtml")
 }
-<fieldset>
-    <legend>All Pages | <a href="~/rcAdmin/ForwardingInvoice/New">Create Forwarding Invoice</a> </legend>
-    <form action="" method="POST">
-        <input type="text" id="Original_Invoice_Number" name="Original_Invoice_Number" value="" /> <input type="submit" value="Search" title="Search" />
-    </form>
-    
-    <div id="grid">
-        @grid.GetHtml(
-                tableStyle: "rcGrid",
-                headerStyle: "head",
-                alternatingRowStyle: "alt",
-                footerStyle: "pgr",
-                columns: grid.Columns(
-                    grid.Column(format: @<a href="~/rcAdmin/ForwardingInvoice/Edit?id=@item.Id_Forwarding_Invoice" title="Edit Page">
-    <img src="images/edit_page.gif" alt="Edit" class="rcGC" />
-</a>),
-grid.Column("Forwarding_MAWB_Number", "MAWB Number", style: "rcGB"),
-grid.Column("Original_Invoice_Number", "Original Forwarding Invoice", style: "rcGB"),
-grid.Column("Forwarding_Service_Name", "Forwarding ServiceName", style: "rcGB"),
-grid.Column("Country_Name", "Country Name", style: "rcGB"),
-                                          grid.Column("Weight", "Weight", style: "rcGB"),
-                                          grid.Column("Pricing", "Price", style: "rcGB"),
-grid.Column("Sending_Date", format: @<i>@item.Sending_Date</i>),
-                    grid.Column(format: @<a href="~/rcAdmin/ForwardingInvoice/Index?id=@item.Id_Forwarding_Invoice" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
-    <img src="images/delete.gif" alt="Delete" class="rcGC" />
-</a>)
-                    )
-                )
-    </div>
-</fieldset>
+<div class="fluid">
+    <fieldset>
+        <div class="widget">
+            <div class="whead">
+                <h6>All Pages | <a href="~/rcAdmin/ForwardingInvoice/New">Create Forwarding Invoice</a> </h6>
+                <div class="clear"></div>
+            </div>
+            <div class="searchLine">
+                <form action="" method="POST">
+                    <input type="text" id="Original_Invoice_Number" name="Original_Invoice_Number" value="" placeholder="Enter Forwarding Invoice Number ..." class="ac ui-autocomplete-input" /> 
+                    <button type="submit" value="Search" title="Search"><span class="icos-search"></span></button>
+                </form>
+            </div>
+            <div id="grid" class="widget">
+                @grid.GetHtml(
+                    tableStyle: "tDark",
+                    headerStyle: "",
+                    alternatingRowStyle: "alt",
+                    footerStyle: "pgr",
+                    columns: grid.Columns(
+                        grid.Column("Forwarding_MAWB_Number", "MAWB Number", style: "rcGB"),
+                        grid.Column("Original_Invoice_Number", "Original Forwarding Invoice", style: "rcGB"),
+                        grid.Column("Forwarding_Service_Name", "Forwarding ServiceName", style: "rcGB"),
+                        grid.Column("Country_Name", "Country Name", style: "rcGB"),
+                        grid.Column("Weight", "Weight", style: "rcGB"),
+                        grid.Column("Pricing", "Price", style: "rcGB"),
+                        grid.Column("Sending_Date", format: @<i>@item.Sending_Date</i>),
+                        grid.Column(format: @<a href="~/rcAdmin/ForwardingInvoice/Edit?id=@item.Id_Forwarding_Invoice" title="Edit Page">
+                                                 <img src="images/edit_page.gif" alt="Edit" class="rcGC" />
+                                             </a>),
+                        grid.Column(format: @<a href="~/rcAdmin/ForwardingInvoice/Index?id=@item.Id_Forwarding_Invoice" title="Delete" onclick="return confirm('Are you sure you want to delete ?')">
+                                                 <img src="images/delete.gif" alt="Delete" class="rcGC" />
+                                             </a>)
+                        )
+                     )
+            </div>
+        </div>
+    </fieldset>
+</div>
